@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Global Passport Project App",
+    "slug": "gpp-app",
+    "version": "0.0.1",
+    "sdkVersion": "36.0.0",
+    "description": "Global Passport Project Mobile Application",
+    "privacy": "public",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "icon": "./src/assets/images/image-app-icon.png",
+    "splash": {
+      "image": "src/assets/images/auth-background.png",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": [
+      "src/assets/images/*",
+      "src/assets/fonts",
+      "src/layouts/**/assets/*"
+    ],
+    "androidStatusBar": {
+      "barStyle": "dark-content",
+      "backgroundColor": "#F7F9FC"
+    },
+    "entryPoint": "node_modules/expo/AppEntry.js"
+  }
+}
