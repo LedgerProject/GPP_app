@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ScrollView, ListRenderItemInfo } from 'react-native';
-import { Button, Divider, List, StyleService, Text, TopNavigation, TopNavigationAction, useStyleSheet } from '@ui-kitten/components';
+import { Button, Divider, List, Layout, StyleService, Text, TopNavigation, TopNavigationAction, useStyleSheet } from '@ui-kitten/components';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { MenuGridList } from '../components/menu-grid-list.component';
 import { DocumentItem } from './doc-wallet/document-item.component';
@@ -13,6 +13,8 @@ const initialDocuments: Document[] = [
   Document.idDocument(),
   Document.vaccinationPage1(),
   Document.vaccinationPage2(),
+  Document.testDoc1(),
+  Document.testDoc2(),
 ];
 
 export const DocWalletScreen = (props): React.ReactElement => {
@@ -49,17 +51,22 @@ export const DocWalletScreen = (props): React.ReactElement => {
   };
 
   return (
-    <View>
+    <SafeAreaLayout
+      style={styles.container}
+      insets='top'>
       <TopNavigation
         title='DocWallet'
         leftControl={renderDrawerAction()}
       />
-      <Divider/>
-      <ScrollView>
-        <MenuGridList
-          data={data}
-          onItemPress={onItemPress}
-        />
+      <Layout
+      style={styles.container}
+      level='2'>
+        <View>
+          <MenuGridList
+            data={data}
+            onItemPress={onItemPress}
+          />
+        </View>
         <Divider/>
         <Text
           style={styles.infoSection}>
@@ -81,12 +88,15 @@ export const DocWalletScreen = (props): React.ReactElement => {
           onPress={onGenerateTokenButtonPress}>
           GENERATE A 30-MINUTE TOKEN
         </Button>
-      </ScrollView>
-    </View>
+      </Layout>
+    </SafeAreaLayout>
   );
 };
 
 const themedStyles = StyleService.create({
+  container: {
+    flex: 1,
+  },
   safeArea: {
     flex: 1,
   },
@@ -103,6 +113,6 @@ const themedStyles = StyleService.create({
   generateTokenButton: {
     marginHorizontal: 16,
     marginTop: 8,
-    marginBottom: 70
+    marginBottom: 10
   }
 });

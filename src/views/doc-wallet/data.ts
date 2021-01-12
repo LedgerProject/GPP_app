@@ -83,4 +83,22 @@ export class Document {
       require('../../assets/images/icon-image.png')
     );
   }
+
+  static testDoc1(): Document {
+    return new Document(
+      5,
+      'Test Doc 1',
+      '0.9 Mbytes',
+      require('../../assets/images/icon-pdf.png')
+    );
+  }
+
+  static testDoc2(): Document {
+    return new Document(
+      6,
+      'Test Doc 2',
+      '1.2 Mbytes',
+      require('../../assets/images/icon-pdf.png')
+    );
+  }
 }
