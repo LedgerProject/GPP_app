@@ -23,6 +23,7 @@ const DATA: MenuItemType[] = [
   { title: 'My Profile', icon: PersonIcon },
   { title: 'Settings', icon: Settings2Icon },
   { title: 'Change Password', icon: LockIcon },
+  { title: 'Kosmopolis', icon: LockIcon },
   { title: 'Logout', icon: LogoutIcon },
 ];
 
@@ -32,14 +33,46 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
 
   const onItemSelect = (index: number): void => {
     switch (index) {
+      //Document Wallet
       case 0: {
         navigation.toggleDrawer();
-        navigation.navigate('Libraries');
+        navigation.navigate('DocWallet');
         return;
       }
+      //Where I Am
       case 1: {
-        WebBrowserService.openBrowserAsync('https://akveo.github.io/react-native-ui-kitten');
         navigation.toggleDrawer();
+        navigation.navigate('Structures');
+        return;
+      }
+      //My Profile
+      case 2: {
+        navigation.toggleDrawer();
+        navigation.navigate('MyProfile');
+        return;
+      }
+      //Settings
+      case 3: {
+        navigation.toggleDrawer();
+        navigation.navigate('Structures');
+        return;
+      }
+      //Change Password
+      case 4: {
+        navigation.toggleDrawer();
+        navigation.navigate('Structures');
+        return;
+      }
+      //Kosmopolis
+      case 5: {
+        navigation.toggleDrawer();
+        WebBrowserService.openBrowserAsync('http://www.kosmopolis.me/');
+        return;
+      }
+      //Logout
+      case 6: {
+        navigation.toggleDrawer();
+        navigation.navigate('SignIn');
         return;
       }
     }
