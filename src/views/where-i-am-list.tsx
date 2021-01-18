@@ -70,35 +70,34 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
 
       <Layout style={styles.safeArea}>
         <View style={styles.filtersContainer}>
-        <Text style={styles.labelWhat}>What are you searching for?</Text>
-        <Select
-              {...props}
-              style={styles.select}
-              selectedOption={filter}
-              data={categoryOptions}
-              placeholder='Show All'
-              onSelect={onSelectFilter}
+          <Text style={styles.labelWhat}>What are you searching for?</Text>
+          <Select
+            {...props}
+            style={styles.select}
+            selectedOption={filter}
+            data={categoryOptions}
+            placeholder='Show All'
+            onSelect={onSelectFilter}
             />
-        <Input autoCapitalize='none' placeholder='Enter the term to filter the search'
-        value={searchterm} onChangeText={setSearchterm} />
+          <Input autoCapitalize='none' placeholder='Enter the term to filter the search'
+            value={searchterm} onChangeText={setSearchterm} />
         </View>
-      <List data={structures} renderItem={renderStructureItem} />
-      <View style={styles.buttonsContainer}>
-       <View style={styles.buttonLeft} >
-        <Button style={styles.button} status='basic' size='small' onPress={onMapButtonPress}>Show Map</Button>
-       </View>
-       <View style={styles.buttonRight} >
-        <Button style={styles.button} status='basic'
-        size='small' onPress={onCountryButtonPress}>Country Informations</Button>
-       </View>
-      </View>
-      <Layout style={styles.downContainer}>
-        <Text style={styles.downText}>Now you are on:</Text>
-        <Text style={styles.downTextBold}>ITALY</Text>
+        <List data={structures} renderItem={renderStructureItem} />
+        <View style={styles.buttonsContainer}>
+          <View style={styles.buttonLeft} >
+            <Button style={styles.button} status='basic' size='small' onPress={onMapButtonPress}>Show Map</Button>
+          </View>
+          <View style={styles.buttonRight} >
+            <Button style={styles.button} status='basic'
+              size='small' onPress={onCountryButtonPress}>Country Informations</Button>
+          </View>
+        </View>
+        <Layout style={styles.downContainer}>
+          <Text style={styles.downText}>Now you are on:</Text>
+          <Text style={styles.downTextBold}>ITALY</Text>
+        </Layout>
       </Layout>
-      </Layout>
-      </SafeAreaLayout>
-
+    </SafeAreaLayout>
   );
 };
 

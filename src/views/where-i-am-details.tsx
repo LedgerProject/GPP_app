@@ -67,7 +67,6 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
       </Layout>
     </Layout>
 
-
       </ScrollView>
     </Layout>
   );

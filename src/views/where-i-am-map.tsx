@@ -35,35 +35,33 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
       />
       <Divider/>
       <ScrollView>
-
-      <Layout style={styles.filtersContainer}>
-        <Text style={styles.labelWhat}>What are you searching for?</Text>
-        <Select
-              {...props}
-              style={styles.select}
-              selectedOption={filter}
-              data={categoryOptions}
-              placeholder='Show All'
-              onSelect={onSelectFilter}
-            />
-      </Layout>
-      <Layout style={styles.mapContainer}>
-        <Image source={require('../../src/assets/images/mappafull.jpg')} style={styles.Map}/>
-      </Layout>
-      <Layout style={styles.buttonsContainer}>
-       <Layout style={styles.buttonLeft} >
-        <Button style={styles2.button} status='basic' size='small' onPress={onListButtonPress}>Show List</Button>
-       </Layout>
-       <Layout style={styles.buttonRight} >
-        <Button style={styles2.button} status='basic'
-          size='small' onPress={onCountryButtonPress}>Country Informations</Button>
-       </Layout>
-      </Layout>
-      <Layout style={styles.downContainer}>
-        <Text style={styles.downText}>Now you are on:</Text>
-        <Text style={styles.downTextBold}>ITALY</Text>
-      </Layout>
-
+        <Layout style={styles.filtersContainer}>
+          <Text style={styles.labelWhat}>What are you searching for?</Text>
+          <Select
+                {...props}
+                style={styles.select}
+                selectedOption={filter}
+                data={categoryOptions}
+                placeholder='Show All'
+                onSelect={onSelectFilter}
+              />
+        </Layout>
+        <Layout style={styles.mapContainer}>
+          <Image source={require('../../src/assets/images/mappafull.jpg')} style={styles.Map}/>
+        </Layout>
+        <Layout style={styles.buttonsContainer}>
+         <Layout style={styles.buttonLeft} >
+          <Button style={styles2.button} status='basic' size='small' onPress={onListButtonPress}>Show List</Button>
+         </Layout>
+         <Layout style={styles.buttonRight} >
+          <Button style={styles2.button} status='basic'
+            size='small' onPress={onCountryButtonPress}>Country Informations</Button>
+         </Layout>
+        </Layout>
+        <Layout style={styles.downContainer}>
+          <Text style={styles.downText}>Now you are on:</Text>
+          <Text style={styles.downTextBold}>ITALY</Text>
+        </Layout>
       </ScrollView>
     </Layout>
   );
@@ -130,6 +128,12 @@ const themedStyles = StyleService.create({
   mapContainer: {
     width: '100%',
   },
-  Map: { width: '100%', height: 300, margin: 0 },
-
+  Map: {
+    width: '100%',
+    height: 350,
+    margin: 0,
+  },
+  button: {
+    width: '100%',
+  },
 });
