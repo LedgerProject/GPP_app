@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "kittentricks.app"
-               BlueprintName = "KittenTricks"
-               ReferencedContainer = "container:KittenTricks.xcodeproj">
+               BuildableName = "gppapp.app"
+               BlueprintName = "GPPApp"
+               ReferencedContainer = "container:GPPApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -43,9 +43,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "KittenTricksTests.xctest"
-               BlueprintName = "KittenTricksTests"
-               ReferencedContainer = "container:KittenTricks.xcodeproj">
+               BuildableName = "GPPAppTests.xctest"
+               BlueprintName = "GPPAppTests"
+               ReferencedContainer = "container:GPPApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -59,9 +59,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "kittentricks.app"
-            BlueprintName = "KittenTricks"
-            ReferencedContainer = "container:KittenTricks.xcodeproj">
+            BuildableName = "gppapp.app"
+            BlueprintName = "GPPApp"
+            ReferencedContainer = "container:GPPApp.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -70,9 +70,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "KittenTricksTests.xctest"
-               BlueprintName = "KittenTricksTests"
-               ReferencedContainer = "container:KittenTricks.xcodeproj">
+               BuildableName = "GPPAppTests.xctest"
+               BlueprintName = "GPPAppTests"
+               ReferencedContainer = "container:GPPApp.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -92,9 +92,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "kittentricks.app"
-            BlueprintName = "KittenTricks"
-            ReferencedContainer = "container:KittenTricks.xcodeproj">
+            BuildableName = "gppapp.app"
+            BlueprintName = "GPPApp"
+            ReferencedContainer = "container:GPPApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -109,9 +109,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "kittentricks.app"
-            BlueprintName = "KittenTricks"
-            ReferencedContainer = "container:KittenTricks.xcodeproj">
+            BuildableName = "gppapp.app"
+            BlueprintName = "GPPApp"
+            ReferencedContainer = "container:GPPApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
