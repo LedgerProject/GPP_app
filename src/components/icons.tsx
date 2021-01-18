@@ -46,6 +46,18 @@ export const Settings2Icon = (style: ImageStyle): IconElement => (
   <Icon {...style} name='settings-2'/>
 );
 
+export const GlobeIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} name='globe'/>
+);
+
+export const StopCircleIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} name='stop-circle'/>
+);
+
+export const CalendarIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} name='calendar'/>
+);
+
 /** ASSET **/
 
 export const AssetDocWalletIcon = (style: ImageStyle): IconElement => (
