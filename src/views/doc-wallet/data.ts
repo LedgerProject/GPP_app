@@ -53,7 +53,7 @@ export class Document {
       1,
       'Passport',
       '1.7 Mbytes',
-      require('../../assets/images/icon-pdf.png')
+      require('../../assets/images/icon-pdf.png'),
     );
   }
 
@@ -62,7 +62,7 @@ export class Document {
       2,
       'Document ID',
       '0.6 Mbytes',
-      require('../../assets/images/icon-image.png')
+      require('../../assets/images/icon-image.png'),
     );
   }
 
@@ -71,7 +71,7 @@ export class Document {
       3,
       'Vaccination Page 1',
       '0.7 Mbytes',
-      require('../../assets/images/icon-image.png')
+      require('../../assets/images/icon-image.png'),
     );
   }
 
@@ -80,7 +80,7 @@ export class Document {
       4,
       'Vaccination Page 2',
       '0.7 Mbytes',
-      require('../../assets/images/icon-image.png')
+      require('../../assets/images/icon-image.png'),
     );
   }
 
@@ -89,7 +89,7 @@ export class Document {
       5,
       'Test Doc 1',
       '0.9 Mbytes',
-      require('../../assets/images/icon-pdf.png')
+      require('../../assets/images/icon-pdf.png'),
     );
   }
 
@@ -98,7 +98,7 @@ export class Document {
       6,
       'Test Doc 2',
       '1.2 Mbytes',
-      require('../../assets/images/icon-pdf.png')
+      require('../../assets/images/icon-pdf.png'),
     );
   }
 }

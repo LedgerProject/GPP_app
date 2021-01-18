@@ -11,7 +11,7 @@ import {
   Select,
   TopNavigation,
   TopNavigationAction,
-  Divider
+  Divider,
 } from '@ui-kitten/components';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { ProfileAvatar } from '../services/profile-avatar.component';
@@ -46,11 +46,11 @@ export const MyProfileScreen = (props): React.ReactElement => {
   };
 
   const onSaveButtonPress = (): void => {
-    //TODO
+    // TODO
   };
 
   const onDeleteButtonPress = (): void => {
-    //TODO
+    // TODO
   };
 
   const renderDrawerAction = (): React.ReactElement => (
@@ -70,7 +70,7 @@ export const MyProfileScreen = (props): React.ReactElement => {
 
   return (
     <View
-      style={{flex:1}}>
+      style={{flex: 1}}>
       <TopNavigation
         title='My Profile'
         leftControl={renderDrawerAction()}
@@ -123,7 +123,8 @@ export const MyProfileScreen = (props): React.ReactElement => {
             <Divider />
             <Text
             style={styles.infoSection}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eu ligula ac magna sodales molestie. Mauris et orci ultrices, cursus est nec, dictum massa.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eu ligula ac magna sodales molestie.
+            Mauris et orci ultrices, cursus est nec, dictum massa.
           </Text>
           <Button
               style={styles.saveButton}
@@ -200,4 +201,3 @@ const themedStyles = StyleService.create({
     marginHorizontal: 16,
   },
 });
-

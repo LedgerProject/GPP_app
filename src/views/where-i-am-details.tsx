@@ -1,6 +1,9 @@
 import React from 'react';
 import { Image, Platform, View , ScrollView, ListRenderItemInfo } from 'react-native';
-import { Input, Button, Divider, List, StyleService, Text, TopNavigation, TopNavigationAction, useStyleSheet, Layout, Icon } from '@ui-kitten/components';
+import {
+  Input, Button, Divider, List, StyleService, Text, TopNavigation,
+  TopNavigationAction, useStyleSheet, Layout, Icon,
+} from '@ui-kitten/components';
 import { ArrowBackIcon, MenuIcon } from '../components/icons';
 
 export const WhereIAmDetailsScreen = (props): React.ReactElement => {
@@ -18,7 +21,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
   );
 
   return (
-    <Layout style={{flex:1}}>
+    <Layout style={{flex: 1}}>
       <TopNavigation
         title='Details'
         leftControl={renderDrawerAction()}

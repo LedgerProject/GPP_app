@@ -84,13 +84,13 @@ const themedStyles = StyleService.create({
   },
   forgotPasswordLabel: {
     marginTop: 8,
-    marginBottom: 8
+    marginBottom: 8,
   },
   enterEmailLabel: {
     zIndex: 1,
     alignSelf: 'center',
     marginTop: 16,
-    marginBottom: 4
+    marginBottom: 4,
   },
   resetPasswordButton: {
     marginHorizontal: 16,

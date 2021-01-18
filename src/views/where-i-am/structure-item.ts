@@ -4,7 +4,7 @@ export class Structure {
               readonly title: string,
               readonly address: string,
               readonly distance: string,
-              readonly icon: string
+              readonly icon: string,
               ) {
   }
 
@@ -14,7 +14,7 @@ export class Structure {
       'Structure Name 1',
       'Address',
       '0.94 Km',
-      'https://reactjs.org/logo-og.png'
+      'https://reactjs.org/logo-og.png',
     );
   }
 
@@ -24,7 +24,7 @@ export class Structure {
       'Structure Name 2',
       'Address',
       '0.94 Km',
-      'https://reactjs.org/logo-og.png'
+      'https://reactjs.org/logo-og.png',
     );
   }
 
@@ -34,7 +34,7 @@ export class Structure {
       'Structure Name 3',
       'Address',
       '0.94 Km',
-      'https://reactjs.org/logo-og.png'
+      'https://reactjs.org/logo-og.png',
     );
   }
 
@@ -44,7 +44,7 @@ export class Structure {
       'Structure Name 4',
       'Address',
       '0.94 Km',
-      'https://reactjs.org/logo-og.png'
+      'https://reactjs.org/logo-og.png',
     );
   }
 

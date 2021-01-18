@@ -13,5 +13,5 @@ export const StructuresNavigator = ({ navigation }): React.ReactElement => (
     <Stack.Screen name='WhereIAmList' component={WhereIAmListScreen}/>
     <Stack.Screen name='WhereIAmDetails' component={WhereIAmDetailsScreen}/>
     <Stack.Screen name='WhereIAmCountry' component={WhereIAmCountryScreen}/>
-  </Stack.Navigator>    
+  </Stack.Navigator>
 );

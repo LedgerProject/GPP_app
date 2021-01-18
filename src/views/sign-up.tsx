@@ -172,7 +172,7 @@ const themedStyles = StyleService.create({
   },
   signUpLabel: {
     marginTop: 8,
-    marginBottom: 8
+    marginBottom: 8,
   },
   signUpButton: {
     marginHorizontal: 16,
