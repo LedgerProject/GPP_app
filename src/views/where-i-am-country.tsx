@@ -23,10 +23,10 @@ export const WhereIAmCountryScreen = (props): React.ReactElement => {
 
   const BackAction = () => (
     <TopNavigationAction icon={BackIcon} onPress={navigateBack}/>
-  );  
+  );
 
   return (
-    <Layout style={{flex:1}}>
+    <Layout style={{flex: 1}}>
       <TopNavigation
         title='Country'
         leftControl={renderDrawerAction()}
@@ -40,30 +40,61 @@ export const WhereIAmCountryScreen = (props): React.ReactElement => {
 
       <Layout style={styles.elementContainer}>
         <Text style={styles.elementTitle}>Topic 1</Text>
-        <Text style={styles.elementDescription}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Text> 
-        <Text style={styles.elementDescription}>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. </Text>
+        <Text style={styles.elementDescription}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+          sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </Text>
+        <Text style={styles.elementDescription}>
+          Ut enim ad minim veniam, quis nostrud exercitation ullamco
+          laboris nisi ut aliquip ex ea commodo consequat.
+          Duis aute irure dolor in reprehenderit in voluptate velit esse
+          cillum dolore eu fugiat nulla pariatur.
+        </Text>
       </Layout>
       <Layout style={styles.elementContainer}>
         <Text style={styles.elementTitle}>Topic 2</Text>
-        <Text style={styles.elementDescription}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Text> 
-        <Text style={styles.elementDescription}>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. </Text>
+        <Text style={styles.elementDescription}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+          sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </Text>
+        <Text style={styles.elementDescription}>
+          Ut enim ad minim veniam, quis nostrud exercitation ullamco
+          laboris nisi ut aliquip ex ea commodo consequat.
+          Duis aute irure dolor in reprehenderit in voluptate velit
+          esse cillum dolore eu fugiat nulla pariatur.
+        </Text>
       </Layout>
       <Layout style={styles.elementContainer}>
         <Text style={styles.elementTitle}>Topic 3</Text>
-        <Text style={styles.elementDescription}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Text> 
-        <Text style={styles.elementDescription}>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. </Text>
+        <Text style={styles.elementDescription}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+          sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </Text>
+        <Text style={styles.elementDescription}>
+          Ut enim ad minim veniam, quis nostrud exercitation
+          ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          Duis aute irure dolor in reprehenderit in voluptate
+          velit esse cillum dolore eu fugiat nulla pariatur.
+        </Text>
       </Layout>
       <Layout style={styles.elementContainer}>
         <Text style={styles.elementTitle}>Topic 4</Text>
-        <Text style={styles.elementDescription}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Text> 
-        <Text style={styles.elementDescription}>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. </Text>
-      </Layout> 
-
-        <Button
+        <Text style={styles.elementDescription}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+          sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </Text>
+        <Text style={styles.elementDescription}>
+          Ut enim ad minim veniam, quis nostrud exercitation
+          ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          Duis aute irure dolor in reprehenderit in voluptate
+          velit esse cillum dolore eu fugiat nulla pariatur.
+        </Text>
+      </Layout>
+      <Button
         status='basic'
         onPress={navigateBack}>
         Back
-      </Button>         
+      </Button>
         <Divider/>
       </ScrollView>
     </Layout>
@@ -75,21 +106,28 @@ const themedStyles = StyleService.create({
     flex: 1,
   },
   mainTitleContainer: {
-    padding: 16, marginBottom:10
+    padding: 16,
+    marginBottom: 10,
   },
   mainTitle: {
     fontSize: 16,
     textAlign: 'center',
-    color: 'black', fontWeight:'bold'
+    color: 'black',
+    fontWeight: 'bold',
   },
   elementContainer: {
-    padding: 6, marginBottom:10, flexDirection:'column'    
+    padding: 6,
+    marginBottom: 10,
+    flexDirection: 'column',
   },
   elementTitle: {
     fontSize: 13,
-    color: '#444',fontWeight:'bold'
+    color: '#444',
+    fontWeight: 'bold',
   },
   elementDescription: {
-    color:'#666', fontSize:11, marginBottom:4
-  }  
+    color: '#666',
+    fontSize: 11,
+    marginBottom: 4,
+  },
 });

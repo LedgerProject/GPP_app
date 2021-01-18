@@ -113,6 +113,6 @@ const themedStyles = StyleService.create({
   generateTokenButton: {
     marginHorizontal: 16,
     marginTop: 8,
-    marginBottom: 10
-  }
+    marginBottom: 10,
+  },
 });

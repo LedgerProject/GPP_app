@@ -3,7 +3,7 @@ import { View, ImageBackground } from 'react-native';
 import { Button, Input, Layout, StyleService, Text, useStyleSheet } from '@ui-kitten/components';
 import { EyeIcon, EyeOffIcon, EmailIcon } from '../components/icons';
 import { KeyboardAvoidingView } from '../services/3rd-party';
-import I18n from "./../i18n/i18n";
+import I18n from './../i18n/i18n';
 
 export default ({ navigation }): React.ReactElement => {
   const [email, setEmail] = React.useState<string>();
@@ -39,7 +39,7 @@ export default ({ navigation }): React.ReactElement => {
           style={styles.signInLabel}
           category='s1'
           status='control'>
-          Sign in to your account {I18n.t("hello")}
+          Sign in to your account {I18n.t('hello')}
         </Text>
       </View>
       <Layout
@@ -109,7 +109,7 @@ const themedStyles = StyleService.create({
   },
   signInLabel: {
     marginTop: 8,
-    marginBottom: 8
+    marginBottom: 8,
   },
   signInButton: {
     marginHorizontal: 16,

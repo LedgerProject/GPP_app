@@ -1,8 +1,8 @@
-import I18n from "i18n-js";
-import * as RNLocalize from "react-native-localize";
+import I18n from 'i18n-js';
+import * as RNLocalize from 'react-native-localize';
 
-import en from "./en";
-import fr from "./fr";
+import en from './en';
+import fr from './fr';
 
 const locales = RNLocalize.getLocales();
 
@@ -13,7 +13,7 @@ if (Array.isArray(locales)) {
 I18n.fallbacks = true;
 I18n.translations = {
   en,
-  fr
+  fr,
 };
 
 export default I18n;

@@ -1,6 +1,17 @@
 import React from 'react';
 import { View, ScrollView, ListRenderItemInfo } from 'react-native';
-import { Button, Divider, List, StyleService, Text, TopNavigation, TopNavigationAction, useStyleSheet, Layout, Icon } from '@ui-kitten/components';
+import {
+  Button,
+  Divider,
+  List,
+  StyleService,
+  Text,
+  TopNavigation,
+  TopNavigationAction,
+  useStyleSheet,
+  Layout,
+  Icon,
+} from '@ui-kitten/components';
 import { MenuIcon } from '../components/icons';
 
 const BackIcon = (props) => (
@@ -23,17 +34,16 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
 
   const BackAction = () => (
     <TopNavigationAction icon={BackIcon} onPress={navigateBack}/>
-  );  
+  );
 
   return (
-    <Layout style={{flex:1}}>
+    <Layout style={{flex: 1}}>
       <TopNavigation
         title='WhereIAmDetails'
         leftControl={renderDrawerAction()}
       />
       <Divider/>
       <ScrollView>
-
         <Divider/>
         <Text>
           Structures Details
@@ -42,7 +52,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
         status='basic'
         onPress={navigateBack}>
         Back
-      </Button>          
+      </Button>
         <Divider/>
       </ScrollView>
     </Layout>
@@ -52,5 +62,5 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
 const themedStyles = StyleService.create({
   safeArea: {
     flex: 1,
-  }
+  },
 });
