@@ -201,4 +201,3 @@ const themedStyles = StyleService.create({
     marginHorizontal: 16,
   },
 });
-

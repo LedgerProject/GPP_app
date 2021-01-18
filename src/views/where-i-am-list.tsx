@@ -1,22 +1,33 @@
 import React from 'react';
-import { View, ScrollView, ListRenderItemInfo } from 'react-native';
+import { View, ScrollView, ListRenderItemInfo, Alert } from 'react-native';
 import {
-  Input,
-  Button,
-  Divider,
-  List,
-  StyleService,
-  Text,
-  TopNavigation,
-  TopNavigationAction,
-  useStyleSheet,
-  Layout,
+  Input, Button, Divider, List, ListItem, StyleService, Text,
+  TopNavigation, TopNavigationAction, useStyleSheet, Layout, Select,
 } from '@ui-kitten/components';
-import { MenuIcon } from '../components/icons';
+import { ArrowBackIcon, MenuIcon } from '../components/icons';
+import { SafeAreaLayout } from '../components/safe-area-layout.component';
+import { categoryOptions } from './where-i-am/data-category';
+
+import structures from './where-i-am/data-structures';
+import { StructureItem } from './where-i-am/structure-item.component';
+/*import { Structure } from './where-i-am/structure-item'
+import { StructureItem } from './where-i-am/structure-item.component';
+
+const initialStructures: Structure[] = [
+  Structure.Structure_001(),
+  Structure.Structure_002(),
+  Structure.Structure_003(),
+  Structure.Structure_004()
+];*/
 
 export const WhereIAmListScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
-  const [filter, setFilter] = React.useState('');
+
+  const [filter, setFilter] = React.useState(props.selectedOption);
+  const [searchterm, setSearchterm] = React.useState('');
+  const onSelectFilter = (option) => {
+    setFilter(option);
+  };
   const onMapButtonPress = (): void => {
     props.navigation && props.navigation.navigate('WhereIAmMap');
   };
@@ -29,48 +40,64 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
     props.navigation && props.navigation.navigate('WhereIAmDetails');
   };
 
+  const navigateBack = () => {
+    props.navigation.goBack();
+  };
+
   const renderDrawerAction = (): React.ReactElement => (
-    <TopNavigationAction
-      icon={MenuIcon}
-      onPress={props.navigation.toggleDrawer}
-    />
+    <TopNavigationAction icon={ArrowBackIcon} onPress={navigateBack} />
+  );
+
+  const onPressItem = (item: any, index: number): void => {
+    props.navigation && props.navigation.navigate('WhereIAmDetails', { item: item });
+  };
+
+    const renderStructureItem = ({ item, index }) => (
+    <StructureItem
+      index={index}
+      item={item}
+      onListviewButtonPress={onPressItem}
+      />
   );
 
   return (
-    <Layout style={{flex: 1}}>
+    <SafeAreaLayout insets='top' style={styles.safeArea}>
       <TopNavigation
         title='Structures List'
         leftControl={renderDrawerAction()}
       />
       <Divider/>
-      <ScrollView>
 
-      <Layout style={styles.filtersContainer}>
-        <Text style={styles.labelWhat}>What are you searching for?</Text>
-
-        <Input
-          placeholder='Enter a term to filter the search'
-          value={filter}
-          onChangeText={setFilter}
-       />
+      <Layout style={styles.safeArea}>
+        <View style={styles.filtersContainer}>
+          <Text style={styles.labelWhat}>What are you searching for?</Text>
+          <Select
+            {...props}
+            style={styles.select}
+            selectedOption={filter}
+            data={categoryOptions}
+            placeholder='Show All'
+            onSelect={onSelectFilter}
+            />
+          <Input autoCapitalize='none' placeholder='Enter the term to filter the search'
+            value={searchterm} onChangeText={setSearchterm} />
+        </View>
+        <List data={structures} renderItem={renderStructureItem} />
+        <View style={styles.buttonsContainer}>
+          <View style={styles.buttonLeft} >
+            <Button style={styles.button} status='basic' size='small' onPress={onMapButtonPress}>Show Map</Button>
+          </View>
+          <View style={styles.buttonRight} >
+            <Button style={styles.button} status='basic'
+              size='small' onPress={onCountryButtonPress}>Country Informations</Button>
+          </View>
+        </View>
+        <Layout style={styles.downContainer}>
+          <Text style={styles.downText}>Now you are on:</Text>
+          <Text style={styles.downTextBold}>ITALY</Text>
+        </Layout>
       </Layout>
-      <Layout>
-      <Button style={styles.button} status='basic' onPress={onDetailsButtonPress}>Details</Button>
-      </Layout>
-      <Layout style={styles.buttonsContainer}>
-       <Layout style={styles.buttonLeft} >
-        <Button style={styles.button} status='basic' onPress={onMapButtonPress}>Map</Button>
-       </Layout>
-       <Layout style={styles.buttonRight} >
-        <Button style={styles.button} status='basic' onPress={onCountryButtonPress}>Country</Button>
-       </Layout>
-      </Layout>
-      <Layout style={styles.downContainer}>
-        <Text style={styles.downText}>Now you are on:</Text>
-        <Text style={styles.downTextBold}>ITALY</Text>
-      </Layout>
-      </ScrollView>
-    </Layout>
+    </SafeAreaLayout>
   );
 };
 
@@ -82,6 +109,11 @@ const themedStyles = StyleService.create({
     fontSize: 12,
     textAlign: 'left',
     color: 'grey',
+  },
+  select: {
+    marginTop: 8,
+    marginBottom: 8,
+    width: '100%',
   },
   topContainer: {
     padding: 6,
@@ -101,29 +133,20 @@ const themedStyles = StyleService.create({
     fontSize: 16,
   },
   buttonRight: {
-    width: '50%',
-    height: 'auto',
-    flex: 1,
-    marginLeft: 5,
-    marginRight: 10,
-    alignItems: 'center',
+    width: '50%', height: 'auto', flex: 1, marginLeft: 5, marginRight: 10, alignItems: 'center',
   },
   buttonLeft: {
-    width: '50%',
-    height: 'auto',
-    flex: 1,
-    marginLeft: 10,
-    marginRight: 5,
-    alignItems: 'center',
+    width: '50%', height: 'auto', flex: 1, marginLeft: 10, marginRight: 5, alignItems: 'center',
   },
   buttonsContainer: {
-    flexDirection: 'row',
-    marginTop: 10,
+    flexDirection: 'row', marginTop: 10,
   },
   filtersContainer: {
-    marginHorizontal: 10,
+    marginHorizontal: 10, marginBottom: 4,
   },
-  button: {
-    width: '100%',
+  button: { width: '100%' },
+  item: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'background-basic-color-3',
   },
 });

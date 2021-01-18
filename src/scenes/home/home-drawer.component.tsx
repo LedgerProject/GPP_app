@@ -33,43 +33,43 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
 
   const onItemSelect = (index: number): void => {
     switch (index) {
-      //Document Wallet
+      // Document Wallet
       case 0: {
         navigation.toggleDrawer();
         navigation.navigate('DocWallet');
         return;
       }
-      //Where I Am
+      // Where I Am
       case 1: {
         navigation.toggleDrawer();
         navigation.navigate('Structures');
         return;
       }
-      //My Profile
+      // My Profile
       case 2: {
         navigation.toggleDrawer();
         navigation.navigate('MyProfile');
         return;
       }
-      //Settings
+      // Settings
       case 3: {
         navigation.toggleDrawer();
         navigation.navigate('Structures');
         return;
       }
-      //Change Password
+      // Change Password
       case 4: {
         navigation.toggleDrawer();
         navigation.navigate('Structures');
         return;
       }
-      //Kosmopolis
+      // Kosmopolis
       case 5: {
         navigation.toggleDrawer();
         WebBrowserService.openBrowserAsync('http://www.kosmopolis.me/');
         return;
       }
-      //Logout
+      // Logout
       case 6: {
         navigation.toggleDrawer();
         navigation.navigate('SignIn');
