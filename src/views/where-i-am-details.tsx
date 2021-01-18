@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, Platform, View , ScrollView, ListRenderItemInfo, ImageBackground } from 'react-native';
 import {
   Input, Button, Divider, List, StyleService, Text, TopNavigation,
-  TopNavigationAction, useStyleSheet, Layout, Icon
+  TopNavigationAction, useStyleSheet, Layout, Icon,
 } from '@ui-kitten/components';
 import { ArrowBackIcon, MenuIcon } from '../components/icons';
 
@@ -21,12 +21,12 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
   );
 
   const onNavigatorButtonPress = (): void => {
-    //props.navigation && props.navigation.navigate('WhereIAmList');
+    // props.navigation && props.navigation.navigate('WhereIAmList');
   };
 
   const onContactButtonPress = (): void => {
-    //props.navigation && props.navigation.navigate('WhereIAmCountry');
-  };  
+    // props.navigation && props.navigation.navigate('WhereIAmCountry');
+  };
 
   return (
     <Layout style={{flex: 1}}>
@@ -76,7 +76,8 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
   </Layout>
   <Layout style={styles.buttonsContainer}>
          <Layout style={styles.buttonLeft} >
-          <Button style={styles.button} status='basic' size='small' onPress={onNavigatorButtonPress}>Start the navigator</Button>
+          <Button style={styles.button} status='basic' size='small'
+          onPress={onNavigatorButtonPress}>Start the navigator</Button>
          </Layout>
          <Layout style={styles.buttonRight} >
           <Button style={styles.button} status='basic'
@@ -84,8 +85,8 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
          </Layout>
   </Layout>
 
-</Layout>  
-</ScrollView>    
+</Layout>
+</ScrollView>
 </Layout>
   );
 };
@@ -159,10 +160,10 @@ const themedStyles = StyleService.create({
     width: '100%',
     height: 350,
     margin: 0,
-  },  
+  },
   elementSubcontainer: {
-    flexDirection:'row'
-  },  
+    flexDirection: 'row',
+  },
   buttonsContainer: {
     flexDirection: 'row',
     marginTop: 10,
@@ -182,6 +183,6 @@ const themedStyles = StyleService.create({
     marginLeft: 10,
     marginRight: 5,
     alignItems: 'center',
-  },    
+  },
   button: { width: '100%' },
 });
