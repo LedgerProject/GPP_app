@@ -54,13 +54,13 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
       //Settings
       case 3: {
         navigation.toggleDrawer();
-        navigation.navigate('Structures');
+        navigation.navigate('Settings');
         return;
       }
       //Change Password
       case 4: {
         navigation.toggleDrawer();
-        navigation.navigate('Structures');
+        navigation.navigate('ChangePassword');
         return;
       }
       //Kosmopolis

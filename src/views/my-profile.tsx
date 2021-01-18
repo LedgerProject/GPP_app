@@ -1,8 +1,7 @@
 import React from 'react';
-import { View, ImageBackground } from 'react-native';
+import { View } from 'react-native';
 import {
   Button,
-  CheckBox,
   Input,
   Layout,
   StyleService,
@@ -11,29 +10,29 @@ import {
   Select,
   TopNavigation,
   TopNavigationAction,
+<<<<<<< Updated upstream
   Divider
+=======
+  Divider,
+  Datepicker,
+>>>>>>> Stashed changes
 } from '@ui-kitten/components';
-import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { ProfileAvatar } from '../services/profile-avatar.component';
-import { EmailIcon, EyeIcon, EyeOffIcon, PersonIcon, PlusIcon } from '../components/icons';
+import { PersonIcon, PlusIcon } from '../components/icons';
 import { genderOptions, nationalityOptions } from './my-profile/data';
-import { MenuIcon } from '../components/icons';
+import { MenuIcon, StopCircleIcon, GlobeIcon, CalendarIcon } from '../components/icons';
 import { KeyboardAvoidingView } from '../services/3rd-party';
 import { ScrollView } from 'react-native-gesture-handler';
 
 export const MyProfileScreen = (props): React.ReactElement => {
-
   const [firstName, setFirstName] = React.useState<string>();
   const [lastName, setLastName] = React.useState<string>();
   const [gender, setGender] = React.useState(props.selectedOption);
   const [nationality, setNationality] = React.useState(props.selectedOption);
-  const [email, setEmail] = React.useState<string>();
-  const [confirmEmail, setConfirmEmail] = React.useState<string>();
-  const [password, setPassword] = React.useState<string>();
-  const [confirmPassword, setConfirmPassword] = React.useState<string>();
-  const [termsAccepted, setTermsAccepted] = React.useState<boolean>(false);
-  const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false);
-  const [confirmPasswordVisible, setConfirmPasswordVisible] = React.useState<boolean>(false);
+  const [birthday, setBirthday] = React.useState<Date>();
+
+  const today = new Date();
+  const firstDayCalendar = new Date(1900, 1, 1);
 
   const styles = useStyleSheet(themedStyles);
 
@@ -106,6 +105,7 @@ export const MyProfileScreen = (props): React.ReactElement => {
             />
             <Select
               {...props}
+              icon={StopCircleIcon}
               style={styles.select}
               selectedOption={gender}
               data={genderOptions}
@@ -114,11 +114,21 @@ export const MyProfileScreen = (props): React.ReactElement => {
             />
             <Select
               {...props}
+              icon={GlobeIcon}
               style={styles.selectNationality}
               selectedOption={nationality}
               data={nationalityOptions}
               placeholder='Select your nationality'
               onSelect={onSelectNationality}
+            />
+            <Datepicker
+              style={styles.datepicker}
+              icon={CalendarIcon}
+              date={birthday}
+              min={firstDayCalendar}
+              max={today}
+              placeholder='Select your birthday'
+              onSelect={selectedDate => setBirthday(selectedDate)}
             />
             <Divider />
             <Text
@@ -184,6 +194,10 @@ const themedStyles = StyleService.create({
   selectNationality: {
     marginTop: 12,
     width: '100%',
+  },
+  datepicker: {
+    marginTop: 12,
+    marginBottom: 12,
   },
   infoSection: {
     justifyContent: 'center',
