@@ -108,6 +108,10 @@ export const AssetTakePhotoDarkIcon = (style: ImageStyle): IconElement => (
   <Icon {...style} pack='app' name='takephoto-dark'/>
 );
 
+export const ArrowBackIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} name='arrow-back-outline'/>
+);
+
 /**DA RIMUOVERE I SEGUENTI **/
 
 export const ArrowIosBackIcon = (style: ImageStyle): IconElement => (
