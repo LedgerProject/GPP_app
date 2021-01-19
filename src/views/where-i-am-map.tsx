@@ -4,6 +4,8 @@ import { Button, Divider, StyleService, Text, TopNavigation, TopNavigationAction
 import { MenuIcon } from '../components/icons';
 import { categoryOptions } from './where-i-am/data-category';
 
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+
 export const WhereIAmMapScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
 
@@ -27,6 +29,8 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
     />
   );
 
+  const { region } = props;
+
   return (
     <Layout style={{flex: 1}}>
       <TopNavigation
@@ -47,7 +51,16 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
               />
         </Layout>
         <Layout style={styles.mapContainer}>
-          <Image source={require('../../src/assets/images/mappafull.jpg')} style={styles.Map}/>
+          <MapView
+            provider={PROVIDER_GOOGLE}
+            style={styles.Map}
+              region={{
+                latitude: 40.7143528,
+                longitude: -74.0059731,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              }}
+            ></MapView>
         </Layout>
         <Layout style={styles.buttonsContainer}>
          <Layout style={styles.buttonLeft} >
