@@ -70,13 +70,13 @@ export const DocWalletScreen = (props): React.ReactElement => {
       alert('Please fill Document Name');
       return;
     }
-
+    setmodalImageVisible(false);
     alert('Document uploaded successfully!');
   };
 
   // IMAGE PICKER
 
-  const [filePath, setFilePath] = React.useState({});
+  const [filePath, setFilePath] = React.useState('');
 
   const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
@@ -126,11 +126,11 @@ export const DocWalletScreen = (props): React.ReactElement => {
   const captureImage = async (type) => {
     const options = {
       mediaType: type,
-      maxWidth: 300,
-      maxHeight: 550,
-      quality: 1,
-      videoQuality: 'low',
-      durationLimit: 30, // Video max duration in seconds
+      // maxWidth: 300,
+      // maxHeight: 550,
+      PhotoQuality: 1,
+      // videoQuality: 'low',
+      // durationLimit: 30, // Video max duration in seconds
       saveToPhotos: true,
     };
     const isCameraPermitted = await requestCameraPermission();
@@ -148,9 +148,9 @@ export const DocWalletScreen = (props): React.ReactElement => {
         } else if (response.errorCode === 'permission') {
           alert('Permission not satisfied');
           return;
-        } else { // if (response.errorCode == 'others') {
+        /* } else { // if (response.errorCode == 'others') {
           alert(response.errorMessage);
-          return;
+          return; */
         }
         /* console.log('base64 -> ', response.base64);
         console.log('uri -> ', response.uri);
@@ -159,7 +159,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
         console.log('fileSize -> ', response.fileSize);
         console.log('type -> ', response.type);
         console.log('fileName -> ', response.fileName); */
-        setFilePath(response);
+        setFilePath(response.uri);
         setmodalImageVisible(true);
       });
     }
@@ -168,9 +168,9 @@ export const DocWalletScreen = (props): React.ReactElement => {
   const chooseFile = (type) => {
     const options = {
       mediaType: type,
-      maxWidth: 300,
-      maxHeight: 550,
-      quality: 1,
+      // maxWidth: 300,
+      // maxHeight: 550,
+      PhotoQuality: 1,
     };
     launchImageLibrary(options, (response) => {
       // console.log('Response = ', response);
@@ -184,9 +184,9 @@ export const DocWalletScreen = (props): React.ReactElement => {
       } else if (response.errorCode === 'permission') {
         alert('Permission not satisfied');
         return;
-      } else { // } if (response.errorCode == 'others') {
+      /* } else { // } if (response.errorCode == 'others') {
         alert(response.errorMessage);
-        return;
+        return; */
       }
       /* console.log('base64 -> ', response.base64);
       console.log('uri -> ', response.uri);
@@ -195,7 +195,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
       console.log('fileSize -> ', response.fileSize);
       console.log('type -> ', response.type);
       console.log('fileName -> ', response.fileName); */
-      setFilePath(response);
+      setFilePath(response.uri);
       setmodalImageVisible(true);
     });
   };
@@ -256,10 +256,10 @@ export const DocWalletScreen = (props): React.ReactElement => {
               onChangeText={setDocumentTitle}
             />
       <Image
-          source={{uri: filePath.uri}}
+          source={{uri: filePath}}
           style={styles.imageStyle}
         />
-        <Text>{filePath.uri}</Text>
+        { /* <Text>{filePath}</Text> */ }
         <Button onPress={handleUpload}>UPLOAD TO IPFS</Button>
         <Button status='basic' onPress={() => setmodalImageVisible(false)}>CLOSE</Button>
       </Layout>
