@@ -131,7 +131,8 @@ export const MyProfileScreen = (props): React.ReactElement => {
               <Divider />
               <Text
                 style={styles.infoSection}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eu ligula ac magna sodales molestie.
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Suspendisse eu ligula ac magna sodales molestie.
                   Mauris et orci ultrices, cursus est nec, dictum massa.
               </Text>
               <Button
