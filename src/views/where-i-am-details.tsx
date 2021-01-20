@@ -5,6 +5,7 @@ import {
   TopNavigationAction, useStyleSheet, Layout, Icon,
 } from '@ui-kitten/components';
 import { ArrowBackIcon, MenuIcon } from '../components/icons';
+import {FlatListSlider} from 'react-native-flatlist-slider';
 
 export const WhereIAmDetailsScreen = (props): React.ReactElement => {
 
@@ -28,6 +29,18 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
     // props.navigation && props.navigation.navigate('WhereIAmCountry');
   };
 
+  const images = [
+    {
+     image: 'https://images.unsplash.com/photo-1567226475328-9d6baaf565cf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60',
+     desc: 'Silent Waters in the mountains in midst of Himilayas',
+    },
+   {
+     image: 'https://images.unsplash.com/photo-1455620611406-966ca6889d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1130&q=80',
+     desc:
+       'Red fort in India New Delhi is a magnificient masterpeiece of humans',
+   },
+   ];
+
   return (
     <Layout style={{flex: 1}}>
       <TopNavigation
@@ -37,9 +50,12 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
       <Divider/>
       <ScrollView>
   <Layout style={styles.header}>
-  <ImageBackground
-    style={styles.image}
-    source={{uri: item.icon}}
+  <FlatListSlider
+    data={images}
+    onPress={ item => alert(JSON.stringify(item)) }
+    autoscroll={false}
+    loop={false}   
+
   />
   <Layout
     style={styles.detailsContainer}
