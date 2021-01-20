@@ -1,16 +1,18 @@
 import React from 'react';
-import { Image, Platform, View , ScrollView, ListRenderItemInfo, ImageBackground } from 'react-native';
+import { View , ScrollView, Modal } from 'react-native';
 import {
   Input, Button, Divider, List, StyleService, Text, TopNavigation,
   TopNavigationAction, useStyleSheet, Layout, Icon,
 } from '@ui-kitten/components';
 import { ArrowBackIcon, MenuIcon } from '../components/icons';
 import {FlatListSlider} from 'react-native-flatlist-slider';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import MapView, {PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 
 export const WhereIAmDetailsScreen = (props): React.ReactElement => {
 
   const { item } = props.route.params;
-
+  const [modalVisible, setmodalVisible] = React.useState(false);
   const styles = useStyleSheet(themedStyles);
 
   const navigateBack = () => {
@@ -29,6 +31,12 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
     // props.navigation && props.navigation.navigate('WhereIAmCountry');
   };
 
+  const ZoomImage = (): void => {
+    // alert(JSON.stringify(item));
+    // props.navigation && props.navigation.navigate('Homepage');
+    setmodalVisible(true);
+  };
+
   const images = [
     {
      image: 'https://images.unsplash.com/photo-1567226475328-9d6baaf565cf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60',
@@ -36,10 +44,21 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
     },
    {
      image: 'https://images.unsplash.com/photo-1455620611406-966ca6889d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1130&q=80',
-     desc:
-       'Red fort in India New Delhi is a magnificient masterpeiece of humans',
+     desc: 'Red fort in India New Delhi is a magnificient masterpeiece of humans',
    },
    ];
+
+   const zoom_images = [
+    {
+     url: 'https://images.unsplash.com/photo-1567226475328-9d6baaf565cf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60',
+     props: {},
+    },
+    {
+     url: 'https://images.unsplash.com/photo-1455620611406-966ca6889d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1130&q=80',
+     props: {},
+    },
+   ];
+
 
   return (
     <Layout style={{flex: 1}}>
@@ -52,7 +71,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
   <Layout style={styles.header}>
   <FlatListSlider
     data={images}
-    // onPress={ item => alert(JSON.stringify(item)) }
+    onPress={ ZoomImage }
     autoscroll={false}
     loop={false}
 
@@ -80,7 +99,20 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
       appearance='hint'>{item.description}</Text>
 
     <Layout style={styles.mapContainer}>
-          <Image source={require('../../src/assets/images/mappafull.jpg')} style={styles.Map}/>
+    <MapView
+            provider={PROVIDER_GOOGLE}
+            style={styles.Map}
+              region={{
+                latitude: item.latitude,
+                longitude: item.longitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              }}
+            >
+      <Marker coordinate={{ latitude : item.latitude , longitude : item.longitude }}
+        // image={{uri: item.icon}}
+      />
+    </MapView>
     </Layout>
 
     <View style={styles.elementSubcontainer}>
@@ -103,6 +135,10 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
 
 </Layout>
 </ScrollView>
+
+<Modal visible={modalVisible} transparent={true}>
+  <ImageViewer imageUrls={zoom_images}/>
+</Modal>
 </Layout>
   );
 };
@@ -179,6 +215,7 @@ const themedStyles = StyleService.create({
   },
   elementSubcontainer: {
     flexDirection: 'row',
+    marginTop: 4,
   },
   buttonsContainer: {
     flexDirection: 'row',
@@ -201,4 +238,5 @@ const themedStyles = StyleService.create({
     alignItems: 'center',
   },
   button: { width: '100%' },
+  backdrop: { /* backgroundColor: 'rgba(0, 0, 0, 0.5)', */ },
 });

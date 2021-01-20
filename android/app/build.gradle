@@ -129,7 +129,7 @@ android {
 
     defaultConfig {
         applicationId "com.kosmopolis.gpp"
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion "21" // rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 6
         versionName "2.4.0"

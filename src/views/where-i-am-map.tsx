@@ -89,9 +89,9 @@ const themedStyles = StyleService.create({
     flex: 1,
   },
   labelWhat: {
-    fontSize: 12,
     textAlign: 'left',
     color: 'grey',
+    marginTop: 4,
   },
   select: {
     marginTop: 8,
