@@ -136,8 +136,16 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
 </Layout>
 </ScrollView>
 
-<Modal visible={modalVisible} transparent={true}>
-  <ImageViewer imageUrls={zoom_images}/>
+<Modal
+visible={modalVisible}
+transparent={true}
+onRequestClose={ () => setmodalVisible(false) }
+>
+  <ImageViewer
+  imageUrls={zoom_images}
+  enableSwipeDown={true}
+  onSwipeDown={ () => setmodalVisible(false) }
+  />
 </Modal>
 </Layout>
   );
