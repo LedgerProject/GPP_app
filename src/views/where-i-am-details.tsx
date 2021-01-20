@@ -52,9 +52,9 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
   <Layout style={styles.header}>
   <FlatListSlider
     data={images}
-    onPress={ item => alert(JSON.stringify(item)) }
+    // onPress={ item => alert(JSON.stringify(item)) }
     autoscroll={false}
-    loop={false}   
+    loop={false}
 
   />
   <Layout
