@@ -1,10 +1,11 @@
 import React from 'react';
-import { Image, Platform, View , ScrollView, ListRenderItemInfo } from 'react-native';
+import { Image, Platform, View , ScrollView, ListRenderItemInfo, ImageBackground } from 'react-native';
 import {
   Input, Button, Divider, List, StyleService, Text, TopNavigation,
   TopNavigationAction, useStyleSheet, Layout, Icon,
 } from '@ui-kitten/components';
 import { ArrowBackIcon, MenuIcon } from '../components/icons';
+import {FlatListSlider} from 'react-native-flatlist-slider';
 
 export const WhereIAmDetailsScreen = (props): React.ReactElement => {
 
@@ -20,6 +21,26 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
     <TopNavigationAction icon={ArrowBackIcon} onPress={navigateBack} />
   );
 
+  const onNavigatorButtonPress = (): void => {
+    // props.navigation && props.navigation.navigate('WhereIAmList');
+  };
+
+  const onContactButtonPress = (): void => {
+    // props.navigation && props.navigation.navigate('WhereIAmCountry');
+  };
+
+  const images = [
+    {
+     image: 'https://images.unsplash.com/photo-1567226475328-9d6baaf565cf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60',
+     desc: 'Silent Waters in the mountains in midst of Himilayas',
+    },
+   {
+     image: 'https://images.unsplash.com/photo-1455620611406-966ca6889d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1130&q=80',
+     desc:
+       'Red fort in India New Delhi is a magnificient masterpeiece of humans',
+   },
+   ];
+
   return (
     <Layout style={{flex: 1}}>
       <TopNavigation
@@ -28,99 +49,116 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
       />
       <Divider/>
       <ScrollView>
+  <Layout style={styles.header}>
+  <FlatListSlider
+    data={images}
+    // onPress={ item => alert(JSON.stringify(item)) }
+    autoscroll={false}
+    loop={false}
 
-      <Layout level='1'>
-      <View style={styles.header}>
-        <Image
-          style={styles.productImage}
-          source={item.icon}
-        />
-        <View style={styles.detailsContainer}>
-          <Text category='s1'>
-            {item.title}
-          </Text>
-          <Text
-            style={styles.authorLabel}
-            appearance='hint'
-            category='c1'>
-            {`Author: ${item.address}`}
-          </Text>
-          <Text
-            style={styles.priceLabel}
-            category='s1'>
-            {item.distance}
-          </Text>
-        </View>
-      </View>
-      <Layout
-        style={styles.descriptionContainer}
-        level='2'>
-        <Text
-          style={styles.aboutLabel}
-          category='s1'>
-          About Book
-        </Text>
-        <Text
-          appearance='hint'>
-          {item.title}
-        </Text>
-      </Layout>
+  />
+  <Layout
+    style={styles.detailsContainer}
+    level='1'>
+    <Text
+      category='h6'>
+      {item.title}
+    </Text>
+    <Text
+      style={styles.subtitle}
+      appearance='hint'
+      category='p2'>
+      {item.address}
+    </Text>
+    <Text
+      style={styles.price}
+      category='h4'>
+      {item.distance}
+    </Text>
+    <Text
+      style={styles.description}
+      appearance='hint'>{item.description}</Text>
+
+    <Layout style={styles.mapContainer}>
+          <Image source={require('../../src/assets/images/mappafull.jpg')} style={styles.Map}/>
     </Layout>
 
-      </ScrollView>
-    </Layout>
+    <View style={styles.elementSubcontainer}>
+          <Text>Latitude: <Text>{item.longitude}</Text></Text>
+    </View>
+    <View style={styles.elementSubcontainer}>
+          <Text>Longitude: <Text>{item.longitude}</Text></Text>
+    </View>
+  </Layout>
+  <Layout style={styles.buttonsContainer}>
+         <Layout style={styles.buttonLeft} >
+          <Button style={styles.button} status='basic' size='small'
+          onPress={onNavigatorButtonPress}>Start the navigator</Button>
+         </Layout>
+         <Layout style={styles.buttonRight} >
+          <Button style={styles.button} status='basic'
+            size='small' onPress={onContactButtonPress}>Contact us</Button>
+         </Layout>
+  </Layout>
+
+</Layout>
+</ScrollView>
+</Layout>
   );
 };
 
 const themedStyles = StyleService.create({
   container: {
     flex: 1,
-    backgroundColor: 'background-basic-color-1',
+    backgroundColor: 'background-basic-color-2',
   },
   commentList: {
     flex: 1,
+    backgroundColor: 'transparent',
   },
   header: {
-    flexDirection: 'row',
-    overflow: 'hidden',
-    padding: 16,
+    marginBottom: 8,
+  },
+  image: {
+    height: 340,
+    width: '100%',
   },
   detailsContainer: {
-    marginHorizontal: 24,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
   },
-  productImage: {
-    width: 140,
-    height: 180,
+  subtitle: {
+    marginTop: 4,
   },
-  authorLabel: {
-    marginVertical: 4,
+  price: {
+    position: 'absolute',
+    top: 24,
+    right: 16,
   },
-  categoryContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginVertical: 12,
-    marginHorizontal: -4,
-  },
-  categoryItem: {
-    marginHorizontal: 4,
-    borderRadius: 16,
-  },
-  rateBar: {
-    marginHorizontal: -4,
-  },
-  priceLabel: {
+  description: {
     marginVertical: 16,
   },
-  buyButton: {
-    marginHorizontal: 16,
-    marginVertical: 24,
-  },
-  descriptionContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 24,
-  },
-  aboutLabel: {
+  size: {
     marginBottom: 16,
+  },
+  colorGroup: {
+    flexDirection: 'row',
+    marginHorizontal: -8,
+  },
+  colorRadio: {
+    marginHorizontal: 8,
+  },
+  actionContainer: {
+    flexDirection: 'row',
+    marginHorizontal: -8,
+    marginTop: 24,
+  },
+  actionButton: {
+    flex: 1,
+    marginHorizontal: 8,
+  },
+  sectionLabel: {
+    marginVertical: 8,
   },
   commentInputLabel: {
     fontSize: 16,
@@ -129,7 +167,38 @@ const themedStyles = StyleService.create({
   },
   commentInput: {
     marginHorizontal: 16,
-    marginTop: 24,
-    marginBottom: 20,
+    marginVertical: 24,
   },
+  mapContainer: {
+    width: '100%',
+  },
+  Map: {
+    width: '100%',
+    height: 350,
+    margin: 0,
+  },
+  elementSubcontainer: {
+    flexDirection: 'row',
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+  buttonRight: {
+    width: '50%',
+    height: 'auto',
+    flex: 1,
+    marginLeft: 5,
+    marginRight: 10,
+    alignItems: 'center',
+  },
+  buttonLeft: {
+    width: '50%',
+    height: 'auto',
+    flex: 1,
+    marginLeft: 10,
+    marginRight: 5,
+    alignItems: 'center',
+  },
+  button: { width: '100%' },
 });
