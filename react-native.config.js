@@ -11,4 +11,11 @@ module.exports = {
     "src/assets/fonts",
     "src/layouts/**/assets/*",
   ],
+  dependencies: {
+    'some-unsupported-package': {
+      platforms: {
+        android: null, // disable Android platform, other platforms will still autolink if provided
+      },
+    },
+  },
 };

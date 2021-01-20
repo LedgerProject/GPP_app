@@ -28,7 +28,7 @@ export const WhereIAmCountryScreen = (props): React.ReactElement => {
       <Layout style={styles.mainTitleContainer}>
         <Text category='h4' style={styles.mainTitle}>Italy</Text>
       </Layout>
-        
+
       { topics.map( (item, index) => (
       <Layout key={index} style={styles.elementContainer}>
         <Text category='s1' style={styles.elementTitle}>{item.title}</Text>
