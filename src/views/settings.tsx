@@ -4,7 +4,6 @@ import {
   Button,
   Layout,
   StyleService,
-  Text,
   useStyleSheet,
   Select,
   TopNavigation,
@@ -15,6 +14,7 @@ import { languageOptions } from './settings/data';
 import { MenuIcon, GlobeIcon } from '../components/icons';
 import { KeyboardAvoidingView } from '../services/3rd-party';
 import { ScrollView } from 'react-native-gesture-handler';
+import { SafeAreaLayout } from '../components/safe-area-layout.component';
 
 export const SettingsScreen = (props): React.ReactElement => {
   const [language, setLanguage] = React.useState(props.selectedOption);
@@ -37,42 +37,47 @@ export const SettingsScreen = (props): React.ReactElement => {
   );
 
   return (
-    <View
-      style={{flex: 1}}>
-      <TopNavigation
-        title='Settings'
-        leftControl={renderDrawerAction()}
-      />
-      <Divider />
-      <ScrollView>
-        <KeyboardAvoidingView style={styles.container}>
-          <Layout
-            style={styles.formContainer}
-            level='1'>
-            <Select
-              {...props}
-              icon={GlobeIcon}
-              style={styles.select}
-              selectedOption={language}
-              data={languageOptions}
-              placeholder='Select the application language'
-              onSelect={onSelectLanguage}
-            />
-            <Divider />
-            <Button
-                style={styles.saveButton}
-                size='giant'
-                onPress={onSaveButtonPress}>
-                Save
-            </Button>
-          </Layout>
-        </KeyboardAvoidingView>
-      </ScrollView>
-    </View>
+    <SafeAreaLayout insets='top' style={styles.safeArea}>
+      <View
+        style={{flex: 1}}>
+        <TopNavigation
+          title='Settings'
+          leftControl={renderDrawerAction()}
+        />
+        <Divider />
+        <ScrollView>
+          <KeyboardAvoidingView style={styles.container}>
+            <Layout
+              style={styles.formContainer}
+              level='1'>
+              <Select
+                {...props}
+                icon={GlobeIcon}
+                style={styles.select}
+                selectedOption={language}
+                data={languageOptions}
+                placeholder='Select the application language'
+                onSelect={onSelectLanguage}
+              />
+              <Divider />
+              <Button
+                  style={styles.saveButton}
+                  size='giant'
+                  onPress={onSaveButtonPress}>
+                  Save
+              </Button>
+            </Layout>
+          </KeyboardAvoidingView>
+        </ScrollView>
+      </View>
+    </SafeAreaLayout>
   );
 };
 
 const themedStyles = StyleService.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     backgroundColor: 'background-basic-color-1',
   },

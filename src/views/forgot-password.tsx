@@ -3,6 +3,7 @@ import { View, ImageBackground } from 'react-native';
 import { Button, Input, Layout, Text, StyleService, useStyleSheet } from '@ui-kitten/components';
 import { EmailIcon } from '../components/icons';
 import { KeyboardAvoidingView } from '../services/3rd-party';
+import { SafeAreaLayout } from '../components/safe-area-layout.component';
 
 export default ({ navigation }): React.ReactElement => {
   const [email, setEmail] = React.useState<string>();
@@ -18,51 +19,56 @@ export default ({ navigation }): React.ReactElement => {
   };
 
   return (
-    <KeyboardAvoidingView>
-      <View style={styles.headerContainer}>
-        <ImageBackground
-          style={styles.imageAuth}
-          source={require('../assets/images/auth-background.png')}>
-        </ImageBackground>
-        <Text
-          style={styles.forgotPasswordLabel}
-          category='s1'
-          status='control'>
-          Forgot password?
-        </Text>
-      </View>
-      <Layout
-        style={styles.formContainer}
-        level='1'>
-        <Text
-          style={styles.enterEmailLabel}>
-          Please enter your email address
-        </Text>
-        <Input
-          placeholder='E-Mail'
-          icon={EmailIcon}
-          value={email}
-          onChangeText={setEmail}
-        />
-      </Layout>
-      <Button
-        style={styles.resetPasswordButton}
-        size='giant'
-        onPress={onResetPasswordButtonPress}>
-        RESET PASSWORD
-      </Button>
-      <Button
-        style={styles.backToLoginButton}
-        appearance='ghost'
-        status='basic'
-        onPress={onBackToLoginButtonPress}>
-        Back to login
-      </Button>
-    </KeyboardAvoidingView>
+    <SafeAreaLayout insets='top' style={styles.safeArea}>
+      <KeyboardAvoidingView>
+        <View style={styles.headerContainer}>
+          <ImageBackground
+            style={styles.imageAuth}
+            source={require('../assets/images/auth-background.png')}>
+          </ImageBackground>
+          <Text
+            style={styles.forgotPasswordLabel}
+            category='s1'
+            status='control'>
+            Forgot password?
+          </Text>
+        </View>
+        <Layout
+          style={styles.formContainer}
+          level='1'>
+          <Text
+            style={styles.enterEmailLabel}>
+            Please enter your email address
+          </Text>
+          <Input
+            placeholder='E-Mail'
+            icon={EmailIcon}
+            value={email}
+            onChangeText={setEmail}
+          />
+        </Layout>
+        <Button
+          style={styles.resetPasswordButton}
+          size='giant'
+          onPress={onResetPasswordButtonPress}>
+          RESET PASSWORD
+        </Button>
+        <Button
+          style={styles.backToLoginButton}
+          appearance='ghost'
+          status='basic'
+          onPress={onBackToLoginButtonPress}>
+          Back to login
+        </Button>
+      </KeyboardAvoidingView>
+    </SafeAreaLayout>
   );
 };
 
 const themedStyles = StyleService.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     backgroundColor: 'background-basic-color-1',
   },

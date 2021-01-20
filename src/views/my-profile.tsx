@@ -19,6 +19,7 @@ import { genderOptions, nationalityOptions } from './my-profile/data';
 import { MenuIcon, StopCircleIcon, GlobeIcon, CalendarIcon } from '../components/icons';
 import { KeyboardAvoidingView } from '../services/3rd-party';
 import { ScrollView } from 'react-native-gesture-handler';
+import { SafeAreaLayout } from '../components/safe-area-layout.component';
 
 export const MyProfileScreen = (props): React.ReactElement => {
   const [firstName, setFirstName] = React.useState<string>();
@@ -64,96 +65,101 @@ export const MyProfileScreen = (props): React.ReactElement => {
   );
 
   return (
-    <View
-      style={{flex: 1}}>
-      <TopNavigation
-        title='My Profile'
-        leftControl={renderDrawerAction()}
-      />
-      <Divider />
-      <ScrollView>
-        <KeyboardAvoidingView style={styles.container}>
-          <View style={styles.headerContainer}>
-            <ProfileAvatar
-              style={styles.profileAvatar}
-              resizeMode='center'
-              source={require('../assets/images/image-person.png')}
-              editButton={renderEditAvatarButton}
-            />
-          </View>
-          <Layout
-            style={styles.formContainer}
-            level='1'>
-            <Input
-              autoCapitalize='none'
-              placeholder='First Name'
-              icon={PersonIcon}
-              value={firstName}
-              onChangeText={setFirstName}
-            />
-            <Input
-              style={styles.nameInput}
-              autoCapitalize='none'
-              placeholder='Last Name'
-              icon={PersonIcon}
-              value={lastName}
-              onChangeText={setLastName}
-            />
-            <Select
-              {...props}
-              icon={StopCircleIcon}
-              style={styles.select}
-              selectedOption={gender}
-              data={genderOptions}
-              placeholder='Select your gender'
-              onSelect={onSelectGender}
-            />
-            <Select
-              {...props}
-              icon={GlobeIcon}
-              style={styles.selectNationality}
-              selectedOption={nationality}
-              data={nationalityOptions}
-              placeholder='Select your nationality'
-              onSelect={onSelectNationality}
-            />
-            <Datepicker
-              style={styles.datepicker}
-              icon={CalendarIcon}
-              date={birthday}
-              min={firstDayCalendar}
-              max={today}
-              placeholder='Select your birthday'
-              onSelect={selectedDate => setBirthday(selectedDate)}
-            />
-            <Divider />
-            <Text
-            style={styles.infoSection}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eu ligula ac magna sodales molestie.
-              Mauris et orci ultrices, cursus est nec, dictum massa.
-          </Text>
-          <Button
-              style={styles.saveButton}
-              size='giant'
-              onPress={onSaveButtonPress}>
-              Save
-          </Button>
-          <Button
-              style={styles.deleteButton}
-              size='giant'
-              status='danger'
-              appearance='outline'
-              onPress={onDeleteButtonPress}>
-              Remove all my data
-          </Button>
-          </Layout>
-        </KeyboardAvoidingView>
-      </ScrollView>
-    </View>
+    <SafeAreaLayout insets='top' style={styles.safeArea}>
+      <View
+        style={{flex: 1}}>
+        <TopNavigation
+          title='My Profile'
+          leftControl={renderDrawerAction()}
+        />
+        <Divider />
+        <ScrollView>
+          <KeyboardAvoidingView style={styles.container}>
+            <View style={styles.headerContainer}>
+              <ProfileAvatar
+                style={styles.profileAvatar}
+                resizeMode='center'
+                source={require('../assets/images/image-person.png')}
+                editButton={renderEditAvatarButton}
+              />
+            </View>
+            <Layout
+              style={styles.formContainer}
+              level='1'>
+              <Input
+                autoCapitalize='none'
+                placeholder='First Name'
+                icon={PersonIcon}
+                value={firstName}
+                onChangeText={setFirstName}
+              />
+              <Input
+                style={styles.nameInput}
+                autoCapitalize='none'
+                placeholder='Last Name'
+                icon={PersonIcon}
+                value={lastName}
+                onChangeText={setLastName}
+              />
+              <Select
+                {...props}
+                icon={StopCircleIcon}
+                style={styles.select}
+                selectedOption={gender}
+                data={genderOptions}
+                placeholder='Select your gender'
+                onSelect={onSelectGender}
+              />
+              <Select
+                {...props}
+                icon={GlobeIcon}
+                style={styles.selectNationality}
+                selectedOption={nationality}
+                data={nationalityOptions}
+                placeholder='Select your nationality'
+                onSelect={onSelectNationality}
+              />
+              <Datepicker
+                style={styles.datepicker}
+                icon={CalendarIcon}
+                date={birthday}
+                min={firstDayCalendar}
+                max={today}
+                placeholder='Select your birthday'
+                onSelect={selectedDate => setBirthday(selectedDate)}
+              />
+              <Divider />
+              <Text
+                style={styles.infoSection}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eu ligula ac magna sodales molestie.
+                  Mauris et orci ultrices, cursus est nec, dictum massa.
+              </Text>
+              <Button
+                  style={styles.saveButton}
+                  size='giant'
+                  onPress={onSaveButtonPress}>
+                  Save
+              </Button>
+              <Button
+                  style={styles.deleteButton}
+                  size='giant'
+                  status='danger'
+                  appearance='outline'
+                  onPress={onDeleteButtonPress}>
+                  Remove all my data
+              </Button>
+            </Layout>
+          </KeyboardAvoidingView>
+        </ScrollView>
+      </View>
+    </SafeAreaLayout>
   );
 };
 
 const themedStyles = StyleService.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     backgroundColor: 'background-basic-color-1',
   },

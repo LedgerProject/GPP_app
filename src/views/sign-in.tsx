@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, ImageBackground } from 'react-native';
 import { Button, Input, Layout, StyleService, Text, useStyleSheet } from '@ui-kitten/components';
+import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { EyeIcon, EyeOffIcon, EmailIcon } from '../components/icons';
 import { KeyboardAvoidingView } from '../services/3rd-party';
 import I18n from './../i18n/i18n';
@@ -29,65 +30,70 @@ export default ({ navigation }): React.ReactElement => {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.container}>
-      <View style={styles.headerContainer}>
-        <ImageBackground
-          style={styles.imageAuth}
-          source={require('../assets/images/auth-background.png')}>
-        </ImageBackground>
-        <Text
-          style={styles.signInLabel}
-          category='s1'
-          status='control'>
-          Sign in to your account {I18n.t('hello')}
-        </Text>
-      </View>
-      <Layout
-        style={styles.formContainer}
-        level='1'>
-        <Input
-          placeholder='E-Mail'
-          icon={EmailIcon}
-          value={email}
-          onChangeText={setEmail}
-        />
-        <Input
-          style={styles.passwordInput}
-          placeholder='Password'
-          icon={passwordVisible ? EyeIcon : EyeOffIcon}
-          value={password}
-          secureTextEntry={!passwordVisible}
-          onChangeText={setPassword}
-          onIconPress={onPasswordIconPress}
-        />
-        <View style={styles.forgotPasswordContainer}>
-          <Button
-            style={styles.forgotPasswordButton}
-            appearance='ghost'
-            status='basic'
-            onPress={onForgotPasswordButtonPress}>
-            Forgot your password?
-          </Button>
+    <SafeAreaLayout insets='top' style={styles.safeArea}>
+      <KeyboardAvoidingView style={styles.container}>
+        <View style={styles.headerContainer}>
+          <ImageBackground
+            style={styles.imageAuth}
+            source={require('../assets/images/auth-background.png')}>
+          </ImageBackground>
+          <Text
+            style={styles.signInLabel}
+            category='s1'
+            status='control'>
+            Sign in to your account {I18n.t('hello')}
+          </Text>
         </View>
-      </Layout>
-      <Button
-        style={styles.signInButton}
-        size='giant'
-        onPress={onSignInButtonPress}>
-        SIGN IN
-      </Button>
-      <Button
-        style={styles.signUpButton}
-        appearance='ghost'
-        status='basic'
-        onPress={onSignUpButtonPress}>
-        Don't have an account? Create
-      </Button>
-    </KeyboardAvoidingView>
+        <Layout
+          style={styles.formContainer}
+          level='1'>
+          <Input
+            placeholder='E-Mail'
+            icon={EmailIcon}
+            value={email}
+            onChangeText={setEmail}
+          />
+          <Input
+            style={styles.passwordInput}
+            placeholder='Password'
+            icon={passwordVisible ? EyeIcon : EyeOffIcon}
+            value={password}
+            secureTextEntry={!passwordVisible}
+            onChangeText={setPassword}
+            onIconPress={onPasswordIconPress}
+          />
+          <View style={styles.forgotPasswordContainer}>
+            <Button
+              style={styles.forgotPasswordButton}
+              appearance='ghost'
+              status='basic'
+              onPress={onForgotPasswordButtonPress}>
+              Forgot your password?
+            </Button>
+          </View>
+        </Layout>
+        <Button
+          style={styles.signInButton}
+          size='giant'
+          onPress={onSignInButtonPress}>
+          SIGN IN
+        </Button>
+        <Button
+          style={styles.signUpButton}
+          appearance='ghost'
+          status='basic'
+          onPress={onSignUpButtonPress}>
+          Don't have an account? Create
+        </Button>
+      </KeyboardAvoidingView>
+    </SafeAreaLayout>
   );
 };
 
 const themedStyles = StyleService.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     backgroundColor: 'background-basic-color-1',
   },
