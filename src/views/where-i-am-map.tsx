@@ -5,6 +5,7 @@ import { MenuIcon } from '../components/icons';
 import { categoryOptions } from './where-i-am/data-category';
 
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import { SafeAreaLayout } from '../components/safe-area-layout.component';
 
 export const WhereIAmMapScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
@@ -32,7 +33,9 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   const { region } = props;
 
   return (
-    <Layout style={{flex: 1}}>
+    <SafeAreaLayout
+      style={styles.safeArea}
+      insets='top'>
       <TopNavigation
         title='Structures Map'
         leftControl={renderDrawerAction()}
@@ -76,7 +79,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
           <Text style={styles.downTextBold}>ITALY</Text>
         </Layout>
       </ScrollView>
-    </Layout>
+    </SafeAreaLayout>
   );
 };
 

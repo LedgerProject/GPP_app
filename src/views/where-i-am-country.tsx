@@ -4,6 +4,7 @@ import { Button, Divider, StyleService, Text, TopNavigation, TopNavigationAction
 import { ArrowBackIcon, MenuIcon } from '../components/icons';
 import { TopNavigationScreen } from 'src/scenes/components/top-navigation/top-navigation.component';
 import topics from './where-i-am/data-topics';
+import { SafeAreaLayout } from '../components/safe-area-layout.component';
 
 export const WhereIAmCountryScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
@@ -17,7 +18,9 @@ export const WhereIAmCountryScreen = (props): React.ReactElement => {
   );
 
   return (
-    <Layout style={{flex: 1}}>
+    <SafeAreaLayout
+      style={styles.safeArea}
+      insets='top'>
       <TopNavigation
         title='Country'
         leftControl={renderDrawerAction()}
@@ -38,7 +41,7 @@ export const WhereIAmCountryScreen = (props): React.ReactElement => {
          ))
       }
       </ScrollView>
-    </Layout>
+      </SafeAreaLayout>
   );
 };
 

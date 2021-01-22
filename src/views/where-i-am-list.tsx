@@ -10,7 +10,7 @@ import { categoryOptions } from './where-i-am/data-category';
 
 import structures from './where-i-am/data-structures';
 import { StructureItem } from './where-i-am/structure-item.component';
-/*import { Structure } from './where-i-am/structure-item'
+/* import { Structure } from './where-i-am/structure-item'
 import { StructureItem } from './where-i-am/structure-item.component';
 
 const initialStructures: Structure[] = [
@@ -61,7 +61,9 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
   );
 
   return (
-    <SafeAreaLayout insets='top' style={styles.safeArea}>
+    <SafeAreaLayout
+      style={styles.safeArea}
+      insets='top'>
       <TopNavigation
         title='Structures List'
         leftControl={renderDrawerAction()}

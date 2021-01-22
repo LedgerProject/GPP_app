@@ -8,6 +8,7 @@ import { ArrowBackIcon, MenuIcon } from '../components/icons';
 import {FlatListSlider} from 'react-native-flatlist-slider';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import MapView, {PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import { SafeAreaLayout } from '../components/safe-area-layout.component';
 
 export const WhereIAmDetailsScreen = (props): React.ReactElement => {
 
@@ -61,7 +62,9 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
 
 
   return (
-    <Layout style={{flex: 1}}>
+    <SafeAreaLayout
+      style={styles.safeArea}
+      insets='top'>
       <TopNavigation
         title='Details'
         leftControl={renderDrawerAction()}
@@ -147,11 +150,14 @@ onRequestClose={ () => setmodalVisible(false) }
   onSwipeDown={ () => setmodalVisible(false) }
   />
 </Modal>
-</Layout>
+</SafeAreaLayout>
   );
 };
 
 const themedStyles = StyleService.create({
+  safeArea: {
+    flex: 1,
+  },  
   container: {
     flex: 1,
     backgroundColor: 'background-basic-color-2',

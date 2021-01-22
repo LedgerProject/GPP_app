@@ -8,10 +8,14 @@ import {
   StyleService,
   Text,
   useStyleSheet,
+  Modal,
 } from '@ui-kitten/components';
 import { EmailIcon, EyeIcon, EyeOffIcon, PersonIcon } from '../components/icons';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { KeyboardAvoidingView } from '../services/3rd-party';
+import axios from 'axios';
+import I18n from './../i18n/i18n';
+import { AppOptions } from '../services/app-options';
 
 export default ({ navigation }): React.ReactElement => {
 
@@ -24,14 +28,87 @@ export default ({ navigation }): React.ReactElement => {
   const [termsAccepted, setTermsAccepted] = React.useState<boolean>(false);
   const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = React.useState<boolean>(false);
+  const [modalVisible, setmodalVisible] = React.useState(false);
+  const [success, setSuccess] = React.useState<string>();
+  const [error, setError] = React.useState<string>();
 
   const styles = useStyleSheet(themedStyles);
 
   const onSignUpButtonPress = (): void => {
-    navigation && navigation.goBack();
+    //navigation && navigation.goBack();
+    setError('');
+    setSuccess('');
+    if (!firstName) {
+      setError(I18n.t('Please fill First Name'));
+      setmodalVisible(true);
+      return;      
+    }    
+    if (!lastName) {
+      setError(I18n.t('Please fill Last Name'));
+      setmodalVisible(true);
+      return;
+    }    
+    if (!email) {
+      setError(I18n.t('Please fill Email'));
+      setmodalVisible(true);
+      return;
+    }
+    if (!confirmEmail) {
+      setError(I18n.t('Please confirm Email'));
+      setmodalVisible(true);
+      return;
+    }
+    if (email != confirmEmail) {
+      setError(I18n.t('Email and confirm Email do not match'));
+      setmodalVisible(true);
+      return;
+    }    
+    if (!password) {
+      setError(I18n.t('Please fill Password'));
+      setmodalVisible(true);
+      return;
+    }   
+    if (!confirmPassword) {
+      setError(I18n.t('Please confirm Password'));
+      setmodalVisible(true);
+      return;
+    }     
+    if (password != confirmPassword) {
+      setError(I18n.t('Password and confirm Password do not match'));
+      setmodalVisible(true);
+      return;
+    }     
+    if (!termsAccepted) {
+      setError(I18n.t('Please accept terms and conditions'));
+      setmodalVisible(true);
+      return;
+    }
+    let postParams = {
+        userType: 'user',
+        email: email,
+        password: password,
+        firstName: firstName,
+        lastName: lastName,
+      };        
+      axios
+      .post(AppOptions.getServerUrl()+'users/signup', postParams)
+      .then(function (response) {
+        // handle success
+        //navigation && navigation.navigate('Homepage');        
+        setSuccess(I18n.t('Congratulations! Registration completed'));
+        setmodalVisible(true);
+      })
+      .catch(function (error) {        
+        //alert(error.message);        
+        setError(I18n.t('An error has occurred, please try again'));
+        setmodalVisible(true);
+        return;        
+      });     
+
   };
 
   const onSignInButtonPress = (): void => {
+    setmodalVisible(false);
     navigation && navigation.navigate('SignIn');
   };
 
@@ -55,7 +132,7 @@ export default ({ navigation }): React.ReactElement => {
             style={styles.signUpLabel}
             category='s1'
             status='control'>
-            Please register to Global Passport Project
+            {I18n.t('Please register to Global Passport Project')}
           </Text>
         </View>
         <Layout
@@ -63,7 +140,7 @@ export default ({ navigation }): React.ReactElement => {
           level='1'>
           <Input
             autoCapitalize='none'
-            placeholder='First Name'
+            placeholder={I18n.t('First Name')}
             icon={PersonIcon}
             value={firstName}
             onChangeText={setFirstName}
@@ -71,7 +148,7 @@ export default ({ navigation }): React.ReactElement => {
           <Input
             style={styles.nameInput}
             autoCapitalize='none'
-            placeholder='Last Name'
+            placeholder={I18n.t('Last Name')}
             icon={PersonIcon}
             value={lastName}
             onChangeText={setLastName}
@@ -79,16 +156,18 @@ export default ({ navigation }): React.ReactElement => {
           <Input
             style={styles.emailInput}
             autoCapitalize='none'
-            placeholder='E-Mail'
+            placeholder={I18n.t('E-mail')}
             icon={EmailIcon}
+            keyboardType={'email-address'}
             value={email}
             onChangeText={setEmail}
           />
           <Input
             style={styles.emailInput}
             autoCapitalize='none'
-            placeholder='Confirm E-Mail'
+            placeholder={I18n.t('Confirm E-Mail')}
             icon={EmailIcon}
+            keyboardType={'email-address'}
             value={confirmEmail}
             onChangeText={setConfirmEmail}
           />
@@ -96,7 +175,7 @@ export default ({ navigation }): React.ReactElement => {
             style={styles.passwordInput}
             autoCapitalize='none'
             secureTextEntry={!passwordVisible}
-            placeholder='Password'
+            placeholder={I18n.t('Password')}
             icon={passwordVisible ? EyeIcon : EyeOffIcon}
             value={password}
             onChangeText={setPassword}
@@ -106,7 +185,7 @@ export default ({ navigation }): React.ReactElement => {
             style={styles.passwordInput}
             autoCapitalize='none'
             secureTextEntry={!confirmPasswordVisible}
-            placeholder='Confirm Password'
+            placeholder={I18n.t('Confirm Password')}
             icon={confirmPasswordVisible ? EyeIcon : EyeOffIcon}
             value={confirmPassword}
             onChangeText={setConfirmPassword}
@@ -115,7 +194,7 @@ export default ({ navigation }): React.ReactElement => {
           <CheckBox
             style={styles.termsCheckBox}
             textStyle={styles.termsCheckBoxText}
-            text='I read and agree to Terms & Conditions'
+            text={I18n.t('I read and agree to Terms & Conditions')}
             checked={termsAccepted}
             onChange={(checked: boolean) => setTermsAccepted(checked)}
           />
@@ -124,16 +203,28 @@ export default ({ navigation }): React.ReactElement => {
           style={styles.signUpButton}
           size='giant'
           onPress={onSignUpButtonPress}>
-          SIGN UP
+           {I18n.t('SIGN UP')}
         </Button>
         <Button
           style={styles.signInButton}
           appearance='ghost'
           status='basic'
           onPress={onSignInButtonPress}>
-          Already have an account? Sign In
+          {I18n.t('Already have an account? Sign In')}
         </Button>
       </KeyboardAvoidingView>
+      <Modal
+      visible={ modalVisible }
+      backdropStyle={styles.backdrop}
+      onBackdropPress={() => setmodalVisible(false)}
+      >
+      <Layout style={ styles.modal } >
+      <Text style={ styles.modalText } status={error ? 'danger' : 'success' }>{error ? error : success}</Text>
+      <Button
+      status={error ? 'basic' : 'primary' }
+      onPress={error ? () => setmodalVisible(false) : onSignInButtonPress}>{ error ? I18n.t('CLOSE') : I18n.t('SIGN IN')}</Button>
+      </Layout>
+      </Modal>         
     </SafeAreaLayout>
   );
 };
@@ -187,5 +278,17 @@ const themedStyles = StyleService.create({
     marginVertical: 12,
     marginHorizontal: 16,
   },
+  backdrop: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+  modal: {
+    textAlign: 'center',
+    margin: 12,
+    padding: 12,
+    minWidth: 192,
+  },
+  modalText: {
+    marginTop: 10,
+    marginBottom: 10,
+    textAlign: 'center',
+  },  
 });
 

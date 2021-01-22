@@ -12,6 +12,9 @@ import {
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AppOptions } from '../services/app-options';
 
 const initialDocuments: Document[] = [
   Document.passportDocument(),
@@ -22,11 +25,27 @@ const initialDocuments: Document[] = [
   Document.testDoc2(),
 ];
 
+const apiInstance = axios.create()
+
+apiInstance.interceptors.request.use(
+    async config => {
+        const token = await AsyncStorage.getItem('token')
+        //console.log(token)
+        if (token) {
+            config.headers.Authorization = 'Bearer ' + token
+        }
+        return config
+    },
+    error => {
+        return Promise.reject(error)
+    }
+);
+
 export const DocWalletScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
   const [documents, setDocuments] = React.useState<Document[]>(initialDocuments);
   const [modalVisible, setmodalVisible] = React.useState(false);
-
+  const [generated_token, setGenerated_token ] = React.useState('');  
   const [modalImageVisible, setmodalImageVisible] = React.useState(false);
   const [DocumentTitle, setDocumentTitle] = React.useState('');
 
@@ -62,7 +81,17 @@ export const DocWalletScreen = (props): React.ReactElement => {
 
   const onGenerateTokenButtonPress = (): void => {
     // props.navigation && props.navigation.navigate('Homepage');
-    setmodalVisible(true);
+    
+      apiInstance
+      .post( AppOptions.getServerUrl()+'users-token')
+      .then(function (response) {
+        // handle success        
+        setGenerated_token(response.data.token);
+        setmodalVisible(true);
+      })
+      .catch(function (error) {
+        alert(error.message);
+      });      
   };
 
   const handleUpload = () => {
@@ -204,7 +233,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
 
   return (
     <SafeAreaLayout
-      style={styles.container}
+      style={styles.safeArea}
       insets='top'>
       <TopNavigation
         title='DocWallet'
@@ -272,7 +301,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
       >
       <Layout style={ styles.modal } >
           <Text style={ styles.modalText } >30-Minutes Token Generated</Text>
-          <Text style={ styles.modalText } category='h3' >XYZABC</Text>
+          <Text style={ styles.modalText } category='h3' >{generated_token}</Text>
           <Text style={ styles.modalText } >Communicate this token only to trusted people.</Text>
           <Button status='basic' onPress={() => setmodalVisible(false)}>CLOSE</Button>
       </Layout>
