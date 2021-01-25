@@ -35,19 +35,19 @@ export default ({ navigation }): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
 
   const onSignUpButtonPress = (): void => {
-    //navigation && navigation.goBack();
+    // navigation && navigation.goBack();
     setError('');
     setSuccess('');
     if (!firstName) {
       setError(I18n.t('Please fill First Name'));
       setmodalVisible(true);
-      return;      
-    }    
+      return;
+    }
     if (!lastName) {
       setError(I18n.t('Please fill Last Name'));
       setmodalVisible(true);
       return;
-    }    
+    }
     if (!email) {
       setError(I18n.t('Please fill Email'));
       setmodalVisible(true);
@@ -58,52 +58,52 @@ export default ({ navigation }): React.ReactElement => {
       setmodalVisible(true);
       return;
     }
-    if (email != confirmEmail) {
+    if (email !== confirmEmail) {
       setError(I18n.t('Email and confirm Email do not match'));
       setmodalVisible(true);
       return;
-    }    
+    }
     if (!password) {
       setError(I18n.t('Please fill Password'));
       setmodalVisible(true);
       return;
-    }   
+    }
     if (!confirmPassword) {
       setError(I18n.t('Please confirm Password'));
       setmodalVisible(true);
       return;
-    }     
-    if (password != confirmPassword) {
+    }
+    if (password !== confirmPassword) {
       setError(I18n.t('Password and confirm Password do not match'));
       setmodalVisible(true);
       return;
-    }     
+    }
     if (!termsAccepted) {
       setError(I18n.t('Please accept terms and conditions'));
       setmodalVisible(true);
       return;
     }
-    let postParams = {
+    const postParams = {
         userType: 'user',
         email: email,
         password: password,
         firstName: firstName,
         lastName: lastName,
-      };        
+      };
       axios
-      .post(AppOptions.getServerUrl()+'users/signup', postParams)
+      .post(AppOptions.getServerUrl() + 'users/signup', postParams)
       .then(function (response) {
         // handle success
-        //navigation && navigation.navigate('Homepage');        
+        // navigation && navigation.navigate('Homepage');
         setSuccess(I18n.t('Congratulations! Registration completed'));
         setmodalVisible(true);
       })
-      .catch(function (error) {        
-        //alert(error.message);        
+      .catch(function () { // error) {
+        // alert(error.message);
         setError(I18n.t('An error has occurred, please try again'));
         setmodalVisible(true);
-        return;        
-      });     
+        return;
+      });
 
   };
 
@@ -222,9 +222,11 @@ export default ({ navigation }): React.ReactElement => {
       <Text style={ styles.modalText } status={error ? 'danger' : 'success' }>{error ? error : success}</Text>
       <Button
       status={error ? 'basic' : 'primary' }
-      onPress={error ? () => setmodalVisible(false) : onSignInButtonPress}>{ error ? I18n.t('CLOSE') : I18n.t('SIGN IN')}</Button>
+      onPress={error ? () => setmodalVisible(false) : onSignInButtonPress}>
+        { error ? I18n.t('CLOSE') : I18n.t('SIGN IN')}
+        </Button>
       </Layout>
-      </Modal>         
+      </Modal>
     </SafeAreaLayout>
   );
 };
@@ -289,6 +291,6 @@ const themedStyles = StyleService.create({
     marginTop: 10,
     marginBottom: 10,
     textAlign: 'center',
-  },  
+  },
 });
 

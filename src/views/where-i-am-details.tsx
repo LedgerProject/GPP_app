@@ -157,7 +157,7 @@ onRequestClose={ () => setmodalVisible(false) }
 const themedStyles = StyleService.create({
   safeArea: {
     flex: 1,
-  },  
+  },
   container: {
     flex: 1,
     backgroundColor: 'background-basic-color-2',

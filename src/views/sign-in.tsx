@@ -26,7 +26,7 @@ export default ({ navigation }): React.ReactElement => {
   };
 
   const onSignInButtonPress = (): void => {
-    
+
     if (!email) {
       setError(I18n.t('Please fill Email'));
       setmodalVisible(true);
@@ -36,23 +36,23 @@ export default ({ navigation }): React.ReactElement => {
       setError(I18n.t('Please fill Password'));
       setmodalVisible(true);
       return;
-    }    
-    let postParams = {
+    }
+    const postParams = {
         email: email,
-        password: password
-      };        
+        password: password,
+      };
       axios
-      .post(AppOptions.getServerUrl()+'users/login', postParams)
+      .post(AppOptions.getServerUrl() + 'users/login', postParams)
       .then(function (response) {
         // handle success
-        AsyncStorage.setItem('token',response.data.token);                                  
+        AsyncStorage.setItem('token', response.data.token);
         navigation && navigation.navigate('Homepage');
       })
-      .catch(function (error) {                
+      .catch(function () { // (error) {
         setError(I18n.t('Please check Email or password'));
         setmodalVisible(true);
-      });              
-    
+      });
+
   };
 
   const onPasswordIconPress = (): void => {
@@ -128,7 +128,7 @@ export default ({ navigation }): React.ReactElement => {
           <Text status='danger' style={ styles.modalText } >{error}</Text>
           <Button status='basic' onPress={() => setmodalVisible(false)}>{I18n.t('CLOSE')}</Button>
       </Layout>
-      </Modal>      
+      </Modal>
     </SafeAreaLayout>
   );
 };
@@ -188,5 +188,5 @@ const themedStyles = StyleService.create({
     marginTop: 10,
     marginBottom: 10,
     textAlign: 'center',
-  },  
+  },
 });

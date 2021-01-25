@@ -1,4 +1,4 @@
-export default {  
+export default {
   'Sign in to your account': 'Sign in to your account',
   'E-mail': 'E-mail',
   'Password': 'Password',

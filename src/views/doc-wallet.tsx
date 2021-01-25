@@ -25,27 +25,27 @@ const initialDocuments: Document[] = [
   Document.testDoc2(),
 ];
 
-const apiInstance = axios.create()
+const apiInstance = axios.create();
 
 apiInstance.interceptors.request.use(
     async config => {
-        const token = await AsyncStorage.getItem('token')
-        //console.log(token)
+        const token = await AsyncStorage.getItem('token');
+        // console.log(token)
         if (token) {
-            config.headers.Authorization = 'Bearer ' + token
+            config.headers.Authorization = 'Bearer ' + token;
         }
-        return config
+        return config;
     },
     error => {
-        return Promise.reject(error)
-    }
+        return Promise.reject(error);
+    },
 );
 
 export const DocWalletScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
   const [documents, setDocuments] = React.useState<Document[]>(initialDocuments);
   const [modalVisible, setmodalVisible] = React.useState(false);
-  const [generated_token, setGenerated_token ] = React.useState('');  
+  const [generated_token, setGenerated_token ] = React.useState('');
   const [modalImageVisible, setmodalImageVisible] = React.useState(false);
   const [DocumentTitle, setDocumentTitle] = React.useState('');
 
@@ -81,17 +81,17 @@ export const DocWalletScreen = (props): React.ReactElement => {
 
   const onGenerateTokenButtonPress = (): void => {
     // props.navigation && props.navigation.navigate('Homepage');
-    
+
       apiInstance
-      .post( AppOptions.getServerUrl()+'users-token')
+      .post( AppOptions.getServerUrl() + 'users-token')
       .then(function (response) {
-        // handle success        
+        // handle success
         setGenerated_token(response.data.token);
         setmodalVisible(true);
       })
       .catch(function (error) {
         alert(error.message);
-      });      
+      });
   };
 
   const handleUpload = () => {
