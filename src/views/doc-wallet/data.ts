@@ -8,6 +8,7 @@ import {
   AssetPhotoLibraryIcon,
 } from '../../components/icons';
 import { MenuItem } from '../../model/menu-item.model';
+import I18n from './../../i18n/i18n';
 
 export interface LayoutData extends MenuItem {
   route: string;
@@ -15,7 +16,7 @@ export interface LayoutData extends MenuItem {
 
 export const data: LayoutData[] = [
   {
-    title: 'Take Photo',
+    title: I18n.t('Take Photo'), // 'Take Photo',
     route: 'TakePhoto',
     icon: (style: ImageStyle) => {
       return React.createElement(
@@ -25,7 +26,7 @@ export const data: LayoutData[] = [
     },
   },
   {
-    title: 'From Library',
+    title: I18n.t('From Library'), // 'From Library',
     route: 'LibraryPhoto',
     icon: (style: ImageStyle) => {
       return React.createElement(

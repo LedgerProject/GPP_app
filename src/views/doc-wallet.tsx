@@ -15,6 +15,8 @@ import {
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppOptions } from '../services/app-options';
+import I18n from './../i18n/i18n';
+import FormData from 'form-data';
 
 const initialDocuments: Document[] = [
   Document.passportDocument(),
@@ -25,15 +27,38 @@ const initialDocuments: Document[] = [
   Document.testDoc2(),
 ];
 
-const apiInstance = axios.create();
+const apiInstanceToken = axios.create();
 
-apiInstance.interceptors.request.use(
+apiInstanceToken.interceptors.request.use(
     async config => {
         const token = await AsyncStorage.getItem('token');
         // console.log(token)
         if (token) {
             config.headers.Authorization = 'Bearer ' + token;
         }
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    },
+);
+
+const apiInstanceIpfs = axios.create();
+
+apiInstanceIpfs.interceptors.request.use(
+    async config => {
+        const token = await AsyncStorage.getItem('token');
+        // console.log(token);
+        if (token) {
+          const headers = { 'Authorization': 'Bearer ' + token, 'Content-Type': 'multipart/form-data' };
+          config.headers = headers;
+          /*config.headers = {
+            //'Authorization': 'Bearer ' + token,
+            "Content-Type": "multipart/form-data",
+          }*/
+          // config.headers.Authorization = 'Bearer ' + token;
+        }
+        // console.log(config);
         return config;
     },
     error => {
@@ -48,7 +73,10 @@ export const DocWalletScreen = (props): React.ReactElement => {
   const [generated_token, setGenerated_token ] = React.useState('');
   const [modalImageVisible, setmodalImageVisible] = React.useState(false);
   const [DocumentTitle, setDocumentTitle] = React.useState('');
-
+  const [DocumentError, setDocumentError] = React.useState('');
+  const [filePath, setFilePath] = React.useState('');
+  const [fileName, setFileName] = React.useState('');
+  const [fileType, setFileType] = React.useState('');
   const onItemPress = (index: number): void => {
     // props.navigation.navigate(data[index].route);
     if (index === 0) {
@@ -82,7 +110,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
   const onGenerateTokenButtonPress = (): void => {
     // props.navigation && props.navigation.navigate('Homepage');
 
-      apiInstance
+      apiInstanceToken
       .post( AppOptions.getServerUrl() + 'users-token')
       .then(function (response) {
         // handle success
@@ -96,16 +124,35 @@ export const DocWalletScreen = (props): React.ReactElement => {
 
   const handleUpload = () => {
     if (!DocumentTitle) {
-      alert('Please fill Document Name');
+      alert(I18n.t('Please fill Document Name'));
       return;
+    } else {
+      setDocumentError('');
+      // console.log(AppOptions.getServerUrl() + 'documents/TTTT');
+      const dataupload = new FormData();
+      dataupload.append('file', {uri: filePath, type: fileType, name: fileName});
+      // apiInstanceIpfs
+      axios
+      .post(AppOptions.getServerUrl() + 'documents/' + DocumentTitle, dataupload, {
+        headers: {
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGdsb2JhbHBhc3Nwb3J0cHJvamVjdC5tZSIsImlkVXNlciI6IjU3OTRlZTU5LTdhNzMtNDIzMi1hODJkLTJjZTdiMmNkZDliMSIsInBlcm1pc3Npb25zIjpbIkRvY1dhbGxldE1hbmFnZW1lbnQiLCJTdHJ1Y3R1cmVzTGlzdCIsIkF1dGhGZWF0dXJlcyIsIlByb2ZpbGVFZGl0Il0sInVzZXJUeXBlIjoidXNlciIsImlhdCI6MTYxMTY1OTM0NiwiZXhwIjoxNjExNjg0NTQ2fQ.IZfV06p3uA-5IfKswwoLGhOTx1tlOqgjGjlTBCNH57s',
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then(function(response) {
+        // console.log(response);
+        setmodalImageVisible(false);
+        alert('Document uploaded successfully!');
+      })
+      .catch(function (error) {
+        // throw error;
+        alert(JSON.stringify(error));
+        // console.log(error);
+      });
     }
-    setmodalImageVisible(false);
-    alert('Document uploaded successfully!');
   };
 
   // IMAGE PICKER
-
-  const [filePath, setFilePath] = React.useState('');
 
   const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
@@ -189,6 +236,8 @@ export const DocWalletScreen = (props): React.ReactElement => {
         console.log('type -> ', response.type);
         console.log('fileName -> ', response.fileName); */
         setFilePath(response.uri);
+        setFileName(response.fileName);
+        setFileType(response.type);
         setmodalImageVisible(true);
       });
     }
@@ -225,6 +274,8 @@ export const DocWalletScreen = (props): React.ReactElement => {
       console.log('type -> ', response.type);
       console.log('fileName -> ', response.fileName); */
       setFilePath(response.uri);
+      setFileName(response.fileName);
+      setFileType(response.type);
       setmodalImageVisible(true);
     });
   };
@@ -251,7 +302,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
         <Divider/>
         <Text
           style={styles.infoSection}>
-          Tap on document for the preview. Swipe left on document to delete it.
+          {I18n.t('Tap on document')}
         </Text>
         <List
           data={documents}
@@ -260,14 +311,14 @@ export const DocWalletScreen = (props): React.ReactElement => {
         <Divider/>
         <Text
           style={styles.infoSection}>
-          Generate a 30-minute token to be communicated to the operator to allow him to check your documens.
+          {I18n.t('Generate a 30-minute token to')}
         </Text>
         <Button
           style={styles.generateTokenButton}
           size='giant'
           appearance='outline'
           onPress={onGenerateTokenButtonPress}>
-          GENERATE A 30-MINUTE TOKEN
+          {I18n.t('GENERATE A 30-MINUTE TOKEN')}
         </Button>
       </Layout>
 
@@ -278,18 +329,20 @@ export const DocWalletScreen = (props): React.ReactElement => {
       onBackdropPress={() => setmodalImageVisible(false)}
       >
       <Layout style={ styles.modal } >
-      <Text >Please specify a title for your document</Text>
+      <Text style={styles.modalTitle} category='s1'>{I18n.t('Please specify a title for your document')}</Text>
       <Input
-              placeholder='Enter Document Name'
+              placeholder={I18n.t('Enter Document Name')}
               value={DocumentTitle}
               onChangeText={setDocumentTitle}
-            />
+      />
+      <Text status='danger' style={styles.errorText}>{DocumentError}</Text>
+      <Layout style={styles.imageContainer}>
       <Image
           source={{uri: filePath}}
           style={styles.imageStyle}
         />
-        { /* <Text>{filePath}</Text> */ }
-        <Button onPress={handleUpload}>UPLOAD TO IPFS</Button>
+      </Layout>
+        <Button onPress={handleUpload}>{I18n.t('UPLOAD TO IPFS')}</Button>
         <Button status='basic' onPress={() => setmodalImageVisible(false)}>CLOSE</Button>
       </Layout>
       </Modal>
@@ -300,9 +353,9 @@ export const DocWalletScreen = (props): React.ReactElement => {
       onBackdropPress={() => setmodalVisible(false)}
       >
       <Layout style={ styles.modal } >
-          <Text style={ styles.modalText } >30-Minutes Token Generated</Text>
+          <Text style={ styles.modalText } >{I18n.t('30-Minutes Token Generated')}</Text>
           <Text style={ styles.modalText } category='h3' >{generated_token}</Text>
-          <Text style={ styles.modalText } >Communicate this token only to trusted people.</Text>
+          <Text style={ styles.modalText } >{I18n.t('Communicate this token only')}</Text>
           <Button status='basic' onPress={() => setmodalVisible(false)}>CLOSE</Button>
       </Layout>
       </Modal>
@@ -342,9 +395,20 @@ const themedStyles = StyleService.create({
     marginBottom: 4,
     textAlign: 'center',
   },
+  modalTitle: {
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  errorText: {
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  imageContainer: {
+    alignItems: 'center',
+  },
   imageStyle: {
-    width: 200,
-    height: 200,
+    width: 150,
+    height: 150,
     margin: 5,
   },
 });
