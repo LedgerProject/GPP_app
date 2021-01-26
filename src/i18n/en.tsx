@@ -24,7 +24,7 @@ export default {
   'Error uploading file': 'Error uploading file',
   'Error generating token': 'Error generating token',
   'Tap on document': 'Tap on document for the preview. Swipe left on document to delete it.',
-  'Generate a 30-minute token to be communicated to the operator to allow him to check your documents.': 'Generate a 30-minute token to be communicated to the operator to allow him to check your documents.',
+  'Generate a 30-minute token to be communicated to': 'Generate a 30-minute token to be communicated to the operator to allow him to check your documents.',
   'GENERATE A 30-MINUTE TOKEN': 'GENERATE A 30-MINUTE TOKEN',
 
   '***DA CONTROLLARE***': '***DA CONTROLLARE***',

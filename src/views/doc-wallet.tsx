@@ -36,8 +36,8 @@ const initialFileResponse: ImagePickerResponse = {
   height: 0,
   fileSize: 0,
   type: '',
-  fileName: ''
-}
+  fileName: '',
+};
 
 export const DocWalletScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
@@ -96,14 +96,14 @@ export const DocWalletScreen = (props): React.ReactElement => {
     .catch(function (error) {
       showAlertMessage(
         I18n.t('Error generating token'),
-        error.message
+        error.message,
       );
     });
   };
 
   // * IMAGE PICKER *
   const getPhoto = async (type: string) => {
-    var mediaTypePhoto : MediaType = 'photo';
+    const mediaTypePhoto: MediaType = 'photo';
 
     if (type === 'camera') {
       const options = {
@@ -125,61 +125,61 @@ export const DocWalletScreen = (props): React.ReactElement => {
         mediaType: mediaTypePhoto,
         PhotoQuality: 1,
       };
-      
+
       launchImageLibrary(options, (response) => {
         managePhoto(response);
       });
     }
-  }
+  };
 
   const managePhoto = async (response: ImagePickerResponse) => {
     if (response.didCancel) {
       showAlertMessage(
         I18n.t('Photo canceled'),
-        I18n.t('User canceled the operation')
+        I18n.t('User canceled the operation'),
       );
       return;
     } else if (response.errorCode === 'camera_unavailable') {
       showAlertMessage(
         I18n.t('Camera not available'),
-        I18n.t('Camera not available on this device')
+        I18n.t('Camera not available on this device'),
       );
       return;
     } else if (response.errorCode === 'permission') {
       showAlertMessage(
         I18n.t('Camera permission needed'),
-        I18n.t('Please turn on the camera permission on this device for this app')
+        I18n.t('Please turn on the camera permission on this device for this app'),
       );
       return;
     } else if (response.errorCode === 'other') {
       showAlertMessage(
         I18n.t('Generic error'),
-        response.errorMessage
+        response.errorMessage,
       );
       return;
     }
 
     setFileResponse(response);
     setModalUploadImageVisible(true);
-  }
+  };
 
   /* IMAGE UPLOAD */
   const handleUpload = async () => {
     if (!documentTitle) {
       showAlertMessage(
         I18n.t('Title missing'),
-        I18n.t('Please fill the document name')
+        I18n.t('Please fill the document name'),
       );
     } else {
       const token = await AsyncStorage.getItem('token');
-      
+
       const dataupload = new FormData();
       dataupload.append('file', {
-        uri: fileResponse.uri, 
-        type: fileResponse.type, 
-        name: fileResponse.fileName
+        uri: fileResponse.uri,
+        type: fileResponse.type,
+        name: fileResponse.fileName,
       });
-      
+
       axios.post(AppOptions.getServerUrl() + 'documents/' + documentTitle, dataupload, {
         headers: {
           'Authorization': 'Bearer ' + token,
@@ -190,14 +190,14 @@ export const DocWalletScreen = (props): React.ReactElement => {
         setModalUploadImageVisible(false);
         showAlertMessage(
           I18n.t('Document uploaded successfully'),
-          I18n.t('Document uploaded successfully to IPFS!')
+          I18n.t('Document uploaded successfully to IPFS!'),
         );
       })
       .catch(function (error) {
         showAlertMessage(
           I18n.t('Error uploading file'),
-          error.message
-          //JSON.stringify(error)
+          error.message,
+          // JSON.stringify(error)
         );
       });
     }
@@ -208,7 +208,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
     setAlertTitle(title);
     setAlertMessage(message);
     setModalAlertVisible(true);
-  }
+  };
 
   return (
     <SafeAreaLayout
@@ -239,7 +239,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
         <Divider/>
         <Text
           style={styles.infoSection}>
-          {I18n.t('Generate a 30-minute token to be communicated to the operator to allow him to check your documents.')}
+          {I18n.t('Generate a 30-minute token to be communicated to')}
         </Text>
         <Button
           style={styles.generateTokenButton}
