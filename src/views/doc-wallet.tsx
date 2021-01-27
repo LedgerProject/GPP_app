@@ -1,14 +1,16 @@
 import React from 'react';
-import { Image, View, ScrollView, ListRenderItemInfo, Platform, PermissionsAndroid } from 'react-native';
+import { Image, View, ListRenderItemInfo } from 'react-native';
 import { Button, Divider, List, Layout, StyleService, Text, TopNavigation,
   TopNavigationAction, useStyleSheet, Modal, Input } from '@ui-kitten/components';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { MenuGridList } from '../components/menu-grid-list.component';
 import { DocumentItem } from './doc-wallet/document-item.component';
-import { KeyboardAvoidingView } from '../services/3rd-party';
+import { requestCameraPermission, requestExternalWritePermission } from '../services/image-picker';
 import { MenuIcon } from '../components/icons';
 import { data, Document } from './doc-wallet/data';
 import {
+  ImagePickerResponse,
+  MediaType,
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
@@ -27,62 +29,33 @@ const initialDocuments: Document[] = [
   Document.testDoc2(),
 ];
 
-const apiInstanceToken = axios.create();
-
-apiInstanceToken.interceptors.request.use(
-    async config => {
-        const token = await AsyncStorage.getItem('token');
-        // console.log(token)
-        if (token) {
-            config.headers.Authorization = 'Bearer ' + token;
-        }
-        return config;
-    },
-    error => {
-        return Promise.reject(error);
-    },
-);
-
-const apiInstanceIpfs = axios.create();
-
-apiInstanceIpfs.interceptors.request.use(
-    async config => {
-        const token = await AsyncStorage.getItem('token');
-        // console.log(token);
-        if (token) {
-          const headers = { 'Authorization': 'Bearer ' + token, 'Content-Type': 'multipart/form-data' };
-          config.headers = headers;
-          /*config.headers = {
-            //'Authorization': 'Bearer ' + token,
-            "Content-Type": "multipart/form-data",
-          }*/
-          // config.headers.Authorization = 'Bearer ' + token;
-        }
-        // console.log(config);
-        return config;
-    },
-    error => {
-        return Promise.reject(error);
-    },
-);
+const initialFileResponse: ImagePickerResponse = {
+  base64: '',
+  uri: '',
+  width: 0,
+  height: 0,
+  fileSize: 0,
+  type: '',
+  fileName: '',
+};
 
 export const DocWalletScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
   const [documents, setDocuments] = React.useState<Document[]>(initialDocuments);
+  const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
   const [modalVisible, setmodalVisible] = React.useState(false);
-  const [generated_token, setGenerated_token ] = React.useState('');
-  const [modalImageVisible, setmodalImageVisible] = React.useState(false);
-  const [DocumentTitle, setDocumentTitle] = React.useState('');
-  const [DocumentError, setDocumentError] = React.useState('');
-  const [filePath, setFilePath] = React.useState('');
-  const [fileName, setFileName] = React.useState('');
-  const [fileType, setFileType] = React.useState('');
-  const onItemPress = (index: number): void => {
-    // props.navigation.navigate(data[index].route);
+  const [alertTitle, setAlertTitle] = React.useState('');
+  const [alertMessage, setAlertMessage] = React.useState('');
+  const [generatedToken, setGeneratedToken ] = React.useState('');
+  const [modalUploadImageVisible, setModalUploadImageVisible] = React.useState(false);
+  const [documentTitle, setDocumentTitle] = React.useState('');
+  const [fileResponse, setFileResponse] = React.useState<ImagePickerResponse>(initialFileResponse);
+
+  const onItemUploadPhotoPress = (index: number): void => {
     if (index === 0) {
-      captureImage('photo');
+      getPhoto('camera');
     } else if (index === 1) {
-      chooseFile('photo');
+      getPhoto('library');
     }
   };
 
@@ -107,180 +80,135 @@ export const DocWalletScreen = (props): React.ReactElement => {
     />
   );
 
-  const onGenerateTokenButtonPress = (): void => {
-    // props.navigation && props.navigation.navigate('Homepage');
+  const onGenerateTokenButtonPress = async (): Promise<void> => {
+    const token = await AsyncStorage.getItem('token');
 
-      apiInstanceToken
-      .post( AppOptions.getServerUrl() + 'users-token')
-      .then(function (response) {
-        // handle success
-        setGenerated_token(response.data.token);
-        setmodalVisible(true);
-      })
-      .catch(function (error) {
-        alert(error.message);
-      });
+    axios.post(AppOptions.getServerUrl() + 'users-token', null, {
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(function(response) {
+      setGeneratedToken(response.data.token);
+      setmodalVisible(true);
+    })
+    .catch(function (error) {
+      showAlertMessage(
+        I18n.t('Error generating token'),
+        error.message,
+      );
+    });
   };
 
-  const handleUpload = () => {
-    if (!DocumentTitle) {
-      alert(I18n.t('Please fill Document Name'));
-      return;
+  // * IMAGE PICKER *
+  const getPhoto = async (type: string) => {
+    const mediaTypePhoto: MediaType = 'photo';
+
+    if (type === 'camera') {
+      const options = {
+        mediaType: mediaTypePhoto,
+        PhotoQuality: 1,
+        saveToPhotos: true,
+      };
+
+      const isCameraPermitted = await requestCameraPermission();
+      const isStoragePermitted = await requestExternalWritePermission();
+
+      if (isCameraPermitted && isStoragePermitted) {
+        launchCamera(options, (response) => {
+          managePhoto(response);
+        });
+      }
     } else {
-      setDocumentError('');
-      // console.log(AppOptions.getServerUrl() + 'documents/TTTT');
+      const options = {
+        mediaType: mediaTypePhoto,
+        PhotoQuality: 1,
+      };
+
+      launchImageLibrary(options, (response) => {
+        managePhoto(response);
+      });
+    }
+  };
+
+  const managePhoto = async (response: ImagePickerResponse) => {
+    if (response.didCancel) {
+      showAlertMessage(
+        I18n.t('Photo canceled'),
+        I18n.t('User canceled the operation'),
+      );
+      return;
+    } else if (response.errorCode === 'camera_unavailable') {
+      showAlertMessage(
+        I18n.t('Camera not available'),
+        I18n.t('Camera not available on this device'),
+      );
+      return;
+    } else if (response.errorCode === 'permission') {
+      showAlertMessage(
+        I18n.t('Camera permission needed'),
+        I18n.t('Please turn on the camera permission on this device for this app'),
+      );
+      return;
+    } else if (response.errorCode === 'other') {
+      showAlertMessage(
+        I18n.t('Generic error'),
+        response.errorMessage,
+      );
+      return;
+    }
+
+    setFileResponse(response);
+    setModalUploadImageVisible(true);
+  };
+
+  /* IMAGE UPLOAD */
+  const handleUpload = async () => {
+    if (!documentTitle) {
+      showAlertMessage(
+        I18n.t('Title missing'),
+        I18n.t('Please fill the document name'),
+      );
+    } else {
+      const token = await AsyncStorage.getItem('token');
+
       const dataupload = new FormData();
-      dataupload.append('file', {uri: filePath, type: fileType, name: fileName});
-      // apiInstanceIpfs
-      axios
-      .post(AppOptions.getServerUrl() + 'documents/' + DocumentTitle, dataupload, {
+      dataupload.append('file', {
+        uri: fileResponse.uri,
+        type: fileResponse.type,
+        name: fileResponse.fileName,
+      });
+
+      axios.post(AppOptions.getServerUrl() + 'documents/' + documentTitle, dataupload, {
         headers: {
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGdsb2JhbHBhc3Nwb3J0cHJvamVjdC5tZSIsImlkVXNlciI6IjU3OTRlZTU5LTdhNzMtNDIzMi1hODJkLTJjZTdiMmNkZDliMSIsInBlcm1pc3Npb25zIjpbIkRvY1dhbGxldE1hbmFnZW1lbnQiLCJTdHJ1Y3R1cmVzTGlzdCIsIkF1dGhGZWF0dXJlcyIsIlByb2ZpbGVFZGl0Il0sInVzZXJUeXBlIjoidXNlciIsImlhdCI6MTYxMTY1OTM0NiwiZXhwIjoxNjExNjg0NTQ2fQ.IZfV06p3uA-5IfKswwoLGhOTx1tlOqgjGjlTBCNH57s',
+          'Authorization': 'Bearer ' + token,
           'Content-Type': 'multipart/form-data',
         },
       })
       .then(function(response) {
-        // console.log(response);
-        setmodalImageVisible(false);
-        alert('Document uploaded successfully!');
+        setModalUploadImageVisible(false);
+        showAlertMessage(
+          I18n.t('Document uploaded successfully'),
+          I18n.t('Document uploaded successfully to IPFS!'),
+        );
       })
       .catch(function (error) {
-        // throw error;
-        alert(JSON.stringify(error));
-        // console.log(error);
+        showAlertMessage(
+          I18n.t('Error uploading file'),
+          error.message,
+          // JSON.stringify(error)
+        );
       });
     }
   };
 
-  // IMAGE PICKER
-
-  const requestCameraPermission = async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'Camera Permission',
-            message: 'App needs camera permission',
-            buttonPositive: 'Accept',
-          },
-        );
-        // If CAMERA Permission is granted
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    } else {
-      return true;
-    }
+  /* ALERT MESSAGE */
+  const showAlertMessage = (title: string, message: string) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setModalAlertVisible(true);
   };
-
-  const requestExternalWritePermission = async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-          {
-            title: 'External Storage Write Permission',
-            message: 'App needs write permission',
-            buttonPositive: 'Accept',
-          },
-        );
-        // If WRITE_EXTERNAL_STORAGE Permission is granted
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        alert('Write permission err' + err);
-      }
-      return false;
-    } else {
-      return true;
-    }
-  };
-
-  const captureImage = async (type) => {
-    const options = {
-      mediaType: type,
-      // maxWidth: 300,
-      // maxHeight: 550,
-      PhotoQuality: 1,
-      // videoQuality: 'low',
-      // durationLimit: 30, // Video max duration in seconds
-      saveToPhotos: true,
-    };
-    const isCameraPermitted = await requestCameraPermission();
-    const isStoragePermitted = await requestExternalWritePermission();
-    if (isCameraPermitted && isStoragePermitted) {
-      launchCamera(options, (response) => {
-        // console.log('Response = ' + response);
-
-        if (response.didCancel) {
-          alert('User cancelled camera picker');
-          return;
-        } else if (response.errorCode === 'camera_unavailable') {
-          alert('Camera not available on device');
-          return;
-        } else if (response.errorCode === 'permission') {
-          alert('Permission not satisfied');
-          return;
-        /* } else { // if (response.errorCode == 'others') {
-          alert(response.errorMessage);
-          return; */
-        }
-        /* console.log('base64 -> ', response.base64);
-        console.log('uri -> ', response.uri);
-        console.log('width -> ', response.width);
-        console.log('height -> ', response.height);
-        console.log('fileSize -> ', response.fileSize);
-        console.log('type -> ', response.type);
-        console.log('fileName -> ', response.fileName); */
-        setFilePath(response.uri);
-        setFileName(response.fileName);
-        setFileType(response.type);
-        setmodalImageVisible(true);
-      });
-    }
-  };
-
-  const chooseFile = (type) => {
-    const options = {
-      mediaType: type,
-      // maxWidth: 300,
-      // maxHeight: 550,
-      PhotoQuality: 1,
-    };
-    launchImageLibrary(options, (response) => {
-      // console.log('Response = ', response);
-
-      if (response.didCancel) {
-        alert('User cancelled camera picker');
-        return;
-      } else if (response.errorCode === 'camera_unavailable') {
-        alert('Camera not available on device');
-        return;
-      } else if (response.errorCode === 'permission') {
-        alert('Permission not satisfied');
-        return;
-      /* } else { // } if (response.errorCode == 'others') {
-        alert(response.errorMessage);
-        return; */
-      }
-      /* console.log('base64 -> ', response.base64);
-      console.log('uri -> ', response.uri);
-      console.log('width -> ', response.width);
-      console.log('height -> ', response.height);
-      console.log('fileSize -> ', response.fileSize);
-      console.log('type -> ', response.type);
-      console.log('fileName -> ', response.fileName); */
-      setFilePath(response.uri);
-      setFileName(response.fileName);
-      setFileType(response.type);
-      setmodalImageVisible(true);
-    });
-  };
-
-  // FINE
 
   return (
     <SafeAreaLayout
@@ -296,13 +224,13 @@ export const DocWalletScreen = (props): React.ReactElement => {
         <View>
           <MenuGridList
             data={data}
-            onItemPress={onItemPress}
+            onItemPress={onItemUploadPhotoPress}
           />
         </View>
         <Divider/>
         <Text
           style={styles.infoSection}>
-          {I18n.t('Tap on document')}
+          {I18n.t('Tap on document for the preview. Swipe left on document to delete it.')}
         </Text>
         <List
           data={documents}
@@ -311,7 +239,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
         <Divider/>
         <Text
           style={styles.infoSection}>
-          {I18n.t('Generate a 30-minute token to')}
+          {I18n.t('Generate a 30-minute token to be communicated to')}
         </Text>
         <Button
           style={styles.generateTokenButton}
@@ -324,40 +252,49 @@ export const DocWalletScreen = (props): React.ReactElement => {
 
 
       <Modal
-      visible={ modalImageVisible }
-      backdropStyle={styles.backdrop}
-      onBackdropPress={() => setmodalImageVisible(false)}
-      >
-      <Layout style={ styles.modal } >
-      <Text style={styles.modalTitle} category='s1'>{I18n.t('Please specify a title for your document')}</Text>
-      <Input
-              placeholder={I18n.t('Enter Document Name')}
-              value={DocumentTitle}
-              onChangeText={setDocumentTitle}
-      />
-      <Text status='danger' style={styles.errorText}>{DocumentError}</Text>
-      <Layout style={styles.imageContainer}>
-      <Image
-          source={{uri: filePath}}
-          style={styles.imageStyle}
-        />
-      </Layout>
-        <Button onPress={handleUpload}>{I18n.t('UPLOAD TO IPFS')}</Button>
-        <Button status='basic' onPress={() => setmodalImageVisible(false)}>CLOSE</Button>
-      </Layout>
+        visible={ modalUploadImageVisible }
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setModalUploadImageVisible(false)}
+        >
+        <Layout style={ styles.modal } >
+          <Text style={styles.modalTitle} category='s1'>{I18n.t('Please specify a title for your document')}</Text>
+          <Input
+            placeholder={I18n.t('Enter Document Name')}
+            value={documentTitle}
+            onChangeText={setDocumentTitle}
+          />
+          <Layout style={styles.imageContainer}>
+            <Image
+                source={{uri: fileResponse.uri}}
+                style={styles.imageStyle}
+              />
+          </Layout>
+          <Button onPress={handleUpload}>{I18n.t('UPLOAD TO IPFS')}</Button>
+          <Button status='basic' onPress={() => setModalUploadImageVisible(false)}>{I18n.t('CLOSE')}</Button>
+        </Layout>
       </Modal>
 
       <Modal
-      visible={ modalVisible }
-      backdropStyle={styles.backdrop}
-      onBackdropPress={() => setmodalVisible(false)}
-      >
-      <Layout style={ styles.modal } >
+        visible={ modalVisible }
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setmodalVisible(false)}>
+        <Layout style={ styles.modal } >
           <Text style={ styles.modalText } >{I18n.t('30-Minutes Token Generated')}</Text>
-          <Text style={ styles.modalText } category='h3' >{generated_token}</Text>
+          <Text style={ styles.modalText } category='h3' >{generatedToken}</Text>
           <Text style={ styles.modalText } >{I18n.t('Communicate this token only')}</Text>
-          <Button status='basic' onPress={() => setmodalVisible(false)}>CLOSE</Button>
-      </Layout>
+          <Button status='basic' onPress={() => setmodalVisible(false)}>{I18n.t('CLOSE')}</Button>
+        </Layout>
+      </Modal>
+
+      <Modal
+        visible={ modalAlertVisible }
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setModalAlertVisible(false)}>
+        <Layout style={ styles.modal } >
+          <Text style={ styles.modalText } category='h6' >{alertTitle}</Text>
+          <Text style={ styles.modalText } >{alertMessage}</Text>
+          <Button status='basic' onPress={() => setModalAlertVisible(false)}>{I18n.t('CLOSE')}</Button>
+        </Layout>
       </Modal>
     </SafeAreaLayout>
   );
