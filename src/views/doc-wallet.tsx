@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Image, View, ListRenderItemInfo } from 'react-native';
 import { Button, Divider, List, Layout, StyleService, Text, TopNavigation,
   TopNavigationAction, useStyleSheet, Modal, Input } from '@ui-kitten/components';
@@ -19,15 +19,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppOptions } from '../services/app-options';
 import I18n from './../i18n/i18n';
 import FormData from 'form-data';
+import slugify from '@sindresorhus/slugify';
 
-const initialDocuments: Document[] = [
+/*const initialDocuments: Document[] = [
   Document.passportDocument(),
   Document.idDocument(),
   Document.vaccinationPage1(),
   Document.vaccinationPage2(),
   Document.testDoc1(),
   Document.testDoc2(),
-];
+];*/
 
 const initialFileResponse: ImagePickerResponse = {
   base64: '',
@@ -41,7 +42,7 @@ const initialFileResponse: ImagePickerResponse = {
 
 export const DocWalletScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
-  const [documents, setDocuments] = React.useState<Document[]>(initialDocuments);
+  const [documents, setDocuments] = React.useState();
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
   const [modalVisible, setmodalVisible] = React.useState(false);
   const [alertTitle, setAlertTitle] = React.useState('');
@@ -60,8 +61,9 @@ export const DocWalletScreen = (props): React.ReactElement => {
   };
 
   const onItemRemove = (document: Document, index: number): void => {
-    documents.splice(index, 1);
-    setDocuments([...documents]);
+    // documents.splice(index, 1);
+    // setDocuments([...documents]);
+    alert('remove');
   };
 
   const renderDrawerAction = (): React.ReactElement => (
@@ -100,6 +102,29 @@ export const DocWalletScreen = (props): React.ReactElement => {
       );
     });
   };
+
+  async function getMyDocuments() {
+    const token = await AsyncStorage.getItem('token');
+    axios
+    .get(AppOptions.getServerUrl() + 'documents', {
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(function (response) {
+      setDocuments(response.data);
+      // alert(JSON.stringify(response));
+    })
+    .catch(function (error) {
+      // alert(JSON.stringify(error));
+      throw error;
+    });
+  }
+
+  useEffect(() => {
+    getMyDocuments();
+  }, []);
 
   // * IMAGE PICKER *
   const getPhoto = async (type: string) => {
@@ -172,12 +197,14 @@ export const DocWalletScreen = (props): React.ReactElement => {
       );
     } else {
       const token = await AsyncStorage.getItem('token');
+      const extension =  fileResponse.fileName.split('.').pop();
+      const fileName = slugify(documentTitle) + '.' + extension;
 
       const dataupload = new FormData();
       dataupload.append('file', {
         uri: fileResponse.uri,
         type: fileResponse.type,
-        name: fileResponse.fileName,
+        name: fileName,
       });
 
       axios.post(AppOptions.getServerUrl() + 'documents/' + documentTitle, dataupload, {
@@ -192,6 +219,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
           I18n.t('Document uploaded successfully'),
           I18n.t('Document uploaded successfully to IPFS!'),
         );
+        getMyDocuments();
       })
       .catch(function (error) {
         showAlertMessage(
@@ -230,7 +258,8 @@ export const DocWalletScreen = (props): React.ReactElement => {
         <Divider/>
         <Text
           style={styles.infoSection}>
-          {I18n.t('Tap on document for the preview. Swipe left on document to delete it.')}
+          {I18n.t('Tap on document for the preview') + '. '
+          + I18n.t('Swipe left on document to delete it') + '.' }
         </Text>
         <List
           data={documents}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View, ImageSourcePropType } from 'react-native';
 import { Button, ListItem, ListItemProps, Text } from '@ui-kitten/components';
 import { CloseIcon, MinusIcon, PlusIcon } from '../../components/icons';
 import { Document } from './data';
@@ -18,13 +18,33 @@ export const DocumentItem = (props: DocumentItemProps): React.ReactElement => {
     onRemove(document, index);
   };
 
+  const formatSize = (size): string => {
+    if (size === 0) { return '0'; }
+    const decimals = 2;
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const i = Math.floor(Math.log(size) / Math.log(k));
+    return parseFloat((size / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  };
+
+  const formatFileImage = (mimeType: string): ImageSourcePropType => {
+    let icon: ImageSourcePropType;
+    if (mimeType === 'image/jpeg' || mimeType === 'image/png') {
+      icon = require('../../assets/images/icon-image.png');
+    } else {
+      icon = require('../../assets/images/icon-pdf.png');
+    }
+    return icon;
+  };
+
   return (
     <ListItem
       {...listItemProps}
       style={[styles.container, style]}>
       <Image
         style={styles.image}
-        source={document.image}
+        source={formatFileImage(document.mimeType)}
       />
       <View style={styles.detailsContainer}>
         <Text
@@ -34,7 +54,7 @@ export const DocumentItem = (props: DocumentItemProps): React.ReactElement => {
         <Text
           appearance='hint'
           category='p2'>
-          {document.size}
+          {formatSize(document.size)}
         </Text>
       </View>
       <Button

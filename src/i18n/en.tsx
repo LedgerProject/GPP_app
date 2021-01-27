@@ -26,6 +26,8 @@ export default {
   'Tap on document': 'Tap on document for the preview. Swipe left on document to delete it.',
   'Generate a 30-minute token to be communicated to': 'Generate a 30-minute token to be communicated to the operator to allow him to check your documents.',
   'GENERATE A 30-MINUTE TOKEN': 'GENERATE A 30-MINUTE TOKEN',
+  'Tap on document for the preview': 'Tap on document for the preview',
+  'Swipe left on document to delete it': 'Swipe left on document to delete it',
 
   '***DA CONTROLLARE***': '***DA CONTROLLARE***',
   'Sign in to your account': 'Sign in to your account',

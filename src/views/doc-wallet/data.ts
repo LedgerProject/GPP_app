@@ -39,17 +39,19 @@ export const data: LayoutData[] = [
 
 export class Document {
 
-  constructor(readonly id: number,
+  constructor(readonly idDocument: string,
               readonly title: string,
               readonly size: string,
-              readonly image: ImageSourcePropType) {
+              readonly mimeType: string,
+              // readonly image: ImageSourcePropType
+              ) {
   }
 
-  get formattedSize(): string {
+  /*get formattedSize(): string {
     return `$${this.size}`;
-  }
+  }*/
 
-  static passportDocument(): Document {
+/*  static passportDocument(): Document {
     return new Document(
       1,
       'Passport',
@@ -101,5 +103,5 @@ export class Document {
       '1.2 Mbytes',
       require('../../assets/images/icon-pdf.png'),
     );
-  }
+  }*/
 }
