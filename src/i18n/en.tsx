@@ -1,6 +1,7 @@
 export default {
   '***GENERAL***': '***GENERAL***',
   'CLOSE': 'CLOSE',
+  'DELETE': 'DELETE',
   'Generic error': 'Generic error',
 
   '***DOCUMENT WALLET***': '***DOCUMENT WALLET***',
@@ -56,4 +57,5 @@ export default {
   'Congratulations! Registration completed': 'Congratulations! Registration completed',
   'An error has occurred, please try again': 'An error has occurred, please try again',
   'Please accept terms and conditions': 'Please accept terms and conditions',
+  'Are you sure to delete the selected document?': 'Are you sure to delete the selected document?',
 };

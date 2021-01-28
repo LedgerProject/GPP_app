@@ -42,9 +42,12 @@ const initialFileResponse: ImagePickerResponse = {
 
 export const DocWalletScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
-  const [documents, setDocuments] = React.useState();
+  const [documents, setDocuments] = React.useState([]);
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
   const [modalVisible, setmodalVisible] = React.useState(false);
+  const [modalDeleteVisible, setModalDeleteVisible] = React.useState(false);
+  const [documentDelete, setDocumentDelete] = React.useState((): any => {});
+  const [documentDeleteIndex, setDocumentDeleteIndex] = React.useState(0);
   const [alertTitle, setAlertTitle] = React.useState('');
   const [alertMessage, setAlertMessage] = React.useState('');
   const [generatedToken, setGeneratedToken ] = React.useState('');
@@ -61,9 +64,37 @@ export const DocWalletScreen = (props): React.ReactElement => {
   };
 
   const onItemRemove = (document: Document, index: number): void => {
-    // documents.splice(index, 1);
-    // setDocuments([...documents]);
-    alert('remove');
+    // DeleteDocument(document,index);
+    setDocumentDelete(document);
+    setDocumentDeleteIndex(index);
+    setModalDeleteVisible(true);
+
+  };
+
+  async function DeleteDocument() {
+    const token = await AsyncStorage.getItem('token');
+    axios
+    .delete(AppOptions.getServerUrl() + 'documents/' + documentDelete.idDocument, {
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(function (response) {
+      documents.splice(documentDeleteIndex, 1);
+      setDocuments([...documents]);
+      setModalDeleteVisible(false);
+      // alert('removed');
+    })
+    .catch(function (error) {
+      // alert(JSON.stringify(error));
+      throw error;
+    });
+  }
+
+
+  const onItemPress = (document: Document, index: number): void => {
+    alert(JSON.stringify(document));
   };
 
   const renderDrawerAction = (): React.ReactElement => (
@@ -79,6 +110,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
       index={info.index}
       document={info.item}
       onRemove={onItemRemove}
+      onItemPress={onItemPress}
     />
   );
 
@@ -323,6 +355,19 @@ export const DocWalletScreen = (props): React.ReactElement => {
           <Text style={ styles.modalText } category='h6' >{alertTitle}</Text>
           <Text style={ styles.modalText } >{alertMessage}</Text>
           <Button status='basic' onPress={() => setModalAlertVisible(false)}>{I18n.t('CLOSE')}</Button>
+        </Layout>
+      </Modal>
+
+      <Modal
+        visible={ modalDeleteVisible }
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setModalDeleteVisible(false)}>
+        <Layout style={ styles.modal } >
+          <Text style={ styles.modalText } category='h6' >
+            {I18n.t('Are you sure to delete the selected document?')}
+          </Text>
+          <Button status='primary' onPress={DeleteDocument}>{I18n.t('DELETE')}</Button>
+          <Button status='basic' onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>
         </Layout>
       </Modal>
     </SafeAreaLayout>

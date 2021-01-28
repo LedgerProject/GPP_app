@@ -8,14 +8,19 @@ export type DocumentItemProps = ListItemProps & {
   index: number;
   document: Document;
   onRemove: (document: Document, index: number) => void;
+  onItemPress: (document: Document, index: number) => void;
 };
 
 export const DocumentItem = (props: DocumentItemProps): React.ReactElement => {
 
-  const { style, document, index, onRemove, ...listItemProps } = props;
+  const { style, document, index, onRemove, onItemPress, ...listItemProps } = props;
 
   const onRemoveButtonPress = (): void => {
     onRemove(document, index);
+  };
+
+  const onButtonPress = (): void => {
+    onItemPress(document, index);
   };
 
   const formatSize = (size): string => {
@@ -41,7 +46,9 @@ export const DocumentItem = (props: DocumentItemProps): React.ReactElement => {
   return (
     <ListItem
       {...listItemProps}
-      style={[styles.container, style]}>
+      style={[styles.container, style]}
+      onPress={onButtonPress}
+      >
       <Image
         style={styles.image}
         source={formatFileImage(document.mimeType)}
