@@ -1,18 +1,51 @@
 import React from 'react';
-import { View, ScrollView, Image, StyleSheet } from 'react-native';
+import { View, ScrollView, Image, StyleSheet, Dimensions } from 'react-native';
 import { Button, Divider, StyleService, Text, TopNavigation, TopNavigationAction, useStyleSheet, Layout, Select } from '@ui-kitten/components';
 import { MenuIcon } from '../components/icons';
 import { categoryOptions } from './where-i-am/data-category';
-
+import { getBoundByRegion } from '../services/maps';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import { Region } from 'react-native-maps';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
+
+const { height, width } = Dimensions.get( 'window' );
+const LATITUDE_DELTA = 60;
+const LONGITUDE_DELTA = LATITUDE_DELTA * (width / height);
+
+interface RegionBoudaries {
+  northWestLatitude: number;
+  northWestLongitude: number;
+  southEastLatitude: number;
+  southEastLongitude: number;
+}
+
+const initialMapRegion: Region = {
+  latitude: 48.368141,
+  longitude: 35.412676,
+  latitudeDelta: LATITUDE_DELTA,
+  longitudeDelta: LONGITUDE_DELTA,
+};
+
+const initialBoudaries: RegionBoudaries = {
+  northWestLatitude: 0,
+  northWestLongitude: 0,
+  southEastLatitude: 0,
+  southEastLongitude: 0,
+};
 
 export const WhereIAmMapScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
 
   const [filter, setFilter] = React.useState(props.selectedOption);
+  const [mapRegion, setMapRegion] = React.useState<Region>(initialMapRegion);
+  const [regionBoundaries, setRegionBoundaries] = React.useState<RegionBoudaries>(initialBoudaries);
+  const [isMapReady, setMapReady] = React.useState(false);
   const onSelectFilter = (option) => {
     setFilter(option);
+  };
+
+  const handleMapReady = () => {
+    setMapReady(true);
   };
 
   const onListButtonPress = (): void => {
@@ -21,6 +54,16 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
   const onCountryButtonPress = (): void => {
     props.navigation && props.navigation.navigate('WhereIAmCountry');
+  };
+
+  const onRegionChange = (curMapRegion): void => {
+    setMapRegion(curMapRegion);
+    const boundaries = getBoundByRegion(curMapRegion);
+    setRegionBoundaries(boundaries);
+    /* console.log("NWLat: " + boundaries.northWestLatitude);
+    console.log("NWLon: " + boundaries.northWestLongitude);
+    console.log("SELat: " + boundaries.southEastLatitude);
+    console.log("SELon: " + boundaries.southEastLongitude); */
   };
 
   const renderDrawerAction = (): React.ReactElement => (
@@ -56,13 +99,11 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
         <Layout style={styles.mapContainer}>
           <MapView
             provider={PROVIDER_GOOGLE}
-            style={styles.Map}
-              region={{
-                latitude: 40.7143528,
-                longitude: -74.0059731,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-              }}
+            style={isMapReady ? styles.Map : {}}
+            region={mapRegion}
+            onRegionChangeComplete={onRegionChange}
+            zoomControlEnabled={true}
+            onMapReady={handleMapReady}
             ></MapView>
         </Layout>
         <Layout style={styles.buttonsContainer}>
