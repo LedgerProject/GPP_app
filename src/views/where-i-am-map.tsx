@@ -24,14 +24,14 @@ const initialMapRegion: Region = {
   longitude: 35.412676,
   latitudeDelta: LATITUDE_DELTA,
   longitudeDelta: LONGITUDE_DELTA,
-}
+};
 
 const initialBoudaries: RegionBoudaries = {
   northWestLatitude: 0,
   northWestLongitude: 0,
   southEastLatitude: 0,
   southEastLongitude: 0,
-}
+};
 
 export const WhereIAmMapScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
@@ -56,15 +56,15 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
     props.navigation && props.navigation.navigate('WhereIAmCountry');
   };
 
-  const onRegionChange = (mapRegion): void => {
-    setMapRegion(mapRegion);
-    const boundaries = getBoundByRegion(mapRegion);
+  const onRegionChange = (curMapRegion): void => {
+    setMapRegion(curMapRegion);
+    const boundaries = getBoundByRegion(curMapRegion);
     setRegionBoundaries(boundaries);
-    console.log("NWLat: " + boundaries.northWestLatitude);
+    /* console.log("NWLat: " + boundaries.northWestLatitude);
     console.log("NWLon: " + boundaries.northWestLongitude);
     console.log("SELat: " + boundaries.southEastLatitude);
-    console.log("SELon: " + boundaries.southEastLongitude);
-  }
+    console.log("SELon: " + boundaries.southEastLongitude); */
+  };
 
   const renderDrawerAction = (): React.ReactElement => (
     <TopNavigationAction
