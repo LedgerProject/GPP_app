@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, ScrollView, Image, StyleSheet, Dimensions } from 'react-native';
 import { Button, Divider, StyleService, Text, TopNavigation, TopNavigationAction, useStyleSheet, Layout, Select } from '@ui-kitten/components';
 import { MenuIcon } from '../components/icons';
 import { categoryOptions } from './where-i-am/data-category';
 import { getBoundByRegion } from '../services/maps';
-import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, {PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { Region } from 'react-native-maps';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
+
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AppOptions } from '../services/app-options';
+import I18n from './../i18n/i18n';
 
 const { height, width } = Dimensions.get( 'window' );
 const LATITUDE_DELTA = 60;
@@ -40,9 +45,44 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   const [mapRegion, setMapRegion] = React.useState<Region>(initialMapRegion);
   const [regionBoundaries, setRegionBoundaries] = React.useState<RegionBoudaries>(initialBoudaries);
   const [isMapReady, setMapReady] = React.useState(false);
+  const [markers, setMarkers] = React.useState([]);
   const onSelectFilter = (option) => {
     setFilter(option);
   };
+
+  async function getMyRegion(Lat1, Lon1, Lat2, Lon2) {
+    // get position
+
+    // ask structures
+    const token = await AsyncStorage.getItem('token');
+    const query_start = '{';
+    const where = `"where":{
+      "latitudeNorthWest": ` + Lat1 + `,
+      "longitudeNorthWest": ` + Lon1 + `,
+      "latitudeSouthEast": ` + Lat2 + `,
+      "longitudeSouthEast": ` + Lon2 + `},
+      `;
+    const fields = '"fields":{"idStructure":true,"idOrganization":false,"organizationname":false,"alias":false,"structurename":true,"address":true,"city":true,"latitude":true,"longitude":true,"email":false,"phoneNumberPrefix":false,"phoneNumber":false,"website":false,"idIcon":false,"iconimage":false,"iconmarker":true}';
+    const query_end = '}';
+    axios
+    .get(AppOptions.getServerUrl() + 'structures/?filter=' + query_start + where + fields + query_end, {
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(function (response) {
+       setMarkers(response.data);
+    })
+    .catch(function (error) {
+      // alert(JSON.stringify(error));
+      throw error;
+    });
+  }
+
+  /*useEffect(() => {
+    getMyRegion();
+  }, []);*/
 
   const handleMapReady = () => {
     setMapReady(true);
@@ -64,6 +104,12 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
     console.log("NWLon: " + boundaries.northWestLongitude);
     console.log("SELat: " + boundaries.southEastLatitude);
     console.log("SELon: " + boundaries.southEastLongitude); */
+    getMyRegion(
+      boundaries.northWestLatitude,
+      boundaries.northWestLongitude,
+      boundaries.southEastLatitude,
+      boundaries.southEastLongitude,
+      );
   };
 
   const renderDrawerAction = (): React.ReactElement => (
@@ -104,7 +150,18 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
             onRegionChangeComplete={onRegionChange}
             zoomControlEnabled={true}
             onMapReady={handleMapReady}
-            ></MapView>
+            >
+            {markers.map( (structure) => {
+              // console.log(structure);
+              return (
+              <Marker
+                key={structure.idStructure}
+                coordinate={{ latitude: structure.latitude, longitude: structure.longitude }}
+                title={structure.structurename}
+              />
+              );
+            })}
+            </MapView>
         </Layout>
         <Layout style={styles.buttonsContainer}>
          <Layout style={styles.buttonLeft} >

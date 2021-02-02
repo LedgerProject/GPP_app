@@ -94,7 +94,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
 
 
   const onItemPress = (document: Document, index: number): void => {
-    alert(JSON.stringify(document));
+    props.navigation && props.navigation.navigate('DocDetails', { item: document });
   };
 
   const renderDrawerAction = (): React.ReactElement => (
@@ -370,6 +370,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
           <Button status='basic' onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>
         </Layout>
       </Modal>
+
     </SafeAreaLayout>
   );
 };
@@ -397,6 +398,7 @@ const themedStyles = StyleService.create({
     marginBottom: 10,
   },
   backdrop: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+  backdrop_black: { backgroundColor: 'rgba(0, 0, 0, 1)' },
   modal: {
     textAlign: 'center',
     margin: 12,
