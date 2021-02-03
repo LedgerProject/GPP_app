@@ -22,7 +22,7 @@ const initialStructures: Structure[] = [
 
 export const WhereIAmListScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
-
+  const { coords } = props.route.params;
   const [filter, setFilter] = React.useState(props.selectedOption);
   const [searchterm, setSearchterm] = React.useState('');
   const onSelectFilter = (option) => {

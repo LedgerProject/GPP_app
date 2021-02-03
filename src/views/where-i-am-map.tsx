@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { View, ScrollView, Image, StyleSheet, Dimensions } from 'react-native';
 import { Button, Divider, StyleService, Text, TopNavigation, TopNavigationAction, useStyleSheet, Layout, Select } from '@ui-kitten/components';
 import { MenuIcon } from '../components/icons';
-import { categoryOptions } from './where-i-am/data-category';
+// import { categoryOptions } from './where-i-am/data-category';
 import { getBoundByRegion } from '../services/maps';
 import MapView, {PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { Region } from 'react-native-maps';
@@ -45,12 +45,25 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   const [mapRegion, setMapRegion] = React.useState<Region>(initialMapRegion);
   const [regionBoundaries, setRegionBoundaries] = React.useState<RegionBoudaries>(initialBoudaries);
   const [isMapReady, setMapReady] = React.useState(false);
+  const [categories, setCategories] = React.useState([]);
+  // const [selectedCategory, setSelectedCategory] = React.useState('');
+  const [categoryOptions, setCategoryOptions] = React.useState([]);
   const [markers, setMarkers] = React.useState([]);
+
   const onSelectFilter = (option) => {
     setFilter(option);
+    alert(JSON.stringify(option));
+    getMyRegion(
+      regionBoundaries.northWestLatitude,
+      regionBoundaries.northWestLongitude,
+      regionBoundaries.southEastLatitude,
+      regionBoundaries.southEastLongitude,
+      option.idCategory,
+    );
   };
 
-  async function getMyRegion(Lat1, Lon1, Lat2, Lon2) {
+  async function getMyRegion(Lat1, Lon1, Lat2, Lon2, idCategory = null) {
+    // console.log(idCategory);
     // get position
 
     // ask structures
@@ -80,16 +93,45 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
     });
   }
 
-  /*useEffect(() => {
-    getMyRegion();
-  }, []);*/
+  useEffect(() => {
+    getCategories();
+  }, []);
+
+  async function getCategories() {
+    let x = 0;
+    const token = await AsyncStorage.getItem('token');
+    // console.log(token);
+    axios
+    .get(AppOptions.getServerUrl() + 'categories', {
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(function (response) {
+       setCategories(response.data);
+       const data: any = response.data;
+       const categoryArray = [];
+       categoryArray.push( { index: x, text: 'Show All', idCategory: '' } );
+       data.map( (category) => {
+         x++;
+         const catObj = { index: x, text: category.identifier, idCategory: category.idCategory };
+         categoryArray.push( catObj );
+       });
+       setCategoryOptions(categoryArray);
+    })
+    .catch(function (error) {
+      // alert(JSON.stringify(error));
+      throw error;
+    });
+  }
 
   const handleMapReady = () => {
     setMapReady(true);
   };
 
   const onListButtonPress = (): void => {
-    props.navigation && props.navigation.navigate('WhereIAmList');
+    props.navigation && props.navigation.navigate('WhereIAmList', { coords: regionBoundaries});
   };
 
   const onCountryButtonPress = (): void => {
@@ -158,7 +200,13 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
                 key={structure.idStructure}
                 coordinate={{ latitude: structure.latitude, longitude: structure.longitude }}
                 title={structure.structurename}
-              />
+                description={structure.address + ' ' + structure.city }
+              >
+              <Image
+                source={ { uri: 'data:image/png;base64,' + structure.iconmarker } }
+                style={{ height: 35, width: 35 }}
+                />
+              </Marker>
               );
             })}
             </MapView>
