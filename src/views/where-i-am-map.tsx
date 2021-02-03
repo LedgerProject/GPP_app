@@ -52,7 +52,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
   const onSelectFilter = (option) => {
     setFilter(option);
-    alert(JSON.stringify(option));
+    // alert(JSON.stringify(option));
     getMyRegion(
       regionBoundaries.northWestLatitude,
       regionBoundaries.northWestLongitude,
@@ -63,28 +63,36 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   };
 
   async function getMyRegion(Lat1, Lon1, Lat2, Lon2, idCategory = null) {
-    // console.log(idCategory);
+    setMarkers([]);
+    let add_on = '';
+    if (idCategory) {
+      add_on = ' ,"idCategory": "' + idCategory + '" ';
+    }
     // get position
 
     // ask structures
     const token = await AsyncStorage.getItem('token');
+    // console.log(token);
     const query_start = '{';
-    const where = `"where":{
-      "latitudeNorthWest": ` + Lat1 + `,
-      "longitudeNorthWest": ` + Lon1 + `,
-      "latitudeSouthEast": ` + Lat2 + `,
-      "longitudeSouthEast": ` + Lon2 + `},
-      `;
-    const fields = '"fields":{"idStructure":true,"idOrganization":false,"organizationname":false,"alias":false,"structurename":true,"address":true,"city":true,"latitude":true,"longitude":true,"email":false,"phoneNumberPrefix":false,"phoneNumber":false,"website":false,"idIcon":false,"iconimage":false,"iconmarker":true}';
+    const where = `"where":{"latitudeNorthWest": `
+    + Lat1 + `,"longitudeNorthWest": `
+    + Lon1 + `,"latitudeSouthEast": `
+    + Lat2 + `,"longitudeSouthEast": `
+    + Lon2 + add_on
+    +
+    `},`;
+
+    const fields = '"fields": {"idStructureCategory": true,"idStructure": true,"idCategory": true,"identifier": true,"structureAlias": true,"structureName": true,"structureAddress": true,"structureLatitude": true,"structureLongitude": true,"structureIdIcon": true,"structureImage": true,"structureMarker": true}';
     const query_end = '}';
     axios
-    .get(AppOptions.getServerUrl() + 'structures/?filter=' + query_start + where + fields + query_end, {
+      .get(AppOptions.getServerUrl() + 'structures/map-search?filter=' + query_start + where + fields + query_end, {
       headers: {
         'Authorization': 'Bearer ' + token,
         'Content-Type': 'application/json',
       },
     })
     .then(function (response) {
+       // console.log(response.data);
        setMarkers(response.data);
     })
     .catch(function (error) {
@@ -140,6 +148,12 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
   const onRegionChange = (curMapRegion): void => {
     setMapRegion(curMapRegion);
+    let idCategory = '';
+    if (filter && filter.idCategory) {
+       idCategory = filter.idCategory;
+    } else {
+      idCategory = null;
+    }
     const boundaries = getBoundByRegion(curMapRegion);
     setRegionBoundaries(boundaries);
     /* console.log("NWLat: " + boundaries.northWestLatitude);
@@ -151,6 +165,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
       boundaries.northWestLongitude,
       boundaries.southEastLatitude,
       boundaries.southEastLongitude,
+      idCategory,
       );
   };
 
@@ -193,17 +208,18 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
             zoomControlEnabled={true}
             onMapReady={handleMapReady}
             >
-            {markers.map( (structure) => {
+            {
+            markers.map( (structure, index) => {
               // console.log(structure);
               return (
               <Marker
-                key={structure.idStructure}
-                coordinate={{ latitude: structure.latitude, longitude: structure.longitude }}
-                title={structure.structurename}
-                description={structure.address + ' ' + structure.city }
+                key={index}
+                coordinate={{ latitude: structure.structureLatitude, longitude: structure.structureLongitude }}
+                title={structure.structureName}
+                description={structure.structureAddress + ' ' + structure.structureCity }
               >
               <Image
-                source={ { uri: 'data:image/png;base64,' + structure.iconmarker } }
+                source={ { uri: 'data:image/png;base64,' + structure.structureMarker } }
                 style={{ height: 35, width: 35 }}
                 />
               </Marker>
