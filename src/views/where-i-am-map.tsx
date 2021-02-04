@@ -11,7 +11,11 @@ import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppOptions } from '../services/app-options';
+import Geocoder from 'react-native-geocoding';
 import I18n from './../i18n/i18n';
+
+// Initialize the module (needs to be done only once)
+Geocoder.init("AIzaSyB0V5h9bq_CfW2Z9pVJHFJI8oiZ8NfdjUY", {language : "en"});
 
 const { height, width } = Dimensions.get( 'window' );
 const LATITUDE_DELTA = 60;
@@ -41,132 +45,171 @@ const initialBoudaries: RegionBoudaries = {
 export const WhereIAmMapScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
 
-  const [filter, setFilter] = React.useState(props.selectedOption);
   const [mapRegion, setMapRegion] = React.useState<Region>(initialMapRegion);
   const [regionBoundaries, setRegionBoundaries] = React.useState<RegionBoudaries>(initialBoudaries);
   const [isMapReady, setMapReady] = React.useState(false);
-  const [categories, setCategories] = React.useState([]);
-  // const [selectedCategory, setSelectedCategory] = React.useState('');
+  const [filterCategory, setFilterCategory] = React.useState(null);
   const [categoryOptions, setCategoryOptions] = React.useState([]);
   const [markers, setMarkers] = React.useState([]);
+  const [currentCountry, setCurrentCountry] = React.useState('');
+  const [avoidNextRegionComplete, setAvoidNextRegionComplete] = React.useState(false);
 
-  const onSelectFilter = (option) => {
-    setFilter(option);
-    // alert(JSON.stringify(option));
-    getMyRegion(
-      regionBoundaries.northWestLatitude,
-      regionBoundaries.northWestLongitude,
-      regionBoundaries.southEastLatitude,
-      regionBoundaries.southEastLongitude,
-      option.idCategory,
-    );
-  };
-
-  async function getMyRegion(Lat1, Lon1, Lat2, Lon2, idCategory = null) {
-    setMarkers([]);
-    let add_on = '';
-    if (idCategory) {
-      add_on = ' ,"idCategory": "' + idCategory + '" ';
-    }
-    // get position
-
-    // ask structures
-    const token = await AsyncStorage.getItem('token');
-    // console.log(token);
-    const query_start = '{';
-    const where = `"where":{"latitudeNorthWest": `
-    + Lat1 + `,"longitudeNorthWest": `
-    + Lon1 + `,"latitudeSouthEast": `
-    + Lat2 + `,"longitudeSouthEast": `
-    + Lon2 + add_on
-    +
-    `},`;
-
-    const fields = '"fields": {"idStructureCategory": true,"idStructure": true,"idCategory": true,"identifier": true,"structureAlias": true,"structureName": true,"structureAddress": true,"structureLatitude": true,"structureLongitude": true,"structureIdIcon": true,"structureImage": true,"structureMarker": true}';
-    const query_end = '}';
-    axios
-      .get(AppOptions.getServerUrl() + 'structures/map-search?filter=' + query_start + where + fields + query_end, {
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(function (response) {
-       // console.log(response.data);
-       setMarkers(response.data);
-    })
-    .catch(function (error) {
-      // alert(JSON.stringify(error));
-      throw error;
-    });
-  }
-
+  // Init functions
   useEffect(() => {
     getCategories();
   }, []);
 
-  async function getCategories() {
-    let x = 0;
-    const token = await AsyncStorage.getItem('token');
-    // console.log(token);
-    axios
-    .get(AppOptions.getServerUrl() + 'categories', {
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(function (response) {
-       setCategories(response.data);
-       const data: any = response.data;
-       const categoryArray = [];
-       categoryArray.push( { index: x, text: 'Show All', idCategory: '' } );
-       data.map( (category) => {
-         x++;
-         const catObj = { index: x, text: category.identifier, idCategory: category.idCategory };
-         categoryArray.push( catObj );
-       });
-       setCategoryOptions(categoryArray);
-    })
-    .catch(function (error) {
-      // alert(JSON.stringify(error));
-      throw error;
-    });
-  }
-
+  // When map is ready set state to true (useful to show zoom controls)
   const handleMapReady = () => {
     setMapReady(true);
   };
 
+  // Get the filter categories
+  async function getCategories() {
+    let x = 0;
+    const token = await AsyncStorage.getItem('token');
+
+    axios
+      .get(AppOptions.getServerUrl() + 'categories', {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(function (response) {
+        const data: any = response.data;
+        const categoryArray = [];
+        categoryArray.push( { index: x, text: 'Show All', idCategory: '' } );
+        data.map( (category) => {
+          x++;
+          const catObj = { index: x, text: category.identifier, idCategory: category.idCategory };
+          categoryArray.push( catObj );
+        });
+        setCategoryOptions(categoryArray);
+      })
+      .catch(function (error) {
+        // alert(JSON.stringify(error));
+        throw error;
+      });
+  }
+
+  // Get the markers from the endpoint, based on the region coordinates
+  async function getMarkers() {
+    // Remove the current markers on the map
+    setMarkers([]);
+
+    // Define the category filter
+    let addCategory = '';
+    if (filterCategory) {
+      addCategory = ' ,"idCategory": "' + filterCategory.idCategory + '" ';
+    }
+
+    // Get current token
+    const token = await AsyncStorage.getItem('token');
+
+    // Define filters
+    const where = `"where": {`
+        + `"latitudeNorthWest": ` + regionBoundaries.northWestLatitude 
+        + `,"longitudeNorthWest": ` + regionBoundaries.northWestLongitude
+        + `,"latitudeSouthEast": ` + regionBoundaries.southEastLatitude
+        + `,"longitudeSouthEast": ` + regionBoundaries.southEastLongitude 
+        + addCategory
+      + `},`;
+
+    // Define fields
+    const fields = `"fields": {`
+        + `"idStructureCategory": false`
+        + `,"idStructure": true`
+        + `,"idCategory": false`
+        + `,"identifier": false`
+        + `,"structureAlias": true`
+        + `,"structureName": true`
+        + `,"structureAddress": true`
+        + `,"structureLatitude": true`
+        + `,"structureLongitude": true`
+        + `,"structureIdIcon": false`
+        + `,"structureImage": false`
+        + `,"structureMarker": true`
+      + `}`;
+
+    // Get the structures based on coordinates and filters
+    axios
+      .get(AppOptions.getServerUrl() + 'structures/map-search?filter={' + where + fields + '}', {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(function (response) {
+        setMarkers(response.data);
+      })
+      .catch(function (error) {
+        // alert(JSON.stringify(error));
+        throw error;
+      });
+  }
+
+  // Event on select the category
+  const onSelectCategory = (option) => {
+    setFilterCategory(option);
+    getMarkers();
+  };
+
+  // Event to show the list
   const onListButtonPress = (): void => {
     props.navigation && props.navigation.navigate('WhereIAmList', { coords: regionBoundaries});
   };
 
+  // Event to show the country information
   const onCountryButtonPress = (): void => {
     props.navigation && props.navigation.navigate('WhereIAmCountry');
   };
 
+  const onMarkerPress = (): void => {
+    setAvoidNextRegionComplete(true);
+  }
+
+  const onPanDragMap = (): void => {
+    setAvoidNextRegionComplete(false);
+  }
+
+  // Event on Google Maps region change
   const onRegionChange = (curMapRegion): void => {
+    console.log(avoidNextRegionComplete);
+    
+    // Set the map region state
     setMapRegion(curMapRegion);
-    let idCategory = '';
-    if (filter && filter.idCategory) {
-       idCategory = filter.idCategory;
-    } else {
-      idCategory = null;
-    }
+
+    // Get the map boundaries
     const boundaries = getBoundByRegion(curMapRegion);
+
+    // Set the map boundaries
     setRegionBoundaries(boundaries);
-    /* console.log("NWLat: " + boundaries.northWestLatitude);
-    console.log("NWLon: " + boundaries.northWestLongitude);
-    console.log("SELat: " + boundaries.southEastLatitude);
-    console.log("SELon: " + boundaries.southEastLongitude); */
-    getMyRegion(
-      boundaries.northWestLatitude,
-      boundaries.northWestLongitude,
-      boundaries.southEastLatitude,
-      boundaries.southEastLongitude,
-      idCategory,
-      );
+    
+    if (avoidNextRegionComplete === false) {
+      setAvoidNextRegionComplete(true);
+      
+      // Get the markers from the endpoint
+      getMarkers();
+
+      // Get the country based on current map region coordinates
+      Geocoder.from(mapRegion.latitude, mapRegion.longitude)
+        .then(json => {
+          let countryLong = '';
+          let countryShort = '';
+          const addressLength = json.results[0].address_components.length;
+
+          for (let i = 0; i < addressLength; i++) {
+            if (json.results[0].address_components[i].short_name.length == 2) {
+              countryLong = json.results[0].address_components[i].long_name;
+              countryShort = json.results[0].address_components[i].short_name;
+            }
+          }
+
+          setCurrentCountry(countryLong);
+        })
+        .catch(error => console.warn(error));
+    }
   };
 
   const renderDrawerAction = (): React.ReactElement => (
@@ -175,8 +218,6 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
       onPress={props.navigation.toggleDrawer}
     />
   );
-
-  const { region } = props;
 
   return (
     <SafeAreaLayout
@@ -193,10 +234,10 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
           <Select
                 {...props}
                 style={styles.select}
-                selectedOption={filter}
+                selectedOption={filterCategory}
                 data={categoryOptions}
                 placeholder='Show All'
-                onSelect={onSelectFilter}
+                onSelect={onSelectCategory}
               />
         </Layout>
         <Layout style={styles.mapContainer}>
@@ -207,24 +248,26 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
             onRegionChangeComplete={onRegionChange}
             zoomControlEnabled={true}
             onMapReady={handleMapReady}
+            onPanDrag={onPanDragMap}
             >
             {
-            markers.map( (structure, index) => {
-              // console.log(structure);
-              return (
-              <Marker
-                key={index}
-                coordinate={{ latitude: structure.structureLatitude, longitude: structure.structureLongitude }}
-                title={structure.structureName}
-                description={structure.structureAddress + ' ' + structure.structureCity }
-              >
-              <Image
-                source={ { uri: 'data:image/png;base64,' + structure.structureMarker } }
-                style={{ height: 35, width: 35 }}
-                />
-              </Marker>
-              );
-            })}
+              markers.map( (structure, index) => {
+                return (
+                <Marker
+                  key={index}
+                  coordinate={{ latitude: structure.structureLatitude, longitude: structure.structureLongitude }}
+                  title={structure.structureName}
+                  description={structure.structureAddress + ' ' + structure.structureCity }
+                  onPress={onMarkerPress}
+                >
+                <Image
+                  source={ { uri: 'data:image/png;base64,' + structure.structureMarker } }
+                  style={{ height: 37, width: 32 }}
+                  />
+                </Marker>
+                );
+              })
+            }
             </MapView>
         </Layout>
         <Layout style={styles.buttonsContainer}>
@@ -238,7 +281,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
         </Layout>
         <Layout style={styles.downContainer}>
           <Text style={styles.downText}>Now you are on:</Text>
-          <Text style={styles.downTextBold}>ITALY</Text>
+          <Text style={styles.downTextBold}>{currentCountry}</Text>
         </Layout>
       </ScrollView>
     </SafeAreaLayout>
