@@ -15,7 +15,7 @@ import Geocoder from 'react-native-geocoding';
 import I18n from './../i18n/i18n';
 
 // Initialize the module (needs to be done only once)
-Geocoder.init("AIzaSyB0V5h9bq_CfW2Z9pVJHFJI8oiZ8NfdjUY", {language : "en"});
+Geocoder.init('AIzaSyB0V5h9bq_CfW2Z9pVJHFJI8oiZ8NfdjUY', {language : 'en'});
 
 const { height, width } = Dimensions.get( 'window' );
 const LATITUDE_DELTA = 60;
@@ -109,10 +109,10 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
     // Define filters
     const where = `"where": {`
-        + `"latitudeNorthWest": ` + regionBoundaries.northWestLatitude 
+        + `"latitudeNorthWest": ` + regionBoundaries.northWestLatitude
         + `,"longitudeNorthWest": ` + regionBoundaries.northWestLongitude
         + `,"latitudeSouthEast": ` + regionBoundaries.southEastLatitude
-        + `,"longitudeSouthEast": ` + regionBoundaries.southEastLongitude 
+        + `,"longitudeSouthEast": ` + regionBoundaries.southEastLongitude
         + addCategory
       + `},`;
 
@@ -167,16 +167,14 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
   const onMarkerPress = (): void => {
     setAvoidNextRegionComplete(true);
-  }
+  };
 
   const onPanDragMap = (): void => {
     setAvoidNextRegionComplete(false);
-  }
+  };
 
   // Event on Google Maps region change
   const onRegionChange = (curMapRegion): void => {
-    console.log(avoidNextRegionComplete);
-    
     // Set the map region state
     setMapRegion(curMapRegion);
 
@@ -185,10 +183,10 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
     // Set the map boundaries
     setRegionBoundaries(boundaries);
-    
+
     if (avoidNextRegionComplete === false) {
       setAvoidNextRegionComplete(true);
-      
+
       // Get the markers from the endpoint
       getMarkers();
 
@@ -200,7 +198,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
           const addressLength = json.results[0].address_components.length;
 
           for (let i = 0; i < addressLength; i++) {
-            if (json.results[0].address_components[i].short_name.length == 2) {
+            if (json.results[0].address_components[i].short_name.length === 2) {
               countryLong = json.results[0].address_components[i].long_name;
               countryShort = json.results[0].address_components[i].short_name;
             }
