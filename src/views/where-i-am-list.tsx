@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, ScrollView, ListRenderItemInfo, Alert } from 'react-native';
 import {
   Input, Button, Divider, List, ListItem, StyleService, Text,
@@ -6,34 +6,140 @@ import {
 } from '@ui-kitten/components';
 import { ArrowBackIcon, MenuIcon } from '../components/icons';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
-import { categoryOptions } from './where-i-am/data-category';
+// import { categoryOptions } from './where-i-am/data-category';
 
-import structures from './where-i-am/data-structures';
-import { StructureItem } from './where-i-am/structure-item.component';
-/* import { Structure } from './where-i-am/structure-item'
 import { StructureItem } from './where-i-am/structure-item.component';
 
-const initialStructures: Structure[] = [
-  Structure.Structure_001(),
-  Structure.Structure_002(),
-  Structure.Structure_003(),
-  Structure.Structure_004()
-];*/
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AppOptions } from '../services/app-options';
+import I18n from './../i18n/i18n';
+import { getActionFromState } from '@react-navigation/native';
 
 export const WhereIAmListScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
-  const { coords } = props.route.params;
+  const { regionBoundaries, option } = props.route.params;
+
   const [filter, setFilter] = React.useState(props.selectedOption);
   const [searchterm, setSearchterm] = React.useState('');
-  const onSelectFilter = (option) => {
-    setFilter(option);
+  const [categories, setCategories] = React.useState([]);
+  const [categoryOptions, setCategoryOptions] = React.useState([]);
+  const [markers, setMarkers] = React.useState([]);
+  const [searchMarkers, setSearchMarkers] = React.useState([]);
+
+  const onSelectFilter = (selected_option) => {
+    setFilter(selected_option);
+    getMyRegion(
+      regionBoundaries.northWestLatitude,
+      regionBoundaries.northWestLongitude,
+      regionBoundaries.southEastLatitude,
+      regionBoundaries.southEastLongitude,
+      selected_option.idCategory,
+    );
   };
+
+  async function getMyRegion(Lat1, Lon1, Lat2, Lon2, idCategory = null) {
+    setMarkers([]);
+    let add_on = '';
+    if (idCategory) {
+      add_on = ' ,"idCategory": "' + idCategory + '" ';
+    }
+    // get position
+
+    // ask structures
+    const token = await AsyncStorage.getItem('token');
+    // console.log(token);
+    const query_start = '{';
+    const where = `"where":{"latitudeNorthWest": `
+    + Lat1 + `,"longitudeNorthWest": `
+    + Lon1 + `,"latitudeSouthEast": `
+    + Lat2 + `,"longitudeSouthEast": `
+    + Lon2 + add_on
+    +
+    `},`;
+    const fields = '"fields": {"idStructureCategory": false,"idStructure": true,"idCategory": false,"identifier": false,"structureAlias": false,"structureName": true,"structureAddress": true,"structureCity": true,"structureLatitude": false,"structureLongitude": false,"structureIdIcon": false,"structureImage": true,"structureMarker": false}';
+    const query_end = '}';
+    axios
+      .get(AppOptions.getServerUrl() + 'structures/map-search?filter=' + query_start + where + fields + query_end, {
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(function (response) {
+       // console.log(response.data);
+       setMarkers(response.data);
+       setSearchMarkers(response.data);
+    })
+    .catch(function (error) {
+      // alert(JSON.stringify(error));
+      throw error;
+    });
+  }
+
+  useEffect(() => {
+    getCategories();
+    let option_category = { index: 0, text: 'Show All', idCategory: '' };
+    if (option) {
+      option_category = option;
+    }
+    onSelectFilter(option_category);
+  }, []);
+
+  async function getCategories() {
+    let x = 0;
+    const token = await AsyncStorage.getItem('token');
+    axios
+    .get(AppOptions.getServerUrl() + 'categories', {
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(function (response) {
+       setCategories(response.data);
+       const data: any = response.data;
+       const categoryArray = [];
+       categoryArray.push( { index: x, text: 'Show All', idCategory: '' } );
+       data.map( (category) => {
+         x++;
+         const catObj = { index: x, text: category.identifier, idCategory: category.idCategory };
+         categoryArray.push( catObj );
+       });
+       setCategoryOptions(categoryArray);
+    })
+    .catch(function (error) {
+      // alert(JSON.stringify(error));
+      throw error;
+    });
+  }
+
+  const handleTextChange = (text): void => {
+    setSearchterm(text);
+    let show_structures = [];
+    if (!text) {
+      show_structures = markers;
+    } else {
+      markers.forEach(element => {
+        const search = text.toLowerCase();
+        const name = element.structureName.toLowerCase();
+        const address = element.structureAddress.toLowerCase();
+        const city = element.structureCity.toLowerCase();
+        if (name.includes(search) || address.includes(search) || city.includes(search)) {
+          show_structures.push(element);
+        }
+      });
+    }
+    setSearchMarkers(show_structures);
+  };
+
   const onMapButtonPress = (): void => {
     props.navigation && props.navigation.navigate('WhereIAmMap');
   };
 
   const onCountryButtonPress = (): void => {
     props.navigation && props.navigation.navigate('WhereIAmCountry');
+    // , { idCountry: '868ec3ad-7777-4875-8048-e2a0d586ae46' });
   };
 
   const onDetailsButtonPress = (): void => {
@@ -48,8 +154,8 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
     <TopNavigationAction icon={ArrowBackIcon} onPress={navigateBack} />
   );
 
-  const onPressItem = (item: any, index: number): void => {
-    props.navigation && props.navigation.navigate('WhereIAmDetails', { item: item });
+  const onPressItem = (idStructure: string, index: number): void => {
+    props.navigation && props.navigation.navigate('WhereIAmDetails', { idStructure: idStructure });
   };
 
     const renderStructureItem = ({ item, index }) => (
@@ -61,6 +167,7 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
   );
 
   return (
+
     <SafeAreaLayout
       style={styles.safeArea}
       insets='top'>
@@ -82,9 +189,9 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
             onSelect={onSelectFilter}
             />
           <Input autoCapitalize='none' placeholder='Enter the term to filter the search'
-            value={searchterm} onChangeText={setSearchterm} />
+            value={searchterm} onChangeText={text => handleTextChange(text)} />
         </View>
-        <List data={structures} renderItem={renderStructureItem} />
+        <List data={searchMarkers} renderItem={renderStructureItem} />
         <View style={styles.buttonsContainer}>
           <View style={styles.buttonLeft} >
             <Button style={styles.button} status='basic' size='small' onPress={onMapButtonPress}>Show Map</Button>

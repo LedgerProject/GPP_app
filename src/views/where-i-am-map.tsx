@@ -13,6 +13,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppOptions } from '../services/app-options';
 import I18n from './../i18n/i18n';
 
+import GetLocation from 'react-native-get-location';
+
 const { height, width } = Dimensions.get( 'window' );
 const LATITUDE_DELTA = 60;
 const LONGITUDE_DELTA = LATITUDE_DELTA * (width / height);
@@ -40,9 +42,8 @@ const initialBoudaries: RegionBoudaries = {
 
 export const WhereIAmMapScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
-
   const [filter, setFilter] = React.useState(props.selectedOption);
-  const [mapRegion, setMapRegion] = React.useState<Region>(initialMapRegion);
+  const [mapRegion, setMapRegion] = React.useState<Region>();
   const [regionBoundaries, setRegionBoundaries] = React.useState<RegionBoudaries>(initialBoudaries);
   const [isMapReady, setMapReady] = React.useState(false);
   const [categories, setCategories] = React.useState([]);
@@ -52,7 +53,6 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
   const onSelectFilter = (option) => {
     setFilter(option);
-    // alert(JSON.stringify(option));
     getMyRegion(
       regionBoundaries.northWestLatitude,
       regionBoundaries.northWestLongitude,
@@ -61,6 +61,28 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
       option.idCategory,
     );
   };
+
+  function getCurrentPosition() {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 15000,
+    })
+    .then(location => {
+      // console.log(location);
+      const initialRegion: Region = {
+        latitude: location.latitude,
+        longitude: location.longitude,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
+      };
+      setMapRegion(initialRegion);
+    })
+    .catch(error => {
+      const { code, message } = error;
+      console.warn(code, message);
+      setMapRegion(initialMapRegion);
+    });
+  }
 
   async function getMyRegion(Lat1, Lon1, Lat2, Lon2, idCategory = null) {
     setMarkers([]);
@@ -92,17 +114,16 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
       },
     })
     .then(function (response) {
-       // console.log(response.data);
        setMarkers(response.data);
     })
     .catch(function (error) {
-      // alert(JSON.stringify(error));
       throw error;
     });
   }
 
   useEffect(() => {
     getCategories();
+    getCurrentPosition();
   }, []);
 
   async function getCategories() {
@@ -129,7 +150,6 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
        setCategoryOptions(categoryArray);
     })
     .catch(function (error) {
-      // alert(JSON.stringify(error));
       throw error;
     });
   }
@@ -139,11 +159,13 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   };
 
   const onListButtonPress = (): void => {
-    props.navigation && props.navigation.navigate('WhereIAmList', { coords: regionBoundaries});
+    props.navigation && props.navigation.navigate('WhereIAmList',
+    { regionBoundaries: regionBoundaries, option: filter });
   };
 
   const onCountryButtonPress = (): void => {
     props.navigation && props.navigation.navigate('WhereIAmCountry');
+    // , { idCountry: '868ec3ad-7777-4875-8048-e2a0d586ae46' });
   };
 
   const onRegionChange = (curMapRegion): void => {
