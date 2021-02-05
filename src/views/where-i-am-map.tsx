@@ -7,7 +7,6 @@ import { getBoundByRegion } from '../services/maps';
 import MapView, {PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { Region } from 'react-native-maps';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
-
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppOptions } from '../services/app-options';
@@ -19,8 +18,8 @@ import GetLocation from 'react-native-get-location';
 Geocoder.init('AIzaSyB0V5h9bq_CfW2Z9pVJHFJI8oiZ8NfdjUY', {language : 'en'});
 
 const { height, width } = Dimensions.get( 'window' );
-const LATITUDE_DELTA = 60;
-const LONGITUDE_DELTA = LATITUDE_DELTA * (width / height);
+const INITIAL_LATITUDE_DELTA = 40;
+const INITIAL_LONGITUDE_DELTA = INITIAL_LATITUDE_DELTA * (width / height);
 
 interface RegionBoudaries {
   northWestLatitude: number;
@@ -32,8 +31,8 @@ interface RegionBoudaries {
 const initialMapRegion: Region = {
   latitude: 48.368141,
   longitude: 35.412676,
-  latitudeDelta: LATITUDE_DELTA,
-  longitudeDelta: LONGITUDE_DELTA,
+  latitudeDelta: INITIAL_LATITUDE_DELTA,
+  longitudeDelta: INITIAL_LONGITUDE_DELTA,
 };
 
 const initialBoudaries: RegionBoudaries = {
@@ -54,10 +53,13 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   const [markers, setMarkers] = React.useState([]);
   const [currentCountry, setCurrentCountry] = React.useState('');
   const [avoidNextRegionComplete, setAvoidNextRegionComplete] = React.useState(false);
+  const [latitudeDelta, setLatitudeDelta] = React.useState(INITIAL_LATITUDE_DELTA);
+  const [longitudeDelta, setLongitudeDelta] = React.useState(INITIAL_LONGITUDE_DELTA);
 
   // Init functions
   useEffect(() => {
     getCategories();
+    getCurrentPosition();
   }, []);
 
   // When map is ready set state to true (useful to show zoom controls)
@@ -71,12 +73,14 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
       timeout: 15000,
     })
     .then(location => {
-      // console.log(location);
+      setLatitudeDelta(1);
+      setLongitudeDelta(1 * (width / height));
+
       const initialRegion: Region = {
         latitude: location.latitude,
         longitude: location.longitude,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA,
+        latitudeDelta: latitudeDelta,
+        longitudeDelta: longitudeDelta,
       };
       setMapRegion(initialRegion);
     })
@@ -181,7 +185,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   // Event to show the list
   const onListButtonPress = (): void => {
     props.navigation && props.navigation.navigate('WhereIAmList',
-    { regionBoundaries: regionBoundaries, option: filter });
+    { regionBoundaries: regionBoundaries, option: filterCategory });
   };
 
   // Event to show the country information
