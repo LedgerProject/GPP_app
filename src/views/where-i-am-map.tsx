@@ -52,7 +52,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   const [categoryOptions, setCategoryOptions] = React.useState([]);
   const [markers, setMarkers] = React.useState([]);
   const [currentCountry, setCurrentCountry] = React.useState('');
-  const [avoidNextRegionComplete, setAvoidNextRegionComplete] = React.useState(false);
+  const [avoidNextRegionComplete, setAvoidNextRegionComplete] = React.useState(true);
   const [latitudeDelta, setLatitudeDelta] = React.useState(INITIAL_LATITUDE_DELTA);
   const [longitudeDelta, setLongitudeDelta] = React.useState(INITIAL_LONGITUDE_DELTA);
 
@@ -73,21 +73,29 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
       timeout: 15000,
     })
     .then(location => {
-      setLatitudeDelta(1);
-      setLongitudeDelta(1 * (width / height));
+      const latDelta = 1;
+      const lonDelta = latDelta * (width / height);
+
+      setLatitudeDelta(latDelta);
+      setLongitudeDelta(lonDelta);
+
+      console.log(latitudeDelta);
 
       const initialRegion: Region = {
         latitude: location.latitude,
         longitude: location.longitude,
-        latitudeDelta: latitudeDelta,
-        longitudeDelta: longitudeDelta,
+        latitudeDelta: latDelta,
+        longitudeDelta: lonDelta,
       };
+
+      setAvoidNextRegionComplete(false);
+
       setMapRegion(initialRegion);
     })
     .catch(error => {
+      setMapRegion(initialMapRegion);
       const { code, message } = error;
       console.warn(code, message);
-      setMapRegion(initialMapRegion);
     });
   }
 
@@ -121,14 +129,14 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   }
 
   // Get the markers from the endpoint, based on the region coordinates
-  async function getMarkers() {
+  async function getMarkers(northWestLatitude, northWestLongitude, southEastLatitude, southEastLongitude, filterCat = null) {
     // Remove the current markers on the map
     setMarkers([]);
 
     // Define the category filter
     let addCategory = '';
-    if (filterCategory) {
-      addCategory = ' ,"idCategory": "' + filterCategory.idCategory + '" ';
+    if (filterCat) {
+      addCategory = ' ,"idCategory": "' + filterCat.idCategory + '" ';
     }
 
     // Get current token
@@ -136,10 +144,10 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
     // Define filters
     const where = `"where": {`
-        + `"latitudeNorthWest": ` + regionBoundaries.northWestLatitude
-        + `,"longitudeNorthWest": ` + regionBoundaries.northWestLongitude
-        + `,"latitudeSouthEast": ` + regionBoundaries.southEastLatitude
-        + `,"longitudeSouthEast": ` + regionBoundaries.southEastLongitude
+        + `"latitudeNorthWest": ` + northWestLatitude
+        + `,"longitudeNorthWest": ` + northWestLongitude
+        + `,"latitudeSouthEast": ` + southEastLatitude
+        + `,"longitudeSouthEast": ` + southEastLongitude
         + addCategory
       + `},`;
 
@@ -179,7 +187,14 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   // Event on select the category
   const onSelectCategory = (option) => {
     setFilterCategory(option);
-    getMarkers();
+    //
+    getMarkers(
+      regionBoundaries.northWestLatitude,
+      regionBoundaries.northWestLongitude,
+      regionBoundaries.southEastLatitude,
+      regionBoundaries.southEastLongitude,
+      option
+    );
   };
 
   // Event to show the list
@@ -203,7 +218,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   };
 
   // Event on Google Maps region change
-  const onRegionChange = (curMapRegion): void => {
+  const onRegionChange = (curMapRegion) => {
     // Set the map region state
     setMapRegion(curMapRegion);
 
@@ -213,11 +228,17 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
     // Set the map boundaries
     setRegionBoundaries(boundaries);
 
-    if (avoidNextRegionComplete === false) {
+    if (avoidNextRegionComplete === false && latitudeDelta < 1.5) {
       setAvoidNextRegionComplete(true);
 
       // Get the markers from the endpoint
-      getMarkers();
+      getMarkers(
+        boundaries.northWestLatitude,
+        boundaries.northWestLongitude,
+        boundaries.southEastLatitude,
+        boundaries.southEastLongitude,
+        filterCategory
+      );
 
       // Get the country based on current map region coordinates
       Geocoder.from(mapRegion.latitude, mapRegion.longitude)
