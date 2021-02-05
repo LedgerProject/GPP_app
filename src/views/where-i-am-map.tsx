@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppOptions } from '../services/app-options';
 import Geocoder from 'react-native-geocoding';
 import I18n from './../i18n/i18n';
+import GetLocation from 'react-native-get-location';
 
 // Initialize the module (needs to be done only once)
 Geocoder.init('AIzaSyB0V5h9bq_CfW2Z9pVJHFJI8oiZ8NfdjUY', {language : 'en'});
@@ -45,7 +46,7 @@ const initialBoudaries: RegionBoudaries = {
 export const WhereIAmMapScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
 
-  const [mapRegion, setMapRegion] = React.useState<Region>(initialMapRegion);
+  const [mapRegion, setMapRegion] = React.useState<Region>();
   const [regionBoundaries, setRegionBoundaries] = React.useState<RegionBoudaries>(initialBoudaries);
   const [isMapReady, setMapReady] = React.useState(false);
   const [filterCategory, setFilterCategory] = React.useState(null);
@@ -63,6 +64,28 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   const handleMapReady = () => {
     setMapReady(true);
   };
+
+  function getCurrentPosition() {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 15000,
+    })
+    .then(location => {
+      // console.log(location);
+      const initialRegion: Region = {
+        latitude: location.latitude,
+        longitude: location.longitude,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
+      };
+      setMapRegion(initialRegion);
+    })
+    .catch(error => {
+      const { code, message } = error;
+      console.warn(code, message);
+      setMapRegion(initialMapRegion);
+    });
+  }
 
   // Get the filter categories
   async function getCategories() {
@@ -157,12 +180,14 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
   // Event to show the list
   const onListButtonPress = (): void => {
-    props.navigation && props.navigation.navigate('WhereIAmList', { coords: regionBoundaries});
+    props.navigation && props.navigation.navigate('WhereIAmList',
+    { regionBoundaries: regionBoundaries, option: filter });
   };
 
   // Event to show the country information
   const onCountryButtonPress = (): void => {
     props.navigation && props.navigation.navigate('WhereIAmCountry');
+    // , { idCountry: '868ec3ad-7777-4875-8048-e2a0d586ae46' });
   };
 
   const onMarkerPress = (): void => {

@@ -5,7 +5,7 @@ import { ListItem, ListItemProps, Text } from '@ui-kitten/components';
 export type StructureItemProps = ListItemProps & {
   index: number;
   item: any;
-  onListviewButtonPress: (item: any, index: number) => void;
+  onListviewButtonPress: (idStructure: string, index: number) => void;
 };
 
 export const StructureItem = (props: StructureItemProps): React.ReactElement => {
@@ -13,7 +13,7 @@ export const StructureItem = (props: StructureItemProps): React.ReactElement => 
   const { index, item, onListviewButtonPress, ...listItemProps } = props;
 
   const onButtonPress = (): void => {
-    onListviewButtonPress(item, index);
+    onListviewButtonPress(item.idStructure, index);
   };
 
   return (
@@ -23,20 +23,20 @@ export const StructureItem = (props: StructureItemProps): React.ReactElement => 
       onPress={onButtonPress}>
       <Image
         style={styles.image}
-        source={{uri: item.icon}}
+        source={{uri: 'data:image/png;base64,' + item.structureImage }}
       />
       <View style={styles.detailsContainer}>
         <Text
           category='s1'>
-          {item.title}
+          {item.structureName}
         </Text>
         <Text
           appearance='hint'
           category='p2'>
-          {item.address}
+          { /*item.structureAddress*/ item.structureCity}
         </Text>
       </View>
-      <Text style={[styles.alignRight]}>{item.distance}</Text>
+      <Text style={[styles.alignRight]}>{item.distance}0.97km</Text>
     </ListItem>
   );
 };
