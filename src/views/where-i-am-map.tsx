@@ -79,8 +79,6 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
       setLatitudeDelta(latDelta);
       setLongitudeDelta(lonDelta);
 
-      console.log(latitudeDelta);
-
       const initialRegion: Region = {
         latitude: location.latitude,
         longitude: location.longitude,
@@ -129,7 +127,13 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   }
 
   // Get the markers from the endpoint, based on the region coordinates
-  async function getMarkers(northWestLatitude, northWestLongitude, southEastLatitude, southEastLongitude, filterCat = null) {
+  async function getMarkers(
+    northWestLatitude,
+    northWestLongitude,
+    southEastLatitude,
+    southEastLongitude,
+    filterCat = null,
+  ) {
     // Remove the current markers on the map
     setMarkers([]);
 
@@ -187,13 +191,13 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   // Event on select the category
   const onSelectCategory = (option) => {
     setFilterCategory(option);
-    //
+
     getMarkers(
       regionBoundaries.northWestLatitude,
       regionBoundaries.northWestLongitude,
       regionBoundaries.southEastLatitude,
       regionBoundaries.southEastLongitude,
-      option
+      option,
     );
   };
 
@@ -237,7 +241,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
         boundaries.northWestLongitude,
         boundaries.southEastLatitude,
         boundaries.southEastLongitude,
-        filterCategory
+        filterCategory,
       );
 
       // Get the country based on current map region coordinates
