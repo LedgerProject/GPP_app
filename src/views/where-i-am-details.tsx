@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View , ScrollView, Modal } from 'react-native';
 import {
   Input, Button, Divider, List, StyleService, Text, TopNavigation,
@@ -10,11 +10,32 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import MapView, {PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AppOptions } from '../services/app-options';
+import I18n from './../i18n/i18n';
+
+/* export class Structure {
+  constructor(
+    readonly idStructure: string,
+    readonly address: string,
+    readonly name: string,
+    readonly city: string,
+    readonly email: string,
+    readonly latitude: number,
+    readonly longitude: number,
+    readonly phoneNumber: string,
+    readonly phoneNumberPrefix: string,
+    readonly website: string,
+    ) {  }
+} */
+
 export const WhereIAmDetailsScreen = (props): React.ReactElement => {
 
-  const { item } = props.route.params;
+  const { idStructure } = props.route.params;
   const [modalVisible, setmodalVisible] = React.useState(false);
   const styles = useStyleSheet(themedStyles);
+  const [structure, setStructure] = React.useState( (): any => [] );
 
   const navigateBack = () => {
     props.navigation.goBack();
@@ -60,6 +81,31 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
     },
    ];
 
+   async function getStructure() {
+    // console.log(idStructure);
+
+    const token = await AsyncStorage.getItem('token');
+    // console.log(token);
+    axios
+    .get(AppOptions.getServerUrl() + 'structures/' + idStructure, {
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(function (response) {
+      // console.log(response.data);
+      setStructure(response.data);
+    })
+    .catch(function (error) {
+      // alert(JSON.stringify(error));
+      throw error;
+    });
+  }
+
+   useEffect(() => {
+    getStructure();
+  }, []);
 
   return (
     <SafeAreaLayout
@@ -71,6 +117,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
       />
       <Divider/>
       <ScrollView>
+
   <Layout style={styles.header}>
   <FlatListSlider
     data={images}
@@ -84,46 +131,50 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
     level='1'>
     <Text
       category='h6'>
-      {item.title}
+      {structure.name}
     </Text>
     <Text
       style={styles.subtitle}
       appearance='hint'
       category='p2'>
-      {item.address}
+      {structure.address} {structure.city}
     </Text>
     <Text
       style={styles.price}
       category='h4'>
-      {item.distance}
+      { /* structure.address */ } 0.97km
     </Text>
+
     <Text
       style={styles.description}
-      appearance='hint'>{item.description}</Text>
+      appearance='hint'>{structure.address}</Text>
 
     <Layout style={styles.mapContainer}>
+    { structure.latitude && structure.longitude && (
     <MapView
             provider={PROVIDER_GOOGLE}
             style={styles.Map}
               region={{
-                latitude: item.latitude,
-                longitude: item.longitude,
+                latitude: structure.latitude,
+                longitude: structure.longitude,
                 latitudeDelta: 0.01,
                 longitudeDelta: 0.01,
               }}
             >
-      <Marker coordinate={{ latitude : item.latitude , longitude : item.longitude }}
+      <Marker coordinate={{ latitude : structure.latitude , longitude : structure.longitude }}
         // image={{uri: item.icon}}
       />
     </MapView>
+    )}
     </Layout>
 
     <View style={styles.elementSubcontainer}>
-          <Text>Latitude: <Text>{item.longitude}</Text></Text>
+          <Text>Latitude: <Text>{structure.latitude}</Text></Text>
     </View>
     <View style={styles.elementSubcontainer}>
-          <Text>Longitude: <Text>{item.longitude}</Text></Text>
+          <Text>Longitude: <Text>{structure.longitude}</Text></Text>
     </View>
+
   </Layout>
   <Layout style={styles.buttonsContainer}>
          <Layout style={styles.buttonLeft} >
@@ -137,6 +188,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
   </Layout>
 
 </Layout>
+
 </ScrollView>
 
 <Modal

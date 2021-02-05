@@ -14,7 +14,6 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppOptions } from '../services/app-options';
 import I18n from './../i18n/i18n';
-import { getActionFromState } from '@react-navigation/native';
 
 export const WhereIAmListScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
