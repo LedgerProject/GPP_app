@@ -157,23 +157,28 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
     // Define fields
     const fields = `"fields": {`
-        + `"idStructureCategory": false`
-        + `,"idStructure": true`
-        + `,"idCategory": false`
-        + `,"identifier": false`
-        + `,"structureAlias": true`
-        + `,"structureName": true`
-        + `,"structureAddress": true`
-        + `,"structureLatitude": true`
-        + `,"structureLongitude": true`
-        + `,"structureIdIcon": false`
-        + `,"structureImage": false`
-        + `,"structureMarker": true`
+        + `"idStructure": true`
+        + `,"idOrganization": false`
+        + `,"organizationname": false`
+        + `,"alias": true`
+        + `,"structurename": true`
+        + `,"address": true`
+        + `,"city": true`
+        + `,"latitude": true`
+        + `,"longitude": true`
+        + `,"email": false`
+        + `,"email": false`
+        + `,"phoneNumberPrefix": false`
+        + `,"phoneNumber": false`
+        + `,"website": false`
+        + `,"idIcon": false`
+        + `,"iconimage": false`
+        + `,"iconmarker": true`
       + `}`;
 
     // Get the structures based on coordinates and filters
     axios
-      .get(AppOptions.getServerUrl() + 'structures/map-search?filter={' + where + fields + '}', {
+      .get(AppOptions.getServerUrl() + 'structures/?filter={' + where + fields + '}', {
         headers: {
           'Authorization': 'Bearer ' + token,
           'Content-Type': 'application/json',
@@ -223,6 +228,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
   // Event on Google Maps region change
   const onRegionChange = (curMapRegion) => {
+
     // Set the map region state
     setMapRegion(curMapRegion);
 
@@ -307,13 +313,13 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
                 return (
                 <Marker
                   key={index}
-                  coordinate={{ latitude: structure.structureLatitude, longitude: structure.structureLongitude }}
-                  title={structure.structureName}
-                  description={structure.structureAddress + ' ' + structure.structureCity }
+                  coordinate={{ latitude: structure.latitude, longitude: structure.longitude }}
+                  title={structure.structurename}
+                  description={structure.address + ' ' + structure.city }
                   onPress={onMarkerPress}
                 >
                 <Image
-                  source={ { uri: 'data:image/png;base64,' + structure.structureMarker } }
+                  source={ { uri: 'data:image/png;base64,' + structure.iconmarker } }
                   style={{ height: 37, width: 32 }}
                   />
                 </Marker>
