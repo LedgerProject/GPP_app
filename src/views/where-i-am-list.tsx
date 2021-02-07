@@ -48,25 +48,42 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
     // ask structures
     const token = await AsyncStorage.getItem('token');
     // console.log(token);
-    const query_start = '{';
-    const where = `"where":{"latitudeNorthWest": `
-    + Lat1 + `,"longitudeNorthWest": `
-    + Lon1 + `,"latitudeSouthEast": `
-    + Lat2 + `,"longitudeSouthEast": `
-    + Lon2 + add_on
-    +
-    `},`;
-    const fields = '"fields": {"idStructureCategory": false,"idStructure": true,"idCategory": false,"identifier": false,"structureAlias": false,"structureName": true,"structureAddress": true,"structureCity": true,"structureLatitude": false,"structureLongitude": false,"structureIdIcon": false,"structureImage": true,"structureMarker": false}';
-    const query_end = '}';
+    const where = `"where": {`
+        + `"latitudeNorthWest": ` + Lat1
+        + `,"longitudeNorthWest": ` + Lon1
+        + `,"latitudeSouthEast": ` + Lat2
+        + `,"longitudeSouthEast": ` + Lon2
+        + add_on
+      + `},`;
+
+    const fields = `"fields": {`
+        + `"idStructure": true`
+        + `,"idOrganization": false`
+        + `,"organizationname": false`
+        + `,"alias": true`
+        + `,"structurename": true`
+        + `,"address": true`
+        + `,"city": true`
+        + `,"latitude": true`
+        + `,"longitude": true`
+        + `,"email": false`
+        + `,"email": false`
+        + `,"phoneNumberPrefix": false`
+        + `,"phoneNumber": false`
+        + `,"website": false`
+        + `,"idIcon": false`
+        + `,"iconimage": true`
+        + `,"iconmarker": false`
+      + `}`;
     axios
-      .get(AppOptions.getServerUrl() + 'structures/map-search?filter=' + query_start + where + fields + query_end, {
+      .get(AppOptions.getServerUrl() + 'structures/?filter={' + where + fields + '}', {
       headers: {
         'Authorization': 'Bearer ' + token,
         'Content-Type': 'application/json',
       },
     })
     .then(function (response) {
-       // console.log(response.data);
+       // console.log(response);
        setMarkers(response.data);
        setSearchMarkers(response.data);
     })
@@ -121,9 +138,9 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
     } else {
       markers.forEach(element => {
         const search = text.toLowerCase();
-        const name = element.structureName.toLowerCase();
-        const address = element.structureAddress.toLowerCase();
-        const city = element.structureCity.toLowerCase();
+        const name = element.structurename.toLowerCase();
+        const address = element.address.toLowerCase();
+        const city = element.city.toLowerCase();
         if (name.includes(search) || address.includes(search) || city.includes(search)) {
           show_structures.push(element);
         }

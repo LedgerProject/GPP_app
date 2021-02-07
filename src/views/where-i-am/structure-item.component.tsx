@@ -23,17 +23,17 @@ export const StructureItem = (props: StructureItemProps): React.ReactElement => 
       onPress={onButtonPress}>
       <Image
         style={styles.image}
-        source={{uri: 'data:image/png;base64,' + item.structureImage }}
+        source={{uri: 'data:image/png;base64,' + item.iconimage }}
       />
       <View style={styles.detailsContainer}>
         <Text
           category='s1'>
-          {item.structureName}
+          {item.structurename}
         </Text>
         <Text
           appearance='hint'
           category='p2'>
-          { /*item.structureAddress*/ item.structureCity}
+          { /*item.structureAddress*/ item.city}
         </Text>
       </View>
       <Text style={[styles.alignRight]}>{item.distance}0.97km</Text>
