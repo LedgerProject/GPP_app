@@ -37,6 +37,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
   const [structure, setStructure] = React.useState( (): any => [] );
   const [structureDescription, setStrucureDescription] = React.useState('');
+  const [images, setImages] = React.useState( (): any => [] );
 
   const navigateBack = () => {
     props.navigation.goBack();
@@ -55,38 +56,12 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
   };
 
   const ZoomImage = (): void => {
-    // alert(JSON.stringify(item));
-    // props.navigation && props.navigation.navigate('Homepage');
     setmodalVisible(true);
   };
 
-  const images = [
-    {
-     image: 'https://images.unsplash.com/photo-1567226475328-9d6baaf565cf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60',
-     desc: 'Silent Waters in the mountains in midst of Himilayas',
-    },
-   {
-     image: 'https://images.unsplash.com/photo-1455620611406-966ca6889d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1130&q=80',
-     desc: 'Red fort in India New Delhi is a magnificient masterpeiece of humans',
-   },
-   ];
-
-   const zoom_images = [
-    {
-     url: 'https://images.unsplash.com/photo-1567226475328-9d6baaf565cf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60',
-     props: {},
-    },
-    {
-     url: 'https://images.unsplash.com/photo-1455620611406-966ca6889d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1130&q=80',
-     props: {},
-    },
-   ];
-
    async function getStructure() {
-    // console.log(idStructure);
 
     const token = await AsyncStorage.getItem('token');
-    // console.log(token);
     axios
     .get(AppOptions.getServerUrl() + 'structures/' + idStructure, {
       headers: {
@@ -105,8 +80,16 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
         },
       })
       .then(function (images_response) {
-        // console.log(images_response);
-        const image_data = images_response.data;
+        const image_data: any = images_response.data;
+        const ImagesArray = [];
+        image_data.map( (element) => {
+          const imgObj = {
+            url: AppOptions.getServerUrl() +
+            'galleries/structures/' + element.folder + '/' +
+            element.filename, desc: '', props: {} };
+          ImagesArray.push( imgObj );
+        });
+        setImages(ImagesArray);
       })
       .catch(function (error) {
         // throw error;
@@ -155,13 +138,15 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
       <ScrollView>
 
   <Layout style={styles.header}>
+  {(images && images.length > 0 && (
   <FlatListSlider
     data={images}
     onPress={ ZoomImage }
     autoscroll={false}
     loop={false}
-
+    imageKey={'url'}
   />
+  ))}
   <Layout
     style={styles.detailsContainer}
     level='1'>
@@ -233,7 +218,7 @@ transparent={true}
 onRequestClose={ () => setmodalVisible(false) }
 >
   <ImageViewer
-  imageUrls={zoom_images}
+  imageUrls={images}
   enableSwipeDown={true}
   onSwipeDown={ () => setmodalVisible(false) }
   />
