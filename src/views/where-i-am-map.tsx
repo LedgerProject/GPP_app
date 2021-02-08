@@ -4,7 +4,7 @@ import { Button, Divider, StyleService, Text, TopNavigation, TopNavigationAction
 import { MenuIcon } from '../components/icons';
 // import { categoryOptions } from './where-i-am/data-category';
 import { getBoundByRegion } from '../services/maps';
-import MapView, {PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import MapView, {PROVIDER_GOOGLE, Marker, Callout, CalloutSubview } from 'react-native-maps';
 import { Region } from 'react-native-maps';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import axios from 'axios';
@@ -80,8 +80,10 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
       setLongitudeDelta(lonDelta);
 
       const initialRegion: Region = {
-        latitude: location.latitude,
-        longitude: location.longitude,
+        // latitude: location.latitude,
+        // longitude: location.longitude,
+        latitude: 41.9027835,
+        longitude: 12.4963655,
         latitudeDelta: latDelta,
         longitudeDelta: lonDelta,
       };
@@ -218,6 +220,10 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
     // , { idCountry: '868ec3ad-7777-4875-8048-e2a0d586ae46' });
   };
 
+  const onMarkerButtonPress = (idStructure): any => {
+    // props.navigation && props.navigation.navigate('WhereIAmDetails', { idStructure: idStructure });
+  };
+
   const onMarkerPress = (): void => {
     setAvoidNextRegionComplete(true);
   };
@@ -314,14 +320,29 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
                 <Marker
                   key={index}
                   coordinate={{ latitude: structure.latitude, longitude: structure.longitude }}
-                  title={structure.structurename}
-                  description={structure.address + ' ' + structure.city }
+                  // image={{ uri: 'data:image/png;base64,' + structure.iconmarker }}
                   onPress={onMarkerPress}
                 >
-                <Image
+            <View>
+              <Image
                   source={ { uri: 'data:image/png;base64,' + structure.iconmarker } }
                   style={{ height: 37, width: 32 }}
                   />
+            </View>
+          <Callout style={styles.callout} onPress={(e) => {
+              props.navigation && props.navigation.navigate('WhereIAmDetails',
+              { idStructure: structure.idStructure });
+            }}
+            >
+            <View>
+              <Text category='s1' style={styles.bold}>{structure.structurename}</Text>
+              <Text>{structure.address}</Text>
+              <Text>{structure.city }</Text>
+              <Button size='small' appearance='outline' status='basic'>Structure Details</Button>
+
+            </View>
+          </Callout>
+
                 </Marker>
                 );
               })
@@ -414,5 +435,11 @@ const themedStyles = StyleService.create({
   },
   button: {
     width: '100%',
+  },
+  callout: {
+    width: 180,
+  },
+  bold: {
+    fontWeight: 'bold',
   },
 });

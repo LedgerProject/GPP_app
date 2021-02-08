@@ -36,6 +36,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
   const [modalVisible, setmodalVisible] = React.useState(false);
   const styles = useStyleSheet(themedStyles);
   const [structure, setStructure] = React.useState( (): any => [] );
+  const [structureDescription, setStrucureDescription] = React.useState('');
 
   const navigateBack = () => {
     props.navigation.goBack();
@@ -94,8 +95,43 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
       },
     })
     .then(function (response) {
-      // console.log(response.data);
       setStructure(response.data);
+      // get images
+      axios
+      .get(AppOptions.getServerUrl() + 'structures/' + idStructure + '/structures-images', {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(function (images_response) {
+        // console.log(images_response);
+        const image_data = images_response.data;
+      })
+      .catch(function (error) {
+        // throw error;
+      });
+      // get description
+      axios
+      .get(AppOptions.getServerUrl() + 'structures/' + idStructure + '/structures-languages', {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(function (lang_response) {
+        const data: any = lang_response.data;
+        data.map( (element) => {
+          if (element.language === 'en') {
+            setStrucureDescription(element.description);
+          }
+        });
+      })
+      .catch(function (error) {
+        // throw error;
+      });
+      //
+
     })
     .catch(function (error) {
       // alert(JSON.stringify(error));
@@ -147,7 +183,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
 
     <Text
       style={styles.description}
-      appearance='hint'>{structure.address}</Text>
+    >{structureDescription}</Text>
 
     <Layout style={styles.mapContainer}>
     { structure.latitude && structure.longitude && (
