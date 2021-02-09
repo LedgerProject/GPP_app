@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { View , ScrollView, Modal } from 'react-native';
+import { View , ScrollView, Image, Platform } from 'react-native';
 import {
   Input, Button, Divider, List, StyleService, Text, TopNavigation,
-  TopNavigationAction, useStyleSheet, Layout, Icon,
+  TopNavigationAction, useStyleSheet, Layout, Icon, ListItem, Modal,
 } from '@ui-kitten/components';
 import { ArrowBackIcon, MenuIcon } from '../components/icons';
 import {FlatListSlider} from 'react-native-flatlist-slider';
@@ -14,7 +14,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppOptions } from '../services/app-options';
 import I18n from './../i18n/i18n';
-
+import openMap from 'react-native-open-maps';
+import { ConversationListScreen } from 'src/scenes/messaging/conversation-list.component';
 /* export class Structure {
   constructor(
     readonly idStructure: string,
@@ -34,10 +35,15 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
 
   const { idStructure } = props.route.params;
   const [modalVisible, setmodalVisible] = React.useState(false);
+  const [modalContactVisible, setmodalContactVisible] = React.useState(false);
   const styles = useStyleSheet(themedStyles);
   const [structure, setStructure] = React.useState( (): any => [] );
-  const [structureDescription, setStrucureDescription] = React.useState('');
+  const [structureDescription, setStructureDescription] = React.useState('');
   const [images, setImages] = React.useState( (): any => [] );
+  const [contactMessage, setContactMessage] = React.useState('');
+  const [alertTitle, setAlertTitle] = React.useState('');
+  const [alertMessage, setAlertMessage] = React.useState('');
+  const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
 
   const navigateBack = () => {
     props.navigation.goBack();
@@ -48,31 +54,86 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
   );
 
   const onNavigatorButtonPress = (): void => {
-    // props.navigation && props.navigation.navigate('WhereIAmList');
+    openMap({
+      latitude: structure.latitude,
+      longitude: structure.longitude,
+      end: structure.address + ', ' + structure.city,
+    });
   };
 
   const onContactButtonPress = (): void => {
-    // props.navigation && props.navigation.navigate('WhereIAmCountry');
+    setmodalContactVisible(true);
   };
+
+  /* ALERT MESSAGE */
+  const showAlertMessage = (title: string, message: string) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setModalAlertVisible(true);
+  };
+
+  const handleSend = async () => {
+    if (!contactMessage) {
+      showAlertMessage(
+        I18n.t('Message missing'),
+        I18n.t('Please fill the Message'),
+      );
+    } else {
+      const token = await AsyncStorage.getItem('token');
+
+    }
+  };
+
 
   const ZoomImage = (): void => {
     setmodalVisible(true);
   };
 
    async function getStructure() {
-
     const token = await AsyncStorage.getItem('token');
+
+
     axios
-    .get(AppOptions.getServerUrl() + 'structures/' + idStructure, {
+    .get(AppOptions.getServerUrl() + `structures/` + idStructure + `?filter={"include":[`
+    + `{"relation": "icon"},`
+    + `{"relation": "structureCategory", "scope":`
+    + `{"include": [{"relation": "category", "scope":`
+    + `{"include": [{"relation": "categoryLanguage", "scope": {"where": {"language": "en"}}}]}`
+    + `}]}`
+    + `},`
+    + `{"relation": "structureImage"},`
+    + `{"relation": "structureLanguage", "scope": {"where": {"language": "en"}}}`
+    + `]}`
+    , {
       headers: {
         'Authorization': 'Bearer ' + token,
         'Content-Type': 'application/json',
       },
     })
     .then(function (response) {
+
       setStructure(response.data);
+
+      const image_data: any = response.data.structureImage;
+      const ImagesArray = [];
+      image_data.map( (element) => {
+        const imgObj = {
+          url: AppOptions.getServerUrl() +
+          'galleries/structures/' + element.folder + '/' +
+          element.filename, desc: '', props: {} };
+        ImagesArray.push( imgObj );
+      });
+      setImages(ImagesArray);
+
+      const lang_data: any = response.data.structureLanguage;
+      lang_data.map( (element) => {
+        if (element.language === 'en') {
+          setStructureDescription(element.description);
+        }
+      });
+
       // get images
-      axios
+      /*axios
       .get(AppOptions.getServerUrl() + 'structures/' + idStructure + '/structures-images', {
         headers: {
           'Authorization': 'Bearer ' + token,
@@ -113,12 +174,11 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
       .catch(function (error) {
         // throw error;
       });
-      //
-
+      //*/
     })
     .catch(function (error) {
-      // alert(JSON.stringify(error));
-      throw error;
+       alert(JSON.stringify(error));
+       throw error;
     });
   }
 
@@ -182,9 +242,17 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
                 longitudeDelta: 0.01,
               }}
             >
-      <Marker coordinate={{ latitude : structure.latitude , longitude : structure.longitude }}
-        // image={{uri: item.icon}}
-      />
+      { structure.latitude && structure.longitude && (
+      <Marker coordinate={{ latitude : structure.latitude , longitude : structure.longitude }}>
+      <View>{ structure.icon && structure.icon.marker && (
+              <Image
+                  source={ { uri: 'data:image/png;base64,' + structure.icon.marker } }
+                  style={{ height: 37, width: 32 }}
+                  />
+      ) }
+      </View>
+      </Marker>
+      )}
     </MapView>
     )}
     </Layout>
@@ -214,8 +282,8 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
 
 <Modal
 visible={modalVisible}
-transparent={true}
-onRequestClose={ () => setmodalVisible(false) }
+backdropStyle={styles.backdrop}
+onBackdropPress={ () => setmodalVisible(false) }
 >
   <ImageViewer
   imageUrls={images}
@@ -223,6 +291,34 @@ onRequestClose={ () => setmodalVisible(false) }
   onSwipeDown={ () => setmodalVisible(false) }
   />
 </Modal>
+
+<Modal
+visible={modalContactVisible}
+backdropStyle={styles.backdrop}
+onBackdropPress={ () => setmodalContactVisible(false) }
+>
+<Layout style={ styles.modal } >
+          <Text style={styles.modalTitle} category='s1'>{I18n.t('Write your request')}</Text>
+          <Input
+            placeholder={I18n.t('Enter Message')}
+            value={contactMessage}
+            onChangeText={setContactMessage}
+          />
+          <Button onPress={handleSend}>{I18n.t('SEND')}</Button>
+          <Button status='basic' onPress={() => setmodalContactVisible(false)}>{I18n.t('CLOSE')}</Button>
+        </Layout>
+</Modal>
+
+<Modal
+        visible={ modalAlertVisible }
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setModalAlertVisible(false)}>
+        <Layout style={ styles.modal } >
+          <Text style={ styles.modalText } category='h6' >{alertTitle}</Text>
+          <Text style={ styles.modalText } >{alertMessage}</Text>
+          <Button status='basic' onPress={() => setModalAlertVisible(false)}>{I18n.t('CLOSE')}</Button>
+        </Layout>
+      </Modal>
 </SafeAreaLayout>
   );
 };
@@ -326,4 +422,17 @@ const themedStyles = StyleService.create({
   },
   button: { width: '100%' },
   backdrop: { /* backgroundColor: 'rgba(0, 0, 0, 0.5)', */ },
+  modal: {
+    textAlign: 'center',
+    margin: 12,
+    padding: 12,
+  },
+  modalText: {
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  modalTitle: {
+    marginBottom: 4,
+    textAlign: 'center',
+  },
 });

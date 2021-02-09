@@ -58,4 +58,9 @@ export default {
   'An error has occurred, please try again': 'An error has occurred, please try again',
   'Please accept terms and conditions': 'Please accept terms and conditions',
   'Are you sure to delete the selected document?': 'Are you sure to delete the selected document?',
+  'Message missing': 'Message missing',
+  'Please fill the Message': 'Please fill the Message',
+  'Enter Message': 'Enter Message',
+  'SEND': 'SEND',
+  'Write your request': 'Write your request',
 };
