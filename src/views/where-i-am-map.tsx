@@ -80,10 +80,10 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
       setLongitudeDelta(lonDelta);
 
       const initialRegion: Region = {
-        // latitude: location.latitude,
-        // longitude: location.longitude,
-        latitude: 41.9027835,
-        longitude: 12.4963655,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        // latitude: 41.9027835,
+        // longitude: 12.4963655,
         latitudeDelta: latDelta,
         longitudeDelta: lonDelta,
       };
@@ -114,7 +114,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
       .then(function (response) {
         const data: any = response.data;
         const categoryArray = [];
-        categoryArray.push( { index: x, text: 'Show All', idCategory: '' } );
+        categoryArray.push( { index: x, text: I18n.t('Show All'), idCategory: '' } );
         data.map( (category) => {
           x++;
           const catObj = { index: x, text: category.identifier, idCategory: category.idCategory };
@@ -210,14 +210,16 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
   // Event to show the list
   const onListButtonPress = (): void => {
-    props.navigation && props.navigation.navigate('WhereIAmList',
-    { regionBoundaries: regionBoundaries, option: filterCategory });
+    props.navigation && props.navigation.navigate('WhereIAmList', {
+      regionBoundaries: regionBoundaries,
+      option: filterCategory,
+      Country: currentCountry,
+    });
   };
 
   // Event to show the country information
   const onCountryButtonPress = (): void => {
-    props.navigation && props.navigation.navigate('WhereIAmCountry');
-    // , { idCountry: '868ec3ad-7777-4875-8048-e2a0d586ae46' });
+    props.navigation && props.navigation.navigate('WhereIAmCountry', { Country: currentCountry});
   };
 
   const onMarkerButtonPress = (idStructure): any => {
@@ -288,19 +290,19 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
       style={styles.safeArea}
       insets='top'>
       <TopNavigation
-        title='Structures Map'
+        title={I18n.t('Structures Map')}
         leftControl={renderDrawerAction()}
       />
       <Divider/>
       <ScrollView>
         <Layout style={styles.filtersContainer}>
-          <Text style={styles.labelWhat}>What are you searching for?</Text>
+          <Text style={styles.labelWhat}>{I18n.t('What are you searching for') + '?'}</Text>
           <Select
                 {...props}
                 style={styles.select}
                 selectedOption={filterCategory}
                 data={categoryOptions}
-                placeholder='Show All'
+                placeholder={I18n.t('Show All')}
                 onSelect={onSelectCategory}
               />
         </Layout>
@@ -338,7 +340,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
               <Text category='s1' style={styles.bold}>{structure.structurename}</Text>
               <Text>{structure.address}</Text>
               <Text>{structure.city }</Text>
-              <Button size='small' appearance='outline' status='basic'>Structure Details</Button>
+              <Button size='small' appearance='outline' status='basic'>{I18n.t('Structure Details')}</Button>
 
             </View>
           </Callout>
@@ -351,15 +353,17 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
         </Layout>
         <Layout style={styles.buttonsContainer}>
          <Layout style={styles.buttonLeft} >
-          <Button style={styles2.button} status='basic' size='small' onPress={onListButtonPress}>Show List</Button>
+          <Button style={styles2.button} status='basic' size='small'
+            onPress={onListButtonPress}>{I18n.t('Show List')}
+          </Button>
          </Layout>
          <Layout style={styles.buttonRight} >
           <Button style={styles2.button} status='basic'
-            size='small' onPress={onCountryButtonPress}>Country Informations</Button>
+            size='small' onPress={onCountryButtonPress}>{I18n.t('Country Informations')}</Button>
          </Layout>
         </Layout>
         <Layout style={styles.downContainer}>
-          <Text style={styles.downText}>Now you are on:</Text>
+          <Text style={styles.downText}>{I18n.t('Now you are on') + ':'}</Text>
           <Text style={styles.downTextBold}>{currentCountry}</Text>
         </Layout>
       </ScrollView>

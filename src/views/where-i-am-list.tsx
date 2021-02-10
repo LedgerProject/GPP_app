@@ -17,7 +17,7 @@ import I18n from './../i18n/i18n';
 
 export const WhereIAmListScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
-  const { regionBoundaries, option } = props.route.params;
+  const { regionBoundaries, option, Country } = props.route.params;
 
   const [filter, setFilter] = React.useState(props.selectedOption);
   const [searchterm, setSearchterm] = React.useState('');
@@ -95,7 +95,7 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
 
   useEffect(() => {
     getCategories();
-    let option_category = { index: 0, text: 'Show All', idCategory: '' };
+    let option_category = { index: 0, text: I18n.t('Show All'), idCategory: '' };
     if (option) {
       option_category = option;
     }
@@ -116,7 +116,7 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
        setCategories(response.data);
        const data: any = response.data;
        const categoryArray = [];
-       categoryArray.push( { index: x, text: 'Show All', idCategory: '' } );
+       categoryArray.push( { index: x, text: I18n.t('Show All'), idCategory: '' } );
        data.map( (category) => {
          x++;
          const catObj = { index: x, text: category.identifier, idCategory: category.idCategory };
@@ -154,8 +154,9 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
   };
 
   const onCountryButtonPress = (): void => {
-    props.navigation && props.navigation.navigate('WhereIAmCountry');
-    // , { idCountry: '868ec3ad-7777-4875-8048-e2a0d586ae46' });
+    props.navigation && props.navigation.navigate('WhereIAmCountry', {
+      Country: Country,
+    });
   };
 
   const onDetailsButtonPress = (): void => {
@@ -188,38 +189,40 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
       style={styles.safeArea}
       insets='top'>
       <TopNavigation
-        title='Structures List'
+        title={I18n.t('Structures List')}
         leftControl={renderDrawerAction()}
       />
       <Divider/>
 
       <Layout style={styles.safeArea}>
         <View style={styles.filtersContainer}>
-          <Text style={styles.labelWhat}>What are you searching for?</Text>
+          <Text style={styles.labelWhat}>{I18n.t('What are you searching for') + '?'}</Text>
           <Select
             {...props}
             style={styles.select}
             selectedOption={filter}
             data={categoryOptions}
-            placeholder='Show All'
+            placeholder={I18n.t('Show All')}
             onSelect={onSelectFilter}
             />
-          <Input autoCapitalize='none' placeholder='Enter the term to filter the search'
+          <Input autoCapitalize='none' placeholder={I18n.t('Enter the term to filter the search')}
             value={searchterm} onChangeText={text => handleTextChange(text)} />
         </View>
         <List data={searchMarkers} renderItem={renderStructureItem} />
         <View style={styles.buttonsContainer}>
           <View style={styles.buttonLeft} >
-            <Button style={styles.button} status='basic' size='small' onPress={onMapButtonPress}>Show Map</Button>
+            <Button style={styles.button} status='basic' size='small'
+              onPress={onMapButtonPress}>{I18n.t('Show Map')}
+            </Button>
           </View>
           <View style={styles.buttonRight} >
             <Button style={styles.button} status='basic'
-              size='small' onPress={onCountryButtonPress}>Country Informations</Button>
+              size='small' onPress={onCountryButtonPress}>{I18n.t('Country Informations')}</Button>
           </View>
         </View>
         <Layout style={styles.downContainer}>
-          <Text style={styles.downText}>Now you are on:</Text>
-          <Text style={styles.downTextBold}>ITALY</Text>
+          <Text style={styles.downText}>{I18n.t('Now you are on') + ':'}</Text>
+          <Text style={styles.downTextBold}>{Country}</Text>
         </Layout>
       </Layout>
     </SafeAreaLayout>

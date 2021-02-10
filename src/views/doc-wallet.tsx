@@ -275,7 +275,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
       style={styles.safeArea}
       insets='top'>
       <TopNavigation
-        title='DocWallet'
+        title={I18n.t('DocWallet')}
         leftControl={renderDrawerAction()}
       />
       <Layout

@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, ScrollView } from 'react-native';
 import { Button, Divider, StyleService, Text, TopNavigation, TopNavigationAction, useStyleSheet, Layout, Icon } from '@ui-kitten/components';
 import { ArrowBackIcon, MenuIcon } from '../components/icons';
 import { TopNavigationScreen } from 'src/scenes/components/top-navigation/top-navigation.component';
-import topics from './where-i-am/data-topics';
+
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AppOptions } from '../services/app-options';
+import I18n from './../i18n/i18n';
 
 export const WhereIAmCountryScreen = (props): React.ReactElement => {
+  const { Country } = props.route.params;
   const styles = useStyleSheet(themedStyles);
+  const [countryName, setCountryName] = React.useState('');
+  const [topics, setTopics] = React.useState([]);
 
   const navigateBack = () => {
     props.navigation.goBack();
@@ -17,19 +24,78 @@ export const WhereIAmCountryScreen = (props): React.ReactElement => {
     <TopNavigationAction icon={ArrowBackIcon} onPress={navigateBack} />
   );
 
+  // Init functions
+  useEffect(() => {
+    getCountry();
+  }, []);
+
+  async function getCountry() {
+
+    const token = await AsyncStorage.getItem('token');
+
+    axios
+      .get(AppOptions.getServerUrl() + `countries?filter={`
+        + `"where": {`
+          + `"identifier": "` + Country + `"`
+        + `}`
+        + `,"include":[`
+          + `{"relation": "countryTopic", "scope":`
+              + `{"include": [`
+                + `{"relation": "countryTopicLanguage",`
+                  + `"scope": {"where":`
+                    + `{"language": "en"}`
+                  + `}`
+                + `}`
+              + `]}`
+          + `},`
+          + `{"relation": "countryLanguage", "scope":`
+              + `{"where":`
+                + `{"language": "en"}`
+              + `}`
+          + `}`
+        + `]`
+        + `}`, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(function (response) {
+        const data: any = response.data[0];
+        setCountryName(data.identifier);
+        const topicsObj = data.countryTopic;
+        const topicsArray = [];
+        topicsObj.map( (elementParent) => {
+          const elementArray: [] = elementParent.countryTopicLanguage;
+          elementArray.map( (element: any) => {
+            if (element.language === 'en') {
+              const topicObj = { title: element.topic, description: element.description };
+              topicsArray.push( topicObj );
+            }
+          });
+        });
+        setTopics(topicsArray);
+      })
+      .catch(function (error) {
+        setCountryName(I18n.t('Country not found'));
+        // alert(JSON.stringify(error));
+        throw error;
+      });
+  }
+
   return (
     <SafeAreaLayout
       style={styles.safeArea}
       insets='top'>
       <TopNavigation
-        title='Country'
+        title={I18n.t('Country')}
         leftControl={renderDrawerAction()}
       />
       <Divider/>
       <ScrollView>
 
       <Layout style={styles.mainTitleContainer}>
-        <Text category='h4' style={styles.mainTitle}>Italy</Text>
+        <Text category='h4' style={styles.mainTitle}>{countryName}</Text>
       </Layout>
 
       { topics.map( (item, index) => (

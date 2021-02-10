@@ -98,7 +98,7 @@ export const DocDetailsScreen = (props): React.ReactElement => {
       style={styles.safeArea}
       insets='top'>
       <TopNavigation
-        title='Document Details'
+        title={I18n.t('Document Details')}
         leftControl={renderDrawerAction()}
       />
       <Divider/>
@@ -112,7 +112,7 @@ export const DocDetailsScreen = (props): React.ReactElement => {
       category='h6' style={styles.documentTitle}>
       {item.title}
     </Text>
-    <Button onPress={ZoomImage}>Zoom</Button>
+    <Button onPress={ZoomImage}>{I18n.t('Zoom')}</Button>
   </Layout>
 </Layout>
 </ScrollView>

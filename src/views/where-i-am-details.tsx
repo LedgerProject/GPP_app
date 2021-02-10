@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { View , ScrollView, Image, Platform } from 'react-native';
+import { View , ScrollView, Image, Platform, Modal } from 'react-native';
 import {
   Input, Button, Divider, List, StyleService, Text, TopNavigation,
-  TopNavigationAction, useStyleSheet, Layout, Icon, ListItem, Modal,
+  TopNavigationAction, useStyleSheet, Layout, Icon, ListItem, Modal as ModalUiKitten,
 } from '@ui-kitten/components';
 import { ArrowBackIcon, MenuIcon } from '../components/icons';
 import {FlatListSlider} from 'react-native-flatlist-slider';
@@ -258,21 +258,21 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
     </Layout>
 
     <View style={styles.elementSubcontainer}>
-          <Text>Latitude: <Text>{structure.latitude}</Text></Text>
+          <Text>{I18n.t('Latitude') + ':'} <Text>{structure.latitude}</Text></Text>
     </View>
     <View style={styles.elementSubcontainer}>
-          <Text>Longitude: <Text>{structure.longitude}</Text></Text>
+          <Text>{I18n.t('Longitude') + ':'} <Text>{structure.longitude}</Text></Text>
     </View>
 
   </Layout>
   <Layout style={styles.buttonsContainer}>
          <Layout style={styles.buttonLeft} >
           <Button style={styles.button} status='basic' size='small'
-          onPress={onNavigatorButtonPress}>Start the navigator</Button>
+          onPress={onNavigatorButtonPress}>{I18n.t('Start the navigator')}</Button>
          </Layout>
          <Layout style={styles.buttonRight} >
           <Button style={styles.button} status='basic'
-            size='small' onPress={onContactButtonPress}>Contact us</Button>
+            size='small' onPress={onContactButtonPress}>{I18n.t('Contact us')}</Button>
          </Layout>
   </Layout>
 
@@ -282,8 +282,8 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
 
 <Modal
 visible={modalVisible}
-backdropStyle={styles.backdrop}
-onBackdropPress={ () => setmodalVisible(false) }
+transparent={true} // backdropStyle={styles.backdrop}
+onRequestClose={ () => setmodalVisible(false) } // onBackdropPress={ () => setmodalVisible(false) }
 >
   <ImageViewer
   imageUrls={images}
@@ -292,33 +292,36 @@ onBackdropPress={ () => setmodalVisible(false) }
   />
 </Modal>
 
-<Modal
+<ModalUiKitten
 visible={modalContactVisible}
 backdropStyle={styles.backdrop}
 onBackdropPress={ () => setmodalContactVisible(false) }
 >
-<Layout style={ styles.modal } >
+<Layout style={ [styles.modal, styles.modalContact] } >
           <Text style={styles.modalTitle} category='s1'>{I18n.t('Write your request')}</Text>
           <Input
             placeholder={I18n.t('Enter Message')}
             value={contactMessage}
             onChangeText={setContactMessage}
+            multiline={true}
+            textStyle={{ minHeight: 64 }}
           />
           <Button onPress={handleSend}>{I18n.t('SEND')}</Button>
           <Button status='basic' onPress={() => setmodalContactVisible(false)}>{I18n.t('CLOSE')}</Button>
         </Layout>
-</Modal>
+</ModalUiKitten>
 
-<Modal
+<ModalUiKitten
         visible={ modalAlertVisible }
         backdropStyle={styles.backdrop}
-        onBackdropPress={() => setModalAlertVisible(false)}>
+        onBackdropPress={() => setModalAlertVisible(false)}
+        >
         <Layout style={ styles.modal } >
           <Text style={ styles.modalText } category='h6' >{alertTitle}</Text>
           <Text style={ styles.modalText } >{alertMessage}</Text>
           <Button status='basic' onPress={() => setModalAlertVisible(false)}>{I18n.t('CLOSE')}</Button>
         </Layout>
-      </Modal>
+      </ModalUiKitten>
 </SafeAreaLayout>
   );
 };
@@ -426,6 +429,9 @@ const themedStyles = StyleService.create({
     textAlign: 'center',
     margin: 12,
     padding: 12,
+  },
+  modalContact: {
+    width: 280,
   },
   modalText: {
     marginBottom: 4,
