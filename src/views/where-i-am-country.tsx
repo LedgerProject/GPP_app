@@ -80,6 +80,7 @@ export const WhereIAmCountryScreen = (props): React.ReactElement => {
         setTopics(topicsArray);
       })
       .catch(function (error) {
+        setLoading(false);
         setCountryName(I18n.t('Country not found'));
         // alert(JSON.stringify(error));
         throw error;

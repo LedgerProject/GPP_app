@@ -83,4 +83,10 @@ export default {
   'Country': 'Country',
   'Country not found': 'Country not found',
   'Loading': 'Loading',
+  'My Profile': 'My Profile',
+  'Select your gender': 'Select your gender',
+  'Select your nationality': 'Select your nationality',
+  'Select your birthday': 'Select your birthday',
+  'Save': 'Save',
+  'Remove all my data': 'Remove all my data',
 };

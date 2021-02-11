@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import {
   Button,
@@ -15,11 +15,17 @@ import {
 } from '@ui-kitten/components';
 import { ProfileAvatar } from '../services/profile-avatar.component';
 import { PersonIcon, PlusIcon } from '../components/icons';
-import { genderOptions, nationalityOptions } from './my-profile/data';
+import { genderOptions } from './my-profile/data';
+// import { genderOptions, nationalityOptions } from './my-profile/data';
 import { MenuIcon, StopCircleIcon, GlobeIcon, CalendarIcon } from '../components/icons';
 import { KeyboardAvoidingView } from '../services/3rd-party';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
+import I18n from './../i18n/i18n';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AppOptions } from '../services/app-options';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export const MyProfileScreen = (props): React.ReactElement => {
   const [firstName, setFirstName] = React.useState<string>();
@@ -27,7 +33,8 @@ export const MyProfileScreen = (props): React.ReactElement => {
   const [gender, setGender] = React.useState(props.selectedOption);
   const [nationality, setNationality] = React.useState(props.selectedOption);
   const [birthday, setBirthday] = React.useState<Date>();
-
+  const [loading, setLoading] = React.useState(false);
+  const [nationalityOptions, setNationalityOptions] = React.useState([]);
   const today = new Date();
   const firstDayCalendar = new Date(1900, 1, 1);
 
@@ -42,11 +49,15 @@ export const MyProfileScreen = (props): React.ReactElement => {
   };
 
   const onSaveButtonPress = (): void => {
+    setLoading(true);
     // TODO
+    setLoading(false);
   };
 
   const onDeleteButtonPress = (): void => {
+    setLoading(true);
     // TODO
+    setLoading(false);
   };
 
   const renderDrawerAction = (): React.ReactElement => (
@@ -64,15 +75,57 @@ export const MyProfileScreen = (props): React.ReactElement => {
     />
   );
 
+  async function getNationalities() {
+      setLoading(true);
+      const token = await AsyncStorage.getItem('token');
+
+      axios
+        .get(AppOptions.getServerUrl() + `nationalities?filter={`
+         + `"include":[`
+          + `{"relation": "nationalityLanguage", "scope": {"where": {"language": "en"}}}`
+         + `]`
+          + `}`
+          , {
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json',
+          },
+        })
+        .then(function (response) {
+          setLoading(false);
+          const data: any = response.data;
+          const options = [];
+          data.map ( (element) => {
+            const option = { text: element.identifier };
+            options.push( option );
+          });
+          setNationalityOptions(options);
+        })
+        .catch(function (error) {
+          setLoading(false);
+          // alert(JSON.stringify(error));
+          throw error;
+        });
+    }
+
+  useEffect(() => {
+    getNationalities();
+  }, []);
+
   return (
     <SafeAreaLayout insets='top' style={styles.safeArea}>
       <View
         style={{flex: 1}}>
         <TopNavigation
-          title='My Profile'
+          title={I18n.t('My Profile')}
           leftControl={renderDrawerAction()}
         />
         <Divider />
+        <Spinner
+          visible={loading}
+          textContent={I18n.t('Loading') + '...'}
+          textStyle={styles.spinnerTextStyle}
+        />
         <ScrollView>
           <KeyboardAvoidingView style={styles.container}>
             <View style={styles.headerContainer}>
@@ -88,7 +141,7 @@ export const MyProfileScreen = (props): React.ReactElement => {
               level='1'>
               <Input
                 autoCapitalize='none'
-                placeholder='First Name'
+                placeholder={I18n.t('First Name')}
                 icon={PersonIcon}
                 value={firstName}
                 onChangeText={setFirstName}
@@ -96,7 +149,7 @@ export const MyProfileScreen = (props): React.ReactElement => {
               <Input
                 style={styles.nameInput}
                 autoCapitalize='none'
-                placeholder='Last Name'
+                placeholder={I18n.t('Last Name')}
                 icon={PersonIcon}
                 value={lastName}
                 onChangeText={setLastName}
@@ -107,7 +160,7 @@ export const MyProfileScreen = (props): React.ReactElement => {
                 style={styles.select}
                 selectedOption={gender}
                 data={genderOptions}
-                placeholder='Select your gender'
+                placeholder={I18n.t('Select your gender')}
                 onSelect={onSelectGender}
               />
               <Select
@@ -116,7 +169,7 @@ export const MyProfileScreen = (props): React.ReactElement => {
                 style={styles.selectNationality}
                 selectedOption={nationality}
                 data={nationalityOptions}
-                placeholder='Select your nationality'
+                placeholder={I18n.t('Select your nationality')}
                 onSelect={onSelectNationality}
               />
               <Datepicker
@@ -125,7 +178,7 @@ export const MyProfileScreen = (props): React.ReactElement => {
                 date={birthday}
                 min={firstDayCalendar}
                 max={today}
-                placeholder='Select your birthday'
+                placeholder={I18n.t('Select your birthday')}
                 onSelect={selectedDate => setBirthday(selectedDate)}
               />
               <Divider />
@@ -139,7 +192,7 @@ export const MyProfileScreen = (props): React.ReactElement => {
                   style={styles.saveButton}
                   size='giant'
                   onPress={onSaveButtonPress}>
-                  Save
+                  {I18n.t('Save')}
               </Button>
               <Button
                   style={styles.deleteButton}
@@ -147,7 +200,7 @@ export const MyProfileScreen = (props): React.ReactElement => {
                   status='danger'
                   appearance='outline'
                   onPress={onDeleteButtonPress}>
-                  Remove all my data
+                  {I18n.t('Remove all my data')}
               </Button>
             </Layout>
           </KeyboardAvoidingView>
@@ -216,5 +269,8 @@ const themedStyles = StyleService.create({
   deleteButton: {
     marginVertical: 12,
     marginHorizontal: 16,
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });

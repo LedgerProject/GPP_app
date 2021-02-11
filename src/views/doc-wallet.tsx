@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Image, View, ListRenderItemInfo } from 'react-native';
 import { Button, Divider, List, Layout, StyleService, Text, TopNavigation,
-  TopNavigationAction, useStyleSheet, Modal, Input } from '@ui-kitten/components';
+  TopNavigationAction, useStyleSheet, Modal as ModalUiKitten, Input } from '@ui-kitten/components';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { MenuGridList } from '../components/menu-grid-list.component';
 import { DocumentItem } from './doc-wallet/document-item.component';
@@ -46,6 +46,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
   const [documents, setDocuments] = React.useState([]);
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
   const [modalVisible, setmodalVisible] = React.useState(false);
+  const [modalFileVisible, setmodalFileVisible] = React.useState(false);
   const [modalDeleteVisible, setModalDeleteVisible] = React.useState(false);
   const [documentDelete, setDocumentDelete] = React.useState((): any => {});
   const [documentDeleteIndex, setDocumentDeleteIndex] = React.useState(0);
@@ -56,6 +57,10 @@ export const DocWalletScreen = (props): React.ReactElement => {
   const [documentTitle, setDocumentTitle] = React.useState('');
   const [fileResponse, setFileResponse] = React.useState<ImagePickerResponse>(initialFileResponse);
   const [loading, setLoading] = React.useState(false);
+
+  const ZoomImage = (): void => {
+    setmodalFileVisible(true);
+  };
 
   const onItemUploadPhotoPress = (index: number): void => {
     if (index === 0) {
@@ -97,9 +102,33 @@ export const DocWalletScreen = (props): React.ReactElement => {
     });
   }
 
+  async function LoadFile(document) {
+
+    setLoading(true);
+    const token = await AsyncStorage.getItem('token');
+    axios
+    .get(AppOptions.getServerUrl() + 'documents-base64/' + document.idDocument, {
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(function (response) {
+      setLoading(false);
+      const image = 'data:' + document.mimeType + ';base64,' + response.data;
+      props.navigation && props.navigation.navigate('DocDetails', { item: document, image: image });
+    })
+    .catch(function (error) {
+      // console.log(error);
+      setLoading(false);
+      // alert(JSON.stringify(error));
+      throw error;
+    });
+
+  }
 
   const onItemPress = (document: Document, index: number): void => {
-    props.navigation && props.navigation.navigate('DocDetails', { item: document });
+    LoadFile(document);
   };
 
   const renderDrawerAction = (): React.ReactElement => (
@@ -331,7 +360,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
       </Layout>
 
 
-      <Modal
+      <ModalUiKitten
         visible={ modalUploadImageVisible }
         backdropStyle={styles.backdrop}
         onBackdropPress={() => setModalUploadImageVisible(false)}
@@ -352,9 +381,9 @@ export const DocWalletScreen = (props): React.ReactElement => {
           <Button onPress={handleUpload}>{I18n.t('UPLOAD TO IPFS')}</Button>
           <Button status='basic' onPress={() => setModalUploadImageVisible(false)}>{I18n.t('CLOSE')}</Button>
         </Layout>
-      </Modal>
+      </ModalUiKitten>
 
-      <Modal
+      <ModalUiKitten
         visible={ modalVisible }
         backdropStyle={styles.backdrop}
         onBackdropPress={() => setmodalVisible(false)}>
@@ -364,9 +393,9 @@ export const DocWalletScreen = (props): React.ReactElement => {
           <Text style={ styles.modalText } >{I18n.t('Communicate this token only')}</Text>
           <Button status='basic' onPress={() => setmodalVisible(false)}>{I18n.t('CLOSE')}</Button>
         </Layout>
-      </Modal>
+      </ModalUiKitten>
 
-      <Modal
+      <ModalUiKitten
         visible={ modalAlertVisible }
         backdropStyle={styles.backdrop}
         onBackdropPress={() => setModalAlertVisible(false)}>
@@ -375,9 +404,9 @@ export const DocWalletScreen = (props): React.ReactElement => {
           <Text style={ styles.modalText } >{alertMessage}</Text>
           <Button status='basic' onPress={() => setModalAlertVisible(false)}>{I18n.t('CLOSE')}</Button>
         </Layout>
-      </Modal>
+      </ModalUiKitten>
 
-      <Modal
+      <ModalUiKitten
         visible={ modalDeleteVisible }
         backdropStyle={styles.backdrop}
         onBackdropPress={() => setModalDeleteVisible(false)}>
@@ -388,8 +417,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
           <Button status='primary' onPress={DeleteDocument}>{I18n.t('DELETE')}</Button>
           <Button status='basic' onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>
         </Layout>
-      </Modal>
-
+      </ModalUiKitten>
     </SafeAreaLayout>
   );
 };
