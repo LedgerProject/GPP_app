@@ -20,6 +20,7 @@ import { AppOptions } from '../services/app-options';
 import I18n from './../i18n/i18n';
 import FormData from 'form-data';
 import slugify from '@sindresorhus/slugify';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 /*const initialDocuments: Document[] = [
   Document.passportDocument(),
@@ -54,6 +55,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
   const [modalUploadImageVisible, setModalUploadImageVisible] = React.useState(false);
   const [documentTitle, setDocumentTitle] = React.useState('');
   const [fileResponse, setFileResponse] = React.useState<ImagePickerResponse>(initialFileResponse);
+  const [loading, setLoading] = React.useState(false);
 
   const onItemUploadPhotoPress = (index: number): void => {
     if (index === 0) {
@@ -72,6 +74,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
   };
 
   async function DeleteDocument() {
+    setLoading(true);
     const token = await AsyncStorage.getItem('token');
     axios
     .delete(AppOptions.getServerUrl() + 'documents/' + documentDelete.idDocument, {
@@ -81,12 +84,14 @@ export const DocWalletScreen = (props): React.ReactElement => {
       },
     })
     .then(function (response) {
+      setLoading(false);
       documents.splice(documentDeleteIndex, 1);
       setDocuments([...documents]);
       setModalDeleteVisible(false);
       // alert('removed');
     })
     .catch(function (error) {
+      setLoading(false);
       // alert(JSON.stringify(error));
       throw error;
     });
@@ -115,6 +120,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
   );
 
   const onGenerateTokenButtonPress = async (): Promise<void> => {
+    setLoading(true);
     const token = await AsyncStorage.getItem('token');
 
     axios.post(AppOptions.getServerUrl() + 'users-token', null, {
@@ -124,10 +130,12 @@ export const DocWalletScreen = (props): React.ReactElement => {
       },
     })
     .then(function(response) {
+      setLoading(false);
       setGeneratedToken(response.data.token);
       setmodalVisible(true);
     })
     .catch(function (error) {
+      setLoading(false);
       showAlertMessage(
         I18n.t('Error generating token'),
         error.message,
@@ -136,6 +144,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
   };
 
   async function getMyDocuments() {
+    setLoading(true);
     const token = await AsyncStorage.getItem('token');
     axios
     .get(AppOptions.getServerUrl() + 'documents', {
@@ -145,10 +154,12 @@ export const DocWalletScreen = (props): React.ReactElement => {
       },
     })
     .then(function (response) {
+      setLoading(false);
       setDocuments(response.data);
       // alert(JSON.stringify(response));
     })
     .catch(function (error) {
+      setLoading(false);
       // alert(JSON.stringify(error));
       throw error;
     });
@@ -228,6 +239,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
         I18n.t('Please fill the document name'),
       );
     } else {
+      setLoading(true);
       const token = await AsyncStorage.getItem('token');
       const extension =  fileResponse.fileName.split('.').pop();
       const fileName = slugify(documentTitle) + '.' + extension;
@@ -246,6 +258,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
         },
       })
       .then(function(response) {
+        setLoading(false);
         setModalUploadImageVisible(false);
         showAlertMessage(
           I18n.t('Document uploaded successfully'),
@@ -254,6 +267,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
         getMyDocuments();
       })
       .catch(function (error) {
+        setLoading(false);
         showAlertMessage(
           I18n.t('Error uploading file'),
           error.message,
@@ -281,6 +295,11 @@ export const DocWalletScreen = (props): React.ReactElement => {
       <Layout
       style={styles.container}
       level='2'>
+      <Spinner
+          visible={loading}
+          textContent={I18n.t('Loading') + '...'}
+          textStyle={styles.spinnerTextStyle}
+        />
         <View>
           <MenuGridList
             data={data}
@@ -423,5 +442,8 @@ const themedStyles = StyleService.create({
     width: 150,
     height: 150,
     margin: 5,
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });

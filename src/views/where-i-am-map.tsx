@@ -13,6 +13,7 @@ import { AppOptions } from '../services/app-options';
 import Geocoder from 'react-native-geocoding';
 import I18n from './../i18n/i18n';
 import GetLocation from 'react-native-get-location';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 // Initialize the module (needs to be done only once)
 Geocoder.init('AIzaSyB0V5h9bq_CfW2Z9pVJHFJI8oiZ8NfdjUY', {language : 'en'});
@@ -55,7 +56,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   const [avoidNextRegionComplete, setAvoidNextRegionComplete] = React.useState(true);
   const [latitudeDelta, setLatitudeDelta] = React.useState(INITIAL_LATITUDE_DELTA);
   const [longitudeDelta, setLongitudeDelta] = React.useState(INITIAL_LONGITUDE_DELTA);
-
+  const [loading, setLoading] = React.useState(false);
   // Init functions
   useEffect(() => {
     getCategories();
@@ -136,6 +137,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
     southEastLongitude,
     filterCat = null,
   ) {
+    setLoading(true);
     // Remove the current markers on the map
     setMarkers([]);
 
@@ -187,9 +189,11 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
         },
       })
       .then(function (response) {
+        setLoading(false);
         setMarkers(response.data);
       })
       .catch(function (error) {
+        setLoading(false);
         // alert(JSON.stringify(error));
         throw error;
       });
@@ -294,6 +298,11 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
         leftControl={renderDrawerAction()}
       />
       <Divider/>
+      <Spinner
+          visible={loading}
+          textContent={I18n.t('Loading') + '...'}
+          textStyle={styles.spinnerTextStyle}
+        />
       <ScrollView>
         <Layout style={styles.filtersContainer}>
           <Text style={styles.labelWhat}>{I18n.t('What are you searching for') + '?'}</Text>
@@ -445,5 +454,8 @@ const themedStyles = StyleService.create({
   },
   bold: {
     fontWeight: 'bold',
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });

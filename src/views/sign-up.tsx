@@ -16,6 +16,7 @@ import { KeyboardAvoidingView } from '../services/3rd-party';
 import axios from 'axios';
 import I18n from './../i18n/i18n';
 import { AppOptions } from '../services/app-options';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export default ({ navigation }): React.ReactElement => {
 
@@ -31,6 +32,7 @@ export default ({ navigation }): React.ReactElement => {
   const [modalVisible, setmodalVisible] = React.useState(false);
   const [success, setSuccess] = React.useState<string>();
   const [error, setError] = React.useState<string>();
+  const [loading, setLoading] = React.useState(false);
 
   const styles = useStyleSheet(themedStyles);
 
@@ -83,6 +85,7 @@ export default ({ navigation }): React.ReactElement => {
       setmodalVisible(true);
       return;
     }
+    setLoading(true);
     const postParams = {
         userType: 'user',
         email: email,
@@ -93,12 +96,14 @@ export default ({ navigation }): React.ReactElement => {
       axios
       .post(AppOptions.getServerUrl() + 'users/signup', postParams)
       .then(function (response) {
+        setLoading(false);
         // handle success
         // navigation && navigation.navigate('Homepage');
         setSuccess(I18n.t('Congratulations! Registration completed'));
         setmodalVisible(true);
       })
       .catch(function () { // error) {
+        setLoading(false);
         // alert(error.message);
         setError(I18n.t('An error has occurred, please try again'));
         setmodalVisible(true);
@@ -123,6 +128,11 @@ export default ({ navigation }): React.ReactElement => {
   return (
     <SafeAreaLayout insets='top' style={styles.safeArea}>
       <KeyboardAvoidingView style={styles.container}>
+      <Spinner
+          visible={loading}
+          textContent={I18n.t('Loading') + '...'}
+          textStyle={styles.spinnerTextStyle}
+        />
         <View style={styles.headerContainer}>
           <ImageBackground
             style={styles.imageAuth}
@@ -291,6 +301,9 @@ const themedStyles = StyleService.create({
     marginTop: 10,
     marginBottom: 10,
     textAlign: 'center',
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });
 

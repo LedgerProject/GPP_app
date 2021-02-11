@@ -14,6 +14,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppOptions } from '../services/app-options';
 import I18n from './../i18n/i18n';
+import Spinner from 'react-native-loading-spinner-overlay';
+
 
 export const WhereIAmListScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
@@ -25,6 +27,7 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
   const [categoryOptions, setCategoryOptions] = React.useState([]);
   const [markers, setMarkers] = React.useState([]);
   const [searchMarkers, setSearchMarkers] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
 
   const onSelectFilter = (selected_option) => {
     setFilter(selected_option);
@@ -38,6 +41,7 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
   };
 
   async function getMyRegion(Lat1, Lon1, Lat2, Lon2, idCategory = null) {
+    setLoading(true);
     setMarkers([]);
     let add_on = '';
     if (idCategory) {
@@ -83,11 +87,13 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
       },
     })
     .then(function (response) {
+      setLoading(false);
        // console.log(response);
        setMarkers(response.data);
        setSearchMarkers(response.data);
     })
     .catch(function (error) {
+      setLoading(false);
       // alert(JSON.stringify(error));
       throw error;
     });
@@ -193,7 +199,11 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
         leftControl={renderDrawerAction()}
       />
       <Divider/>
-
+      <Spinner
+          visible={loading}
+          textContent={I18n.t('Loading') + '...'}
+          textStyle={styles.spinnerTextStyle}
+        />
       <Layout style={styles.safeArea}>
         <View style={styles.filtersContainer}>
           <Text style={styles.labelWhat}>{I18n.t('What are you searching for') + '?'}</Text>
@@ -276,5 +286,8 @@ const themedStyles = StyleService.create({
   item: {
     borderBottomWidth: 1,
     borderBottomColor: 'background-basic-color-3',
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });

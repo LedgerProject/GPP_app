@@ -9,12 +9,14 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppOptions } from '../services/app-options';
 import I18n from './../i18n/i18n';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export const WhereIAmCountryScreen = (props): React.ReactElement => {
   const { Country } = props.route.params;
   const styles = useStyleSheet(themedStyles);
   const [countryName, setCountryName] = React.useState('');
   const [topics, setTopics] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
 
   const navigateBack = () => {
     props.navigation.goBack();
@@ -30,7 +32,7 @@ export const WhereIAmCountryScreen = (props): React.ReactElement => {
   }, []);
 
   async function getCountry() {
-
+    setLoading(true);
     const token = await AsyncStorage.getItem('token');
 
     axios
@@ -61,6 +63,7 @@ export const WhereIAmCountryScreen = (props): React.ReactElement => {
         },
       })
       .then(function (response) {
+        setLoading(false);
         const data: any = response.data[0];
         setCountryName(data.identifier);
         const topicsObj = data.countryTopic;
@@ -92,6 +95,11 @@ export const WhereIAmCountryScreen = (props): React.ReactElement => {
         leftControl={renderDrawerAction()}
       />
       <Divider/>
+      <Spinner
+          visible={loading}
+          textContent={I18n.t('Loading') + '...'}
+          textStyle={styles.spinnerTextStyle}
+        />
       <ScrollView>
 
       <Layout style={styles.mainTitleContainer}>
@@ -129,5 +137,8 @@ const themedStyles = StyleService.create({
   },
   elementDescription: {
     color: '#666', marginBottom: 4,
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });

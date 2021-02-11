@@ -82,5 +82,5 @@ export default {
   'Now you are on': 'Now you are on',
   'Country': 'Country',
   'Country not found': 'Country not found',
-
+  'Loading': 'Loading',
 };

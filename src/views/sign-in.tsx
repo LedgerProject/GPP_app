@@ -8,6 +8,7 @@ import I18n from './../i18n/i18n';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppOptions } from '../services/app-options';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export default ({ navigation }): React.ReactElement => {
   const [email, setEmail] = React.useState<string>();
@@ -16,6 +17,7 @@ export default ({ navigation }): React.ReactElement => {
   const [modalVisible, setmodalVisible] = React.useState(false);
   const [error, setError] = React.useState<string>();
   const styles = useStyleSheet(themedStyles);
+  const [loading, setLoading] = React.useState(false);
 
   const onSignUpButtonPress = (): void => {
     navigation && navigation.navigate('SignUp');
@@ -37,6 +39,7 @@ export default ({ navigation }): React.ReactElement => {
       setmodalVisible(true);
       return;
     }
+    setLoading(true);
     const postParams = {
         email: email,
         password: password,
@@ -45,10 +48,12 @@ export default ({ navigation }): React.ReactElement => {
       .post(AppOptions.getServerUrl() + 'users/login', postParams)
       .then(function (response) {
         // handle success
+        setLoading(false);
         AsyncStorage.setItem('token', response.data.token);
         navigation && navigation.navigate('Homepage');
       })
       .catch(function () { // (error) {
+        setLoading(false);
         setError(I18n.t('Please check Email or password'));
         setmodalVisible(true);
       });
@@ -62,6 +67,11 @@ export default ({ navigation }): React.ReactElement => {
   return (
     <SafeAreaLayout insets='top' style={styles.safeArea}>
       <KeyboardAvoidingView style={styles.container}>
+      <Spinner
+          visible={loading}
+          textContent={I18n.t('Loading') + '...'}
+          textStyle={styles.spinnerTextStyle}
+        />
         <View style={styles.headerContainer}>
           <ImageBackground
             style={styles.imageAuth}
@@ -188,5 +198,8 @@ const themedStyles = StyleService.create({
     marginTop: 10,
     marginBottom: 10,
     textAlign: 'center',
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });

@@ -15,7 +15,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppOptions } from '../services/app-options';
 import I18n from './../i18n/i18n';
 import openMap from 'react-native-open-maps';
-import { ConversationListScreen } from 'src/scenes/messaging/conversation-list.component';
+import Spinner from 'react-native-loading-spinner-overlay';
+
 /* export class Structure {
   constructor(
     readonly idStructure: string,
@@ -44,6 +45,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
   const [alertTitle, setAlertTitle] = React.useState('');
   const [alertMessage, setAlertMessage] = React.useState('');
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const navigateBack = () => {
     props.navigation.goBack();
@@ -79,7 +81,11 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
         I18n.t('Please fill the Message'),
       );
     } else {
+      setLoading(true);
       const token = await AsyncStorage.getItem('token');
+
+
+      setLoading(false);
 
     }
   };
@@ -90,6 +96,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
   };
 
    async function getStructure() {
+    setLoading(true);
     const token = await AsyncStorage.getItem('token');
 
 
@@ -111,7 +118,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
       },
     })
     .then(function (response) {
-
+      setLoading(false);
       setStructure(response.data);
 
       const image_data: any = response.data.structureImage;
@@ -177,6 +184,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
       //*/
     })
     .catch(function (error) {
+       setLoading(false);
        alert(JSON.stringify(error));
        throw error;
     });
@@ -195,6 +203,11 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
         leftControl={renderDrawerAction()}
       />
       <Divider/>
+      <Spinner
+          visible={loading}
+          textContent={I18n.t('Loading') + '...'}
+          textStyle={styles.spinnerTextStyle}
+        />
       <ScrollView>
 
   <Layout style={styles.header}>
@@ -440,5 +453,8 @@ const themedStyles = StyleService.create({
   modalTitle: {
     marginBottom: 4,
     textAlign: 'center',
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });

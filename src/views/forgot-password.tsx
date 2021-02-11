@@ -4,9 +4,12 @@ import { Button, Input, Layout, Text, StyleService, useStyleSheet } from '@ui-ki
 import { EmailIcon } from '../components/icons';
 import { KeyboardAvoidingView } from '../services/3rd-party';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
+import Spinner from 'react-native-loading-spinner-overlay';
+import I18n from './../i18n/i18n';
 
 export default ({ navigation }): React.ReactElement => {
   const [email, setEmail] = React.useState<string>();
+  const [loading, setLoading] = React.useState(false);
 
   const styles = useStyleSheet(themedStyles);
 
@@ -21,6 +24,11 @@ export default ({ navigation }): React.ReactElement => {
   return (
     <SafeAreaLayout insets='top' style={styles.safeArea}>
       <KeyboardAvoidingView>
+      <Spinner
+          visible={loading}
+          textContent={I18n.t('Loading') + '...'}
+          textStyle={styles.spinnerTextStyle}
+        />
         <View style={styles.headerContainer}>
           <ImageBackground
             style={styles.imageAuth}
@@ -111,5 +119,8 @@ const themedStyles = StyleService.create({
   },
   forgotPasswordButton: {
     paddingHorizontal: 0,
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });
