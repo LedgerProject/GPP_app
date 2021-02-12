@@ -240,9 +240,6 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
   // Event on Google Maps region change
   const onRegionChange = (curMapRegion) => {
-    // Set the map region state
-    //setMapRegion(curMapRegion);
-
     // Get the map boundaries
     const boundaries = getBoundByRegion(curMapRegion);
 
