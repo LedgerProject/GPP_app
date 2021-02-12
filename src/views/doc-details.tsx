@@ -42,7 +42,7 @@ export const DocDetailsScreen = (props): React.ReactElement => {
 
    const zoom_images = [
     {
-     url: 'https://images.unsplash.com/photo-1567226475328-9d6baaf565cf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60',
+     url: image,
      props: {},
     },
    ];

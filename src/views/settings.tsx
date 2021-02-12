@@ -9,15 +9,22 @@ import {
   TopNavigation,
   TopNavigationAction,
   Divider,
+  Text,
+  Modal as ModalUiKitten,
 } from '@ui-kitten/components';
-import { languageOptions } from './settings/data';
+import languageOptions from './settings/data';
 import { MenuIcon, GlobeIcon } from '../components/icons';
 import { KeyboardAvoidingView } from '../services/3rd-party';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import I18n from './../i18n/i18n';
 
 export const SettingsScreen = (props): React.ReactElement => {
   const [language, setLanguage] = React.useState(props.selectedOption);
+  const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
+  const [alertTitle, setAlertTitle] = React.useState('');
+  const [alertMessage, setAlertMessage] = React.useState('');
 
   const styles = useStyleSheet(themedStyles);
 
@@ -27,6 +34,21 @@ export const SettingsScreen = (props): React.ReactElement => {
 
   const onSaveButtonPress = (): void => {
     // TODO
+    if (language) {
+      AsyncStorage.setItem('lang', language.lang);
+      showAlertMessage(
+        I18n.t('Language Options'),
+        I18n.t('Language updated successfully'),
+      );
+      I18n.locale = language.lang;
+      // console.log(I18n.locale);
+    }
+  };
+
+  const showAlertMessage = (title: string, message: string) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setModalAlertVisible(true);
   };
 
   const renderDrawerAction = (): React.ReactElement => (
@@ -41,7 +63,7 @@ export const SettingsScreen = (props): React.ReactElement => {
       <View
         style={{flex: 1}}>
         <TopNavigation
-          title='Settings'
+          title={I18n.t('Settings')}
           leftControl={renderDrawerAction()}
         />
         <Divider />
@@ -56,7 +78,7 @@ export const SettingsScreen = (props): React.ReactElement => {
                 style={styles.select}
                 selectedOption={language}
                 data={languageOptions}
-                placeholder='Select the application language'
+                placeholder={I18n.t('Select the application language')}
                 onSelect={onSelectLanguage}
               />
               <Divider />
@@ -64,12 +86,22 @@ export const SettingsScreen = (props): React.ReactElement => {
                   style={styles.saveButton}
                   size='giant'
                   onPress={onSaveButtonPress}>
-                  Save
+                  {I18n.t('Save')}
               </Button>
             </Layout>
           </KeyboardAvoidingView>
         </ScrollView>
       </View>
+      <ModalUiKitten
+        visible={ modalAlertVisible }
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setModalAlertVisible(false)}>
+        <Layout style={ styles.modal } >
+          <Text style={ styles.modalText } category='h6' >{alertTitle}</Text>
+          <Text style={ styles.modalText } >{alertMessage}</Text>
+          <Button status='basic' onPress={() => setModalAlertVisible(false)}>{I18n.t('CLOSE')}</Button>
+        </Layout>
+      </ModalUiKitten>
     </SafeAreaLayout>
   );
 };
@@ -101,5 +133,19 @@ const themedStyles = StyleService.create({
   saveButton: {
     marginTop: 12,
     marginHorizontal: 16,
+  },
+  backdrop: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+  modal: {
+    textAlign: 'center',
+    margin: 12,
+    padding: 12,
+  },
+  modalText: {
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  modalTitle: {
+    marginBottom: 4,
+    textAlign: 'center',
   },
 });

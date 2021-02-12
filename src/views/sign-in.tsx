@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect} from 'react';
 import { View, ImageBackground } from 'react-native';
 import { Button, Input, Layout, StyleService, Text, useStyleSheet, Modal } from '@ui-kitten/components';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
@@ -63,6 +63,11 @@ export default ({ navigation }): React.ReactElement => {
   const onPasswordIconPress = (): void => {
     setPasswordVisible(!passwordVisible);
   };
+
+  useEffect(() => {
+    setEmail('test@globalpassportproject.me');
+    setPassword('12345678');
+  }, []);
 
   return (
     <SafeAreaLayout insets='top' style={styles.safeArea}>

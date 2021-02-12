@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { View, ScrollView, ListRenderItemInfo, Alert } from 'react-native';
 import {
   Input, Button, Divider, List, ListItem, StyleService, Text,
-  TopNavigation, TopNavigationAction, useStyleSheet, Layout, Select,
+  TopNavigation, TopNavigationAction, useStyleSheet, Layout, Select, Modal as ModalUiKitten,
 } from '@ui-kitten/components';
 import { ArrowBackIcon, MenuIcon } from '../components/icons';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
@@ -28,6 +28,9 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
   const [markers, setMarkers] = React.useState([]);
   const [searchMarkers, setSearchMarkers] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+  const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
+  const [alertTitle, setAlertTitle] = React.useState('');
+  const [alertMessage, setAlertMessage] = React.useState('');
 
   const onSelectFilter = (selected_option) => {
     setFilter(selected_option);
@@ -160,9 +163,17 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
   };
 
   const onCountryButtonPress = (): void => {
+
+  if (Country) {
     props.navigation && props.navigation.navigate('WhereIAmCountry', {
       Country: Country,
     });
+  } else {
+    showAlertMessage(
+      I18n.t('Country Error'),
+      I18n.t('No Country Selected'),
+    );
+  }
   };
 
   const onDetailsButtonPress = (): void => {
@@ -179,6 +190,12 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
 
   const onPressItem = (idStructure: string, index: number): void => {
     props.navigation && props.navigation.navigate('WhereIAmDetails', { idStructure: idStructure });
+  };
+
+  const showAlertMessage = (title: string, message: string) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setModalAlertVisible(true);
   };
 
     const renderStructureItem = ({ item, index }) => (
@@ -235,6 +252,16 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
           <Text style={styles.downTextBold}>{Country}</Text>
         </Layout>
       </Layout>
+      <ModalUiKitten
+        visible={ modalAlertVisible }
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setModalAlertVisible(false)}>
+        <Layout style={ styles.modal } >
+          <Text style={ styles.modalText } category='h6' >{alertTitle}</Text>
+          <Text style={ styles.modalText } >{alertMessage}</Text>
+          <Button status='basic' onPress={() => setModalAlertVisible(false)}>{I18n.t('CLOSE')}</Button>
+        </Layout>
+      </ModalUiKitten>
     </SafeAreaLayout>
   );
 };
@@ -289,5 +316,19 @@ const themedStyles = StyleService.create({
   },
   spinnerTextStyle: {
     color: '#FFF',
+  },
+  backdrop: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+  modal: {
+    textAlign: 'center',
+    margin: 12,
+    padding: 12,
+  },
+  modalText: {
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  modalTitle: {
+    marginBottom: 4,
+    textAlign: 'center',
   },
 });

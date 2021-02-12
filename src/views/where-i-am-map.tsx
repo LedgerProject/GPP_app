@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 import { View, ScrollView, Image, StyleSheet, Dimensions } from 'react-native';
-import { Button, Divider, StyleService, Text, TopNavigation, TopNavigationAction, useStyleSheet, Layout, Select } from '@ui-kitten/components';
+import {
+  Button, Divider, StyleService, Text, TopNavigation,
+  TopNavigationAction, useStyleSheet, Layout, Select, Modal as ModalUiKitten,
+} from '@ui-kitten/components';
 import { MenuIcon } from '../components/icons';
 // import { categoryOptions } from './where-i-am/data-category';
 import { getBoundByRegion } from '../services/maps';
@@ -16,7 +19,7 @@ import GetLocation from 'react-native-get-location';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 // Initialize the module (needs to be done only once)
-Geocoder.init('AIzaSyB0V5h9bq_CfW2Z9pVJHFJI8oiZ8NfdjUY', {language : 'en'});
+Geocoder.init( AppOptions.getGeocoderApiKey() , {language : 'en'});
 
 const { height, width } = Dimensions.get( 'window' );
 const INITIAL_LATITUDE_DELTA = 40;
@@ -57,6 +60,10 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   const [latitudeDelta, setLatitudeDelta] = React.useState(INITIAL_LATITUDE_DELTA);
   const [longitudeDelta, setLongitudeDelta] = React.useState(INITIAL_LONGITUDE_DELTA);
   const [loading, setLoading] = React.useState(false);
+  const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
+  const [alertTitle, setAlertTitle] = React.useState('');
+  const [alertMessage, setAlertMessage] = React.useState('');
+
   // Init functions
   useEffect(() => {
     getCategories();
@@ -95,8 +102,8 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
     })
     .catch(error => {
       setMapRegion(initialMapRegion);
-      const { code, message } = error;
-      console.warn(code, message);
+      // const { code, message } = error;
+      // console.log(code, message);
     });
   }
 
@@ -214,20 +221,30 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
   // Event to show the list
   const onListButtonPress = (): void => {
+   if (markers.length) {
     props.navigation && props.navigation.navigate('WhereIAmList', {
       regionBoundaries: regionBoundaries,
       option: filterCategory,
       Country: currentCountry,
     });
+   } else {
+    showAlertMessage(
+      I18n.t('Structures Error'),
+      I18n.t('No Structure Found'),
+    );
+   }
   };
 
   // Event to show the country information
   const onCountryButtonPress = (): void => {
-    props.navigation && props.navigation.navigate('WhereIAmCountry', { Country: currentCountry});
-  };
-
-  const onMarkerButtonPress = (idStructure): any => {
-    // props.navigation && props.navigation.navigate('WhereIAmDetails', { idStructure: idStructure });
+    if (currentCountry) {
+      props.navigation && props.navigation.navigate('WhereIAmCountry', { Country: currentCountry});
+    } else {
+      showAlertMessage(
+        I18n.t('Country Error'),
+        I18n.t('No Country Selected'),
+      );
+    }
   };
 
   const onMarkerPress = (): void => {
@@ -274,8 +291,16 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
           setCurrentCountry(countryLong);
         })
-        .catch(error => console.warn(error));
+        .catch(error => {
+          // console.log(error)
+        });
     }
+  };
+
+  const showAlertMessage = (title: string, message: string) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setModalAlertVisible(true);
   };
 
   const renderDrawerAction = (): React.ReactElement => (
@@ -371,6 +396,17 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
           <Text style={styles.downText}>{I18n.t('Now you are on') + ':'}</Text>
           <Text style={styles.downTextBold}>{currentCountry}</Text>
         </Layout>
+
+        <ModalUiKitten
+        visible={ modalAlertVisible }
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setModalAlertVisible(false)}>
+        <Layout style={ styles.modal } >
+          <Text style={ styles.modalText } category='h6' >{alertTitle}</Text>
+          <Text style={ styles.modalText } >{alertMessage}</Text>
+          <Button status='basic' onPress={() => setModalAlertVisible(false)}>{I18n.t('CLOSE')}</Button>
+        </Layout>
+      </ModalUiKitten>
       </ScrollView>
     </SafeAreaLayout>
   );
@@ -453,5 +489,19 @@ const themedStyles = StyleService.create({
   },
   spinnerTextStyle: {
     color: '#FFF',
+  },
+  backdrop: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+  modal: {
+    textAlign: 'center',
+    margin: 12,
+    padding: 12,
+  },
+  modalText: {
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  modalTitle: {
+    marginBottom: 4,
+    textAlign: 'center',
   },
 });

@@ -1,6 +1,8 @@
-import { SelectOptionType } from '@ui-kitten/components';
+// import { SelectOptionType } from '@ui-kitten/components';
 
-export const languageOptions: SelectOptionType[] = [
-    { text: 'English'},
-    { text: 'Français' },
+const languageOptions = [
+    { text: 'English', lang: 'en' },
+    { text: 'Français', lang: 'fr' },
 ];
+
+export default languageOptions;

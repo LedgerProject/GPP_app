@@ -89,4 +89,12 @@ export default {
   'Select your birthday': 'Select your birthday',
   'Save': 'Save',
   'Remove all my data': 'Remove all my data',
+  'Country Error': 'Country Error',
+  'No Country Selected': 'No Country Selected',
+  'Structures Error': 'Structures Error',
+  'No Structure Found': 'No Structure Found',
+  'Settings': 'Settings',
+  'Select the application language': 'Select the application language',
+  'Language Options': 'Language Options',
+  'Language updated successfully': 'Language updated successfully',
 };

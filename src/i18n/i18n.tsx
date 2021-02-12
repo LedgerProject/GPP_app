@@ -12,6 +12,7 @@ if (Array.isArray(locales)) {
 
 I18n.fallbacks = true;
 I18n.translations = {
+  default: en,
   en,
   fr,
 };
