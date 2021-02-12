@@ -240,9 +240,8 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
   // Event on Google Maps region change
   const onRegionChange = (curMapRegion) => {
-
     // Set the map region state
-    setMapRegion(curMapRegion);
+    //setMapRegion(curMapRegion);
 
     // Get the map boundaries
     const boundaries = getBoundByRegion(curMapRegion);
@@ -263,7 +262,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
       );
 
       // Get the country based on current map region coordinates
-      Geocoder.from(mapRegion.latitude, mapRegion.longitude)
+      Geocoder.from(curMapRegion.latitude, curMapRegion.longitude)
         .then(json => {
           let countryLong = '';
           let countryShort = '';
@@ -319,7 +318,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
           <MapView
             provider={PROVIDER_GOOGLE}
             style={isMapReady ? styles.Map : {}}
-            region={mapRegion}
+            initialRegion={mapRegion}
             onRegionChangeComplete={onRegionChange}
             zoomControlEnabled={true}
             onMapReady={handleMapReady}
