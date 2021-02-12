@@ -123,6 +123,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
 
       const image_data: any = response.data.structureImage;
       const ImagesArray = [];
+      if (image_data) {
       image_data.map( (element) => {
         const imgObj = {
           url: AppOptions.getServerUrl() +
@@ -130,14 +131,17 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
           element.filename, desc: '', props: {} };
         ImagesArray.push( imgObj );
       });
+      }
       setImages(ImagesArray);
 
       const lang_data: any = response.data.structureLanguage;
+      if (lang_data) {
       lang_data.map( (element) => {
         if (element.language === 'en') {
           setStructureDescription(element.description);
         }
       });
+      }
 
       // get images
       /*axios
@@ -185,7 +189,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
     })
     .catch(function (error) {
        setLoading(false);
-       alert(JSON.stringify(error));
+       // alert(JSON.stringify(error));
        throw error;
     });
   }
