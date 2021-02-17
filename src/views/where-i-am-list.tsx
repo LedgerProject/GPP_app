@@ -19,7 +19,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 
 export const WhereIAmListScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
-  const { regionBoundaries, option, Country } = props.route.params;
+  const { regionBoundaries, option, Country, currentPosition } = props.route.params;
 
   const [filter, setFilter] = React.useState(props.selectedOption);
   const [searchterm, setSearchterm] = React.useState('');
@@ -40,15 +40,20 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
       regionBoundaries.southEastLatitude,
       regionBoundaries.southEastLongitude,
       selected_option.idCategory,
+      currentPosition.latitude,
+      currentPosition.longitude,
     );
   };
 
-  async function getMyRegion(Lat1, Lon1, Lat2, Lon2, idCategory = null) {
+  async function getMyRegion(Lat1, Lon1, Lat2, Lon2, idCategory = null, currentLat = null, currentLon = null) {
     setLoading(true);
     setMarkers([]);
     let add_on = '';
     if (idCategory) {
       add_on = ' ,"idCategory": "' + idCategory + '" ';
+    }
+    if (currentLat && currentLon) {
+      add_on = add_on + ' ,"userLatitude": "' + currentLat + '" ,"userLongitude": "' + currentLon + '" ';
     }
     // get position
 
@@ -188,8 +193,9 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
     <TopNavigationAction icon={ArrowBackIcon} onPress={navigateBack} />
   );
 
-  const onPressItem = (idStructure: string, index: number): void => {
-    props.navigation && props.navigation.navigate('WhereIAmDetails', { idStructure: idStructure });
+  const onPressItem = (idStructure: string, index: number, distance: number): void => {
+    // console.log(distance);
+    props.navigation && props.navigation.navigate('WhereIAmDetails', { idStructure: idStructure, distance: distance });
   };
 
   const showAlertMessage = (title: string, message: string) => {

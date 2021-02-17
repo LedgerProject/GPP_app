@@ -34,7 +34,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 
 export const WhereIAmDetailsScreen = (props): React.ReactElement => {
 
-  const { idStructure } = props.route.params;
+  const { idStructure, distance } = props.route.params;
   const [modalVisible, setmodalVisible] = React.useState(false);
   const [modalContactVisible, setmodalContactVisible] = React.useState(false);
   const styles = useStyleSheet(themedStyles);
@@ -237,12 +237,13 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
       category='p2'>
       {structure.address} {structure.city}
     </Text>
+    { distance && (
     <Text
       style={styles.price}
       category='h4'>
-      { /* structure.address */ } 0.97km
+      { parseFloat(distance).toFixed(1) } km
     </Text>
-
+    )}
     <Text
       style={styles.description}
     >{structureDescription}</Text>

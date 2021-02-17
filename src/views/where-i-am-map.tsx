@@ -227,6 +227,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
       regionBoundaries: regionBoundaries,
       option: filterCategory,
       Country: currentCountry,
+      currentPosition: currentPosition,
     });
    } else {
     showAlertMessage(
