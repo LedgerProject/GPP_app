@@ -98,18 +98,18 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
    async function getStructure() {
     setLoading(true);
     const token = await AsyncStorage.getItem('token');
-
-
+    let lang = await AsyncStorage.getItem('lang');
+    lang = lang.substring(0, 2);
     axios
     .get(AppOptions.getServerUrl() + `structures/` + idStructure + `?filter={"include":[`
     + `{"relation": "icon"},`
     + `{"relation": "structureCategory", "scope":`
     + `{"include": [{"relation": "category", "scope":`
-    + `{"include": [{"relation": "categoryLanguage", "scope": {"where": {"language": "en"}}}]}`
+    + `{"include": [{"relation": "categoryLanguage", "scope": {"where": {"language": "` + lang + `"}}}]}`
     + `}]}`
     + `},`
     + `{"relation": "structureImage"},`
-    + `{"relation": "structureLanguage", "scope": {"where": {"language": "en"}}}`
+    + `{"relation": "structureLanguage", "scope": {"where": {"language": "` + lang + `"}}}`
     + `]}`
     , {
       headers: {
@@ -203,7 +203,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
       style={styles.safeArea}
       insets='top'>
       <TopNavigation
-        title='Details'
+        title={I18n.t('Details')}
         leftControl={renderDrawerAction()}
       />
       <Divider/>

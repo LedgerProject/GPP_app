@@ -19,6 +19,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import I18n from './../i18n/i18n';
+import RNRestart from 'react-native-restart';
 
 export const SettingsScreen = (props): React.ReactElement => {
   const [language, setLanguage] = React.useState(props.selectedOption);
@@ -37,11 +38,11 @@ export const SettingsScreen = (props): React.ReactElement => {
     if (language) {
       AsyncStorage.setItem('lang', language.lang);
       showAlertMessage(
-        I18n.t('Language Options'),
-        I18n.t('Language updated successfully'),
+        ('Language Options'),
+        ('Language updated successfully'),
       );
       I18n.locale = language.lang;
-      // console.log(I18n.locale);
+      RNRestart.Restart();
     }
   };
 
@@ -97,8 +98,8 @@ export const SettingsScreen = (props): React.ReactElement => {
         backdropStyle={styles.backdrop}
         onBackdropPress={() => setModalAlertVisible(false)}>
         <Layout style={ styles.modal } >
-          <Text style={ styles.modalText } category='h6' >{alertTitle}</Text>
-          <Text style={ styles.modalText } >{alertMessage}</Text>
+          <Text style={ styles.modalText } category='h6' >{I18n.t(alertTitle)}</Text>
+          <Text style={ styles.modalText } >{I18n.t(alertMessage)}</Text>
           <Button status='basic' onPress={() => setModalAlertVisible(false)}>{I18n.t('CLOSE')}</Button>
         </Layout>
       </ModalUiKitten>

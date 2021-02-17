@@ -78,11 +78,12 @@ export const MyProfileScreen = (props): React.ReactElement => {
   async function getNationalities() {
       setLoading(true);
       const token = await AsyncStorage.getItem('token');
-
+      let lang = await AsyncStorage.getItem('lang');
+      lang = lang.substring(0, 2);
       axios
         .get(AppOptions.getServerUrl() + `nationalities?filter={`
          + `"include":[`
-          + `{"relation": "nationalityLanguage", "scope": {"where": {"language": "en"}}}`
+          + `{"relation": "nationalityLanguage", "scope": {"where": {"language": "` + lang + `"}}}`
          + `]`
           + `}`
           , {

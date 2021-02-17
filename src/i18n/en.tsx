@@ -97,4 +97,12 @@ export default {
   'Select the application language': 'Select the application language',
   'Language Options': 'Language Options',
   'Language updated successfully': 'Language updated successfully',
+  'Document Wallet': 'Document Wallet',
+  'Where I Am': 'Where I Am',
+  'Change Password': 'Change Password',
+  'Kosmopolis': 'Kosmopolis',
+  'Logout': 'Logout',
+  'Details': 'Details',
+  'Social': 'Social',
+  'New Post': 'New Post',
 };

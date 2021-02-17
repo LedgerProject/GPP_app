@@ -7,7 +7,7 @@ import { MenuGridList } from '../components/menu-grid-list.component';
 import { DocumentItem } from './doc-wallet/document-item.component';
 import { requestCameraPermission, requestExternalWritePermission } from '../services/image-picker';
 import { MenuIcon } from '../components/icons';
-import { data, Document } from './doc-wallet/data';
+import { Document } from './doc-wallet/data';
 import {
   ImagePickerResponse,
   MediaType,
@@ -22,6 +22,15 @@ import FormData from 'form-data';
 import slugify from '@sindresorhus/slugify';
 import Spinner from 'react-native-loading-spinner-overlay';
 
+import { ImageStyle, ImageSourcePropType } from 'react-native';
+import { ThemedIcon } from '../components/themed-icon.component';
+import {
+ AssetTakePhotoDarkIcon,
+ AssetTakePhotoIcon,
+ AssetPhotoLibraryDarkIcon,
+ AssetPhotoLibraryIcon,
+} from '../components/icons';
+import { MenuItem } from '../model/menu-item.model';
 /*const initialDocuments: Document[] = [
   Document.passportDocument(),
   Document.idDocument(),
@@ -30,6 +39,10 @@ import Spinner from 'react-native-loading-spinner-overlay';
   Document.testDoc1(),
   Document.testDoc2(),
 ];*/
+
+export interface LayoutData extends MenuItem {
+  route: string;
+}
 
 const initialFileResponse: ImagePickerResponse = {
   base64: '',
@@ -57,6 +70,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
   const [documentTitle, setDocumentTitle] = React.useState('');
   const [fileResponse, setFileResponse] = React.useState<ImagePickerResponse>(initialFileResponse);
   const [loading, setLoading] = React.useState(false);
+  const [data, setData] = React.useState([]);
 
   const ZoomImage = (): void => {
     setmodalFileVisible(true);
@@ -195,8 +209,60 @@ export const DocWalletScreen = (props): React.ReactElement => {
   }
 
   useEffect(() => {
+    getButtons();
     getMyDocuments();
   }, []);
+
+  async function getButtons() {
+    const buttonsArray = [];
+    buttonsArray.push(
+      {
+        title: I18n.t('Take Photo'),
+        route: 'TakePhoto',
+        icon: (style: ImageStyle) => {
+          return React.createElement(
+            ThemedIcon,
+            { ...style, light: AssetTakePhotoIcon, dark: AssetTakePhotoDarkIcon },
+          );
+        },
+      },
+    );
+    buttonsArray.push(
+      {
+        title: I18n.t('From Library'),
+        route: 'LibraryPhoto',
+        icon: (style: ImageStyle) => {
+          return React.createElement(
+            ThemedIcon,
+            { ...style, light: AssetPhotoLibraryIcon, dark: AssetPhotoLibraryDarkIcon },
+          );
+        },
+      },
+    );
+    setData(buttonsArray);
+  }
+  /*export const data: LayoutData[] = [
+  {
+    title: I18n.t('Take Photo'), // 'Take Photo',
+    route: 'TakePhoto',
+    icon: (style: ImageStyle) => {
+      return React.createElement(
+        ThemedIcon,
+        { ...style, light: AssetTakePhotoIcon, dark: AssetTakePhotoDarkIcon },
+      );
+    },
+  },
+  {
+    title: I18n.t('From Library'), // 'From Library',
+    route: 'LibraryPhoto',
+    icon: (style: ImageStyle) => {
+      return React.createElement(
+        ThemedIcon,
+        { ...style, light: AssetPhotoLibraryIcon, dark: AssetPhotoLibraryDarkIcon },
+      );
+    },
+  },
+  ];*/
 
   // * IMAGE PICKER *
   const getPhoto = async (type: string) => {

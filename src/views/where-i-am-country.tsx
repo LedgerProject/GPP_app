@@ -34,7 +34,8 @@ export const WhereIAmCountryScreen = (props): React.ReactElement => {
   async function getCountry() {
     setLoading(true);
     const token = await AsyncStorage.getItem('token');
-
+    let lang = await AsyncStorage.getItem('lang');
+    lang = lang.substring(0, 2);
     axios
       .get(AppOptions.getServerUrl() + `countries?filter={`
         + `"where": {`
@@ -45,14 +46,14 @@ export const WhereIAmCountryScreen = (props): React.ReactElement => {
               + `{"include": [`
                 + `{"relation": "countryTopicLanguage",`
                   + `"scope": {"where":`
-                    + `{"language": "en"}`
+                    + `{"language": "` + lang + `"}`
                   + `}`
                 + `}`
               + `]}`
           + `},`
           + `{"relation": "countryLanguage", "scope":`
               + `{"where":`
-                + `{"language": "en"}`
+                + `{"language": "` + lang + `"}`
               + `}`
           + `}`
         + `]`

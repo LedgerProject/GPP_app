@@ -1,7 +1,7 @@
 import React from 'react';
-import { ImageStyle, ImageSourcePropType } from 'react-native';
-import { ThemedIcon } from '../../components/themed-icon.component';
-import {
+ import { ImageStyle, ImageSourcePropType } from 'react-native';
+ import { ThemedIcon } from '../../components/themed-icon.component';
+ import {
   AssetTakePhotoDarkIcon,
   AssetTakePhotoIcon,
   AssetPhotoLibraryDarkIcon,

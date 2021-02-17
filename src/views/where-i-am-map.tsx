@@ -63,6 +63,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
   const [alertTitle, setAlertTitle] = React.useState('');
   const [alertMessage, setAlertMessage] = React.useState('');
+  const [currentPosition, setCurrentPosition] = React.useState((): any => {});
 
   // Init functions
   useEffect(() => {
@@ -86,7 +87,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
       setLatitudeDelta(latDelta);
       setLongitudeDelta(lonDelta);
-
+      setCurrentPosition({ latitude: location.latitude, longitude: location.longitude });
       const initialRegion: Region = {
         latitude: location.latitude,
         longitude: location.longitude,
@@ -379,6 +380,14 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
                 );
               })
             }
+            { currentPosition && (
+            <Marker
+                  key={-999}
+                  coordinate={{ latitude: currentPosition.latitude, longitude: currentPosition.longitude }}
+                  // image={{ uri: 'data:image/png;base64,' + structure.iconmarker }}
+                >
+                </Marker>
+            ) }
             </MapView>
         </Layout>
         <Layout style={styles.buttonsContainer}>

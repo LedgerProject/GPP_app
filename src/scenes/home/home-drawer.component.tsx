@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import {
   Avatar,
@@ -16,61 +16,97 @@ import { BookOpenIcon, LockIcon, MapIcon, PersonIcon, Settings2Icon, LogoutIcon 
 import { SafeAreaLayout } from '../../components/safe-area-layout.component';
 import { WebBrowserService } from '../../services/web-browser.service';
 import { AppInfoService } from '../../services/app-info.service';
+import I18n from '../../i18n/i18n';
 
-const DATA: MenuItemType[] = [
-  { title: 'Document Wallet', icon: BookOpenIcon },
-  { title: 'Where I Am', icon: MapIcon },
-  { title: 'My Profile', icon: PersonIcon },
-  { title: 'Settings', icon: Settings2Icon },
-  { title: 'Change Password', icon: LockIcon },
-  { title: 'Kosmopolis', icon: LockIcon },
-  { title: 'Logout', icon: LogoutIcon },
-];
+/*const DATA: MenuItemType[] = [
+  { title: I18n.t('Document Wallet'), icon: BookOpenIcon },
+  { title: I18n.t('Where I Am'), icon: MapIcon },
+  { title: I18n.t('My Profile'), icon: PersonIcon },
+  { title: I18n.t('Settings'), icon: Settings2Icon },
+  { title: I18n.t('Change Password'), icon: LockIcon },
+  { title: I18n.t('Kosmopolis'), icon: LockIcon },
+  { title: I18n.t('Logout'), icon: LogoutIcon },
+];*/
 
 const version: string = AppInfoService.getVersion();
 
 export const HomeDrawer = ({ navigation }): DrawerElement => {
+
+/*const DATA: MenuItemType[] = [
+  { title: I18n.t('Document Wallet'), icon: BookOpenIcon },
+  { title: I18n.t('Where I Am'), icon: MapIcon },
+  { title: I18n.t('My Profile'), icon: PersonIcon },
+  { title: I18n.t('Settings'), icon: Settings2Icon },
+  { title: I18n.t('Change Password'), icon: LockIcon },
+  { title: I18n.t('Kosmopolis'), icon: LockIcon },
+  { title: I18n.t('Logout'), icon: LogoutIcon },
+];*/
+
+  const [DATA, setDATA] = React.useState([]);
+
+  useEffect(() => {
+    const menuObj = [
+      { title: I18n.t('Homepage'), icon: BookOpenIcon },
+      { title: I18n.t('Document Wallet'), icon: BookOpenIcon },
+      { title: I18n.t('Where I Am'), icon: MapIcon },
+      { title: I18n.t('My Profile'), icon: PersonIcon },
+      { title: I18n.t('Settings'), icon: Settings2Icon },
+      { title: I18n.t('Change Password'), icon: LockIcon },
+      { title: I18n.t('Kosmopolis'), icon: LockIcon },
+      { title: I18n.t('Logout'), icon: LogoutIcon },
+    ];
+    const menuArray = menuObj;
+    // menuArray.push(menuObj);
+    setDATA(menuArray);
+  }, []);
+
+
 
   const onItemSelect = (index: number): void => {
     switch (index) {
       // Document Wallet
       case 0: {
         navigation.toggleDrawer();
+        navigation.navigate('Homepage');
+        return;
+      }
+      case 1: {
+        navigation.toggleDrawer();
         navigation.navigate('DocWallet');
         return;
       }
       // Where I Am
-      case 1: {
+      case 2: {
         navigation.toggleDrawer();
         navigation.navigate('Structures');
         return;
       }
       // My Profile
-      case 2: {
+      case 3: {
         navigation.toggleDrawer();
         navigation.navigate('MyProfile');
         return;
       }
       // Settings
-      case 3: {
+      case 4: {
         navigation.toggleDrawer();
         navigation.navigate('Settings');
         return;
       }
       // Change Password
-      case 4: {
+      case 5: {
         navigation.toggleDrawer();
         navigation.navigate('ChangePassword');
         return;
       }
       // Kosmopolis
-      case 5: {
+      case 6: {
         navigation.toggleDrawer();
         WebBrowserService.openBrowserAsync('http://www.kosmopolis.me/');
         return;
       }
       // Logout
-      case 6: {
+      case 7: {
         navigation.toggleDrawer();
         navigation.navigate('SignIn');
         return;
