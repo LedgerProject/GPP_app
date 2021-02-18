@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, View, Alert } from 'react-native';
+import { Image, StyleSheet, View, Alert, Text as TextNative } from 'react-native';
 import { ListItem, ListItemProps, Text } from '@ui-kitten/components';
 
 export type StructureItemProps = ListItemProps & {
@@ -30,15 +30,14 @@ export const StructureItem = (props: StructureItemProps): React.ReactElement => 
         source={{uri: 'data:image/png;base64,' + item.iconimage }}
       />
       <View style={styles.detailsContainer}>
-        <Text
-          category='s1'>
+        <TextNative numberOfLines={1} ellipsizeMode={'tail'}
+          style={styles.structureName} >
           {item.structurename}
-        </Text>
-        <Text
-          appearance='hint'
-          category='p2'>
+        </TextNative>
+        <TextNative numberOfLines={1} ellipsizeMode={'tail'}
+          style={styles.structureCity} >
           { /*item.structureAddress*/ item.city}
-        </Text>
+        </TextNative>
       </View>
       { item.distance && (
       <Text style={[styles.alignRight]}>{parseFloat(item.distance).toFixed(1)} km</Text>
@@ -62,12 +61,23 @@ const styles = StyleSheet.create({
     flex: 1,
     height: '100%',
     padding: 16, backgroundColor: '#EEE',
+    paddingRight: 90,
   },
   alignRight: {
     position: 'absolute', top: 20,
-    right: 12,
+    right: 16,
+    width: 75,
+    textAlign: 'right',
+    fontSize: 14,
   },
   iconButton: {
     paddingHorizontal: 0,
+  },
+  structureName: {
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+  structureCity: {
+    fontSize: 13,
   },
 });

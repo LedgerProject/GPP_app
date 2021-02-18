@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View , ScrollView, Image, Platform, Modal } from 'react-native';
+import { View , ScrollView, Image, Platform, Modal, Text as TextNative } from 'react-native';
 import {
   Input, Button, Divider, List, StyleService, Text, TopNavigation,
   TopNavigationAction, useStyleSheet, Layout, Icon, ListItem, Modal as ModalUiKitten,
@@ -228,6 +228,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
     style={styles.detailsContainer}
     level='1'>
     <Text
+      style={styles.structureName}
       category='h6'>
       {structure.name}
     </Text>
@@ -240,7 +241,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
     { distance && (
     <Text
       style={styles.price}
-      category='h4'>
+      category='h6'>
       { parseFloat(distance).toFixed(1) } km
     </Text>
     )}
@@ -461,5 +462,8 @@ const themedStyles = StyleService.create({
   },
   spinnerTextStyle: {
     color: '#FFF',
+  },
+  structureName: {
+    paddingRight: 90,
   },
 });
