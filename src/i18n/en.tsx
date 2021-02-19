@@ -105,4 +105,5 @@ export default {
   'Details': 'Details',
   'Social': 'Social',
   'New Post': 'New Post',
+  'Homepage': 'Homepage',
 };

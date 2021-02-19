@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: '100%',
     padding: 16, backgroundColor: '#EEE',
+    paddingTop: 10,
     paddingRight: 90,
   },
   alignRight: {
