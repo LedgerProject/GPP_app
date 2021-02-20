@@ -5,7 +5,6 @@ import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { EyeIcon, EyeOffIcon, EmailIcon } from '../components/icons';
 import { KeyboardAvoidingView } from '../services/3rd-party';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SplashImage } from '../components/splash-image.component';
 
 export default ({ navigation }): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
@@ -13,11 +12,11 @@ export default ({ navigation }): React.ReactElement => {
   useEffect(() => {
     async function getIntroStatus() {
       const intro = await AsyncStorage.getItem('intro');
-      if (intro === '1') {
+       if (intro === '1') {
         navigation && navigation.navigate('SignIn');
-      } else {
+       } else {
         navigation && navigation.navigate('Intro');
-      }
+       }
     }
     getIntroStatus();
   }, []);
