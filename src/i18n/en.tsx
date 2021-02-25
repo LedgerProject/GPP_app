@@ -106,4 +106,5 @@ export default {
   'Social': 'Social',
   'New Post': 'New Post',
   'Homepage': 'Homepage',
+  'Zoom in to view the structures': 'Zoom in to view the structures',
 };

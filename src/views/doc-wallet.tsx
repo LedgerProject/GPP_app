@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Image, View, ListRenderItemInfo } from 'react-native';
 import { Button, Divider, List, Layout, StyleService, Text, TopNavigation,
-  TopNavigationAction, useStyleSheet, Modal as ModalUiKitten, Input } from '@ui-kitten/components';
+  TopNavigationAction, useStyleSheet, Modal as ModalUiKitten, Input, Icon } from '@ui-kitten/components';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { MenuGridList } from '../components/menu-grid-list.component';
 import { DocumentItem } from './doc-wallet/document-item.component';
@@ -53,6 +53,13 @@ const initialFileResponse: ImagePickerResponse = {
   type: '',
   fileName: '',
 };
+
+export const CustomTakePhotoIcon = (props) => (
+  <Icon {...props} name='custom-take-photo' pack='assets' />
+);
+export const CustomFromLibraryIcon = (props) => (
+  <Icon {...props} name='custom-from-library' pack='assets' />
+);
 
 export const DocWalletScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
@@ -222,7 +229,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
         icon: (style: ImageStyle) => {
           return React.createElement(
             ThemedIcon,
-            { ...style, light: AssetTakePhotoIcon, dark: AssetTakePhotoDarkIcon },
+            { ...style, light: CustomTakePhotoIcon, dark: CustomTakePhotoIcon },
           );
         },
       },
@@ -234,7 +241,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
         icon: (style: ImageStyle) => {
           return React.createElement(
             ThemedIcon,
-            { ...style, light: AssetPhotoLibraryIcon, dark: AssetPhotoLibraryDarkIcon },
+            { ...style, light: CustomFromLibraryIcon, dark: CustomFromLibraryIcon },
           );
         },
       },

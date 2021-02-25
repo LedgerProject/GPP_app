@@ -129,14 +129,14 @@ export const MyProfileScreen = (props): React.ReactElement => {
         />
         <ScrollView>
           <KeyboardAvoidingView style={styles.container}>
-            <View style={styles.headerContainer}>
+            {/*<View style={styles.headerContainer}>
               <ProfileAvatar
                 style={styles.profileAvatar}
                 resizeMode='center'
                 source={require('../assets/images/image-person.png')}
                 editButton={renderEditAvatarButton}
               />
-            </View>
+            </View>*/}
             <Layout
               style={styles.formContainer}
               level='1'>

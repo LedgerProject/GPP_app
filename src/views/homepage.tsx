@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, ImageStyle } from 'react-native';
-import { Divider, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
+import { StyleSheet, ImageStyle, Image } from 'react-native';
+import { Divider, TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { MenuGridList } from '../components/menu-grid-list.component';
 import { MenuIcon } from '../components/icons';
@@ -17,6 +17,15 @@ import {
   AssetNewPostIcon,
   AssetNewPostDarkIcon,
 } from './../components/icons';
+
+export const CustomDocWalletIcon = (props) => (
+  <Icon {...props} name='custom-doc-wallet' pack='assets' />
+);
+export const CustomWhereIAmIcon = (props) => (
+  <Icon {...props} name='custom-where-i-am' pack='assets' />
+);
+
+
 
 export const HomepageScreen = (props): React.ReactElement => {
 
@@ -46,7 +55,7 @@ export const HomepageScreen = (props): React.ReactElement => {
         icon: (style: ImageStyle) => {
           return React.createElement(
             ThemedIcon,
-            { ...style, light: AssetDocWalletIcon, dark: AssetDocWalletDarkIcon },
+            { ...style, light: CustomDocWalletIcon, dark: CustomDocWalletIcon },
           );
         },
       },
@@ -58,12 +67,12 @@ export const HomepageScreen = (props): React.ReactElement => {
         icon: (style: ImageStyle) => {
           return React.createElement(
             ThemedIcon,
-            { ...style, light: AssetStructuresIcon, dark: AssetStructuresDarkIcon },
+            { ...style, light: CustomWhereIAmIcon, dark: CustomWhereIAmIcon },
           );
         },
       },
     );
-    buttonsArray.push(
+    /*buttonsArray.push(
     {
       title: I18n.t('Social'),
       route: 'Social',
@@ -74,8 +83,8 @@ export const HomepageScreen = (props): React.ReactElement => {
         );
       },
     },
-    );
-    buttonsArray.push(
+    );*/
+    /*buttonsArray.push(
     {
       title: I18n.t('New Post'),
       route: 'NewPost',
@@ -86,7 +95,7 @@ export const HomepageScreen = (props): React.ReactElement => {
         );
       },
     },
-    );
+    );*/
     setData(buttonsArray);
   }
 

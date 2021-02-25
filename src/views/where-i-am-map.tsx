@@ -59,6 +59,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   const [avoidNextRegionComplete, setAvoidNextRegionComplete] = React.useState(true);
   const [latitudeDelta, setLatitudeDelta] = React.useState(INITIAL_LATITUDE_DELTA);
   const [longitudeDelta, setLongitudeDelta] = React.useState(INITIAL_LONGITUDE_DELTA);
+  const [zoom, setZoom] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
   const [alertTitle, setAlertTitle] = React.useState('');
@@ -144,11 +145,13 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
     southEastLatitude,
     southEastLongitude,
     filterCat = null,
+    delta = 0,
   ) {
-    setLoading(true);
+
     // Remove the current markers on the map
     setMarkers([]);
-
+if (delta < 1.5) {
+    setLoading(true);
     // Define the category filter
     let addCategory = '';
     if (filterCat) {
@@ -205,6 +208,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
         // alert(JSON.stringify(error));
         throw error;
       });
+    }
   }
 
   // Event on select the category
@@ -261,13 +265,12 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   const onRegionChange = (curMapRegion) => {
     // Get the map boundaries
     const boundaries = getBoundByRegion(curMapRegion);
-
     // Set the map boundaries
     setRegionBoundaries(boundaries);
-
+    setZoom(curMapRegion.longitudeDelta);
     if (avoidNextRegionComplete === false && latitudeDelta < 1.5) {
-      setAvoidNextRegionComplete(true);
 
+      setAvoidNextRegionComplete(true);
       // Get the markers from the endpoint
       getMarkers(
         boundaries.northWestLatitude,
@@ -275,8 +278,8 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
         boundaries.southEastLatitude,
         boundaries.southEastLongitude,
         filterCategory,
+        curMapRegion.longitudeDelta,
       );
-
       // Get the country based on current map region coordinates
       Geocoder.from(curMapRegion.latitude, curMapRegion.longitude)
         .then(json => {
@@ -339,6 +342,9 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
               />
         </Layout>
         <Layout style={styles.mapContainer}>
+          { zoom >= 1.5 && (
+          <Text style={styles.info}>{I18n.t('Zoom in to view the structures')}</Text>
+          )}
           <MapView
             provider={PROVIDER_GOOGLE}
             style={isMapReady ? styles.Map : {}}
@@ -513,5 +519,11 @@ const themedStyles = StyleService.create({
   modalTitle: {
     marginBottom: 4,
     textAlign: 'center',
+  },
+  info: {
+    textAlign: 'center',
+    paddingBottom: 3,
+    backgroundColor: '#999',
+    color: '#FFF',
   },
 });
