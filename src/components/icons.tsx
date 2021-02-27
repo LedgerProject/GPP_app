@@ -109,7 +109,7 @@ export const AssetTakePhotoDarkIcon = (style: ImageStyle): IconElement => (
 );
 
 export const ArrowBackIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='arrow-back-outline'/>
+  <Icon {...style} name='arrow-back-outline' fill='#FFFFFF' />
 );
 
 /**DA RIMUOVERE I SEGUENTI **/
@@ -159,7 +159,7 @@ export const ListIcon = (style: ImageStyle): IconElement => (
 );
 
 export const MenuIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='menu'/>
+  <Icon {...style} name='menu' fill='#FFFFFF'/>
 );
 
 export const MoreVerticalIcon = (style: ImageStyle): IconElement => (

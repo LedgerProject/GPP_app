@@ -65,7 +65,9 @@ export const SettingsScreen = (props): React.ReactElement => {
         style={{flex: 1}}>
         <TopNavigation
           title={I18n.t('Settings')}
-          leftControl={renderDrawerAction()}
+          titleStyle={styles.topBarTitle}
+          leftControl={renderDrawerAction() }
+          style={styles.topBar}
         />
         <Divider />
         <ScrollView>
@@ -148,5 +150,15 @@ const themedStyles = StyleService.create({
   modalTitle: {
     marginBottom: 4,
     textAlign: 'center',
+  },
+  topBar: {
+    backgroundColor: 'color-primary-default',
+  },
+  topBarTitle: {
+    color: '#FFFFFF',
+  },
+  topBarIcon: {
+    color: '#FFFFFF',
+    tintColor: '#FFFFFF',
   },
 });

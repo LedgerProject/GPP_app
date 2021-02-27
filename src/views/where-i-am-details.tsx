@@ -204,7 +204,9 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
       insets='top'>
       <TopNavigation
         title={I18n.t('Details')}
-        leftControl={renderDrawerAction()}
+        titleStyle={styles.topBarTitle}
+        leftControl={renderDrawerAction() }
+        style={styles.topBar}
       />
       <Divider/>
       <Spinner
@@ -286,11 +288,11 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
   </Layout>
   <Layout style={styles.buttonsContainer}>
          <Layout style={styles.buttonLeft} >
-          <Button style={styles.button} status='basic' size='small'
+          <Button style={styles.button} status='primary' size='small'
           onPress={onNavigatorButtonPress}>{I18n.t('Start the navigator')}</Button>
          </Layout>
          <Layout style={styles.buttonRight} >
-          <Button style={styles.button} status='basic'
+          <Button style={styles.button} status='primary'
             size='small' onPress={onContactButtonPress}>{I18n.t('Contact us')}</Button>
          </Layout>
   </Layout>
@@ -465,5 +467,15 @@ const themedStyles = StyleService.create({
   },
   structureName: {
     paddingRight: 90,
+  },
+  topBar: {
+    backgroundColor: 'color-primary-default',
+  },
+  topBarTitle: {
+    color: '#FFFFFF',
+  },
+  topBarIcon: {
+    color: '#FFFFFF',
+    tintColor: '#FFFFFF',
   },
 });

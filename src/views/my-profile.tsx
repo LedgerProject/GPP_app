@@ -119,7 +119,9 @@ export const MyProfileScreen = (props): React.ReactElement => {
         style={{flex: 1}}>
         <TopNavigation
           title={I18n.t('My Profile')}
-          leftControl={renderDrawerAction()}
+          titleStyle={styles.topBarTitle}
+          leftControl={renderDrawerAction() }
+          style={styles.topBar}
         />
         <Divider />
         <Spinner
@@ -273,5 +275,15 @@ const themedStyles = StyleService.create({
   },
   spinnerTextStyle: {
     color: '#FFF',
+  },
+  topBar: {
+    backgroundColor: 'color-primary-default',
+  },
+  topBarTitle: {
+    color: '#FFFFFF',
+  },
+  topBarIcon: {
+    color: '#FFFFFF',
+    tintColor: '#FFFFFF',
   },
 });

@@ -321,7 +321,9 @@ if (delta < 1.5) {
       insets='top'>
       <TopNavigation
         title={I18n.t('Structures Map')}
-        leftControl={renderDrawerAction()}
+        titleStyle={styles.topBarTitle}
+        leftControl={renderDrawerAction() }
+        style={styles.topBar}
       />
       <Divider/>
       <Spinner
@@ -378,7 +380,7 @@ if (delta < 1.5) {
               <Text category='s1' style={styles.bold}>{structure.structurename}</Text>
               <Text>{structure.address}</Text>
               <Text>{structure.city }</Text>
-              <Button size='small' appearance='outline' status='basic'>{I18n.t('Structure Details')}</Button>
+              <Button size='small' appearance='outline' status='primary'>{I18n.t('Structure Details')}</Button>
 
             </View>
           </Callout>
@@ -399,12 +401,12 @@ if (delta < 1.5) {
         </Layout>
         <Layout style={styles.buttonsContainer}>
          <Layout style={styles.buttonLeft} >
-          <Button style={styles2.button} status='basic' size='small'
+          <Button style={styles2.button} status='primary' size='small'
             onPress={onListButtonPress}>{I18n.t('Show List')}
           </Button>
          </Layout>
          <Layout style={styles.buttonRight} >
-          <Button style={styles2.button} status='basic'
+          <Button style={styles2.button} status='primary'
             size='small' onPress={onCountryButtonPress}>{I18n.t('Country Informations')}</Button>
          </Layout>
         </Layout>
@@ -525,5 +527,15 @@ const themedStyles = StyleService.create({
     paddingBottom: 3,
     backgroundColor: '#999',
     color: '#FFF',
+  },
+  topBar: {
+    backgroundColor: 'color-primary-default',
+  },
+  topBarTitle: {
+    color: '#FFFFFF',
+  },
+  topBarIcon: {
+    color: '#FFFFFF',
+    tintColor: '#FFFFFF',
   },
 });

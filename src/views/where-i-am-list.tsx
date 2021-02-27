@@ -219,7 +219,9 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
       insets='top'>
       <TopNavigation
         title={I18n.t('Structures List')}
-        leftControl={renderDrawerAction()}
+        titleStyle={styles.topBarTitle}
+        leftControl={renderDrawerAction() }
+        style={styles.topBar}
       />
       <Divider/>
       <Spinner
@@ -244,12 +246,12 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
         <List data={searchMarkers} renderItem={renderStructureItem} />
         <View style={styles.buttonsContainer}>
           <View style={styles.buttonLeft} >
-            <Button style={styles.button} status='basic' size='small'
+            <Button style={styles.button} status='primary' size='small'
               onPress={onMapButtonPress}>{I18n.t('Show Map')}
             </Button>
           </View>
           <View style={styles.buttonRight} >
-            <Button style={styles.button} status='basic'
+            <Button style={styles.button} status='primary'
               size='small' onPress={onCountryButtonPress}>{I18n.t('Country Informations')}</Button>
           </View>
         </View>
@@ -336,5 +338,15 @@ const themedStyles = StyleService.create({
   modalTitle: {
     marginBottom: 4,
     textAlign: 'center',
+  },
+  topBar: {
+    backgroundColor: 'color-primary-default',
+  },
+  topBarTitle: {
+    color: '#FFFFFF',
+  },
+  topBarIcon: {
+    color: '#FFFFFF',
+    tintColor: '#FFFFFF',
   },
 });

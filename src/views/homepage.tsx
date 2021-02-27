@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, ImageStyle, Image } from 'react-native';
-import { Divider, TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
+import { Divider, TopNavigation, TopNavigationAction, Icon, StyleService, useStyleSheet } from '@ui-kitten/components';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { MenuGridList } from '../components/menu-grid-list.component';
 import { MenuIcon } from '../components/icons';
 // import { data } from './homepage/data';
 import I18n from './../i18n/i18n';
 import { ThemedIcon } from './../components/themed-icon.component';
-import {
+/*import {
   AssetDocWalletDarkIcon,
   AssetDocWalletIcon,
   AssetStructuresDarkIcon,
@@ -16,7 +16,7 @@ import {
   AssetSocialIcon,
   AssetNewPostIcon,
   AssetNewPostDarkIcon,
-} from './../components/icons';
+} from './../components/icons';*/
 
 export const CustomDocWalletIcon = (props) => (
   <Icon {...props} name='custom-doc-wallet' pack='assets' />
@@ -30,6 +30,7 @@ export const CustomWhereIAmIcon = (props) => (
 export const HomepageScreen = (props): React.ReactElement => {
 
   const [data, setData] = React.useState([]);
+  const styles = useStyleSheet(themedStyles);
 
   const onItemPress = (index: number): void => {
     props.navigation.navigate(data[index].route);
@@ -39,6 +40,7 @@ export const HomepageScreen = (props): React.ReactElement => {
     <TopNavigationAction
       icon={MenuIcon}
       onPress={props.navigation.toggleDrawer}
+      style={styles.topBarIcon}
     />
   );
 
@@ -105,7 +107,9 @@ export const HomepageScreen = (props): React.ReactElement => {
       insets='top'>
       <TopNavigation
         title='Global Passport Project'
-        leftControl={renderDrawerAction()}
+        titleStyle={styles.topBarTitle}
+        leftControl={renderDrawerAction() }
+        style={styles.topBar}
       />
       <Divider/>
       <MenuGridList
@@ -116,8 +120,18 @@ export const HomepageScreen = (props): React.ReactElement => {
   );
 };
 
-const styles = StyleSheet.create({
+const themedStyles = StyleService.create({
   safeArea: {
     flex: 1,
+  },
+  topBar: {
+    backgroundColor: 'color-primary-default',
+  },
+  topBarTitle: {
+    color: '#FFFFFF',
+  },
+  topBarIcon: {
+    color: '#FFFFFF',
+    tintColor: '#FFFFFF',
   },
 });

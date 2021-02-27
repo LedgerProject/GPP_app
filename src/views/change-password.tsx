@@ -15,6 +15,7 @@ import { EyeIcon, EyeOffIcon, MenuIcon } from '../components/icons';
 import { KeyboardAvoidingView } from '../services/3rd-party';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
+import I18n from './../i18n/i18n';
 
 export const ChangePasswordScreen = (props): React.ReactElement => {
   const [currentPassword, setCurrentPassword] = React.useState<string>();
@@ -54,8 +55,10 @@ export const ChangePasswordScreen = (props): React.ReactElement => {
       <View
         style={{flex: 1}}>
         <TopNavigation
-          title='Change Password'
-          leftControl={renderDrawerAction()}
+          title={I18n.t('Change Password')}
+          titleStyle={styles.topBarTitle}
+          leftControl={renderDrawerAction() }
+          style={styles.topBar}
         />
         <Divider />
         <ScrollView>
@@ -65,7 +68,7 @@ export const ChangePasswordScreen = (props): React.ReactElement => {
               level='1'>
               <Input
                 style={styles.passwordInput}
-                placeholder='Current Password'
+                placeholder={I18n.t('Current Password')}
                 icon={currentPasswordVisible ? EyeIcon : EyeOffIcon}
                 value={currentPassword}
                 secureTextEntry={!currentPasswordVisible}
@@ -74,7 +77,7 @@ export const ChangePasswordScreen = (props): React.ReactElement => {
               />
               <Input
                 style={styles.passwordInput}
-                placeholder='New Password'
+                placeholder={I18n.t('New Password')}
                 icon={newPasswordVisible ? EyeIcon : EyeOffIcon}
                 value={newPassword}
                 secureTextEntry={!newPasswordVisible}
@@ -83,7 +86,7 @@ export const ChangePasswordScreen = (props): React.ReactElement => {
               />
               <Input
                 style={styles.passwordInput}
-                placeholder='Confirm New Password'
+                placeholder={I18n.t('Confirm New Password')}
                 icon={confirmNewPasswordVisible ? EyeIcon : EyeOffIcon}
                 value={confirmNewPassword}
                 secureTextEntry={!confirmNewPasswordVisible}
@@ -101,7 +104,7 @@ export const ChangePasswordScreen = (props): React.ReactElement => {
                   style={styles.saveButton}
                   size='giant'
                   onPress={onSaveButtonPress}>
-                  Save
+                  {I18n.t('Save')}
               </Button>
             </Layout>
           </KeyboardAvoidingView>
@@ -135,5 +138,15 @@ const themedStyles = StyleService.create({
   },
   saveButton: {
     marginHorizontal: 16,
+  },
+  topBar: {
+    backgroundColor: 'color-primary-default',
+  },
+  topBarTitle: {
+    color: '#FFFFFF',
+  },
+  topBarIcon: {
+    color: '#FFFFFF',
+    tintColor: '#FFFFFF',
   },
 });

@@ -107,4 +107,7 @@ export default {
   'New Post': 'New Post',
   'Homepage': 'Homepage',
   'Zoom in to view the structures': 'Zoom in to view the structures',
+  'Current Password': 'Current Password',
+  'New Password': 'New Password',
+  'Confirm New Password': 'Confirm New Password',
 };

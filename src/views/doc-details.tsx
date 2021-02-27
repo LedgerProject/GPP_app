@@ -53,7 +53,9 @@ export const DocDetailsScreen = (props): React.ReactElement => {
       insets='top'>
       <TopNavigation
         title={I18n.t('Document Details')}
-        leftControl={renderDrawerAction()}
+        titleStyle={styles.topBarTitle}
+        leftControl={renderDrawerAction() }
+        style={styles.topBar}
       />
       <Divider/>
       <ScrollView>
@@ -189,4 +191,14 @@ const themedStyles = StyleService.create({
   backdrop: { /* backgroundColor: 'rgba(0, 0, 0, 0.5)', */ },
   documentTitle: { textAlign: 'center' },
   zoomButton: { marginTop: 6 },
+  topBar: {
+    backgroundColor: 'color-primary-default',
+  },
+  topBarTitle: {
+    color: '#FFFFFF',
+  },
+  topBarIcon: {
+    color: '#FFFFFF',
+    tintColor: '#FFFFFF',
+  },
 });

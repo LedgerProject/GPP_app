@@ -20,6 +20,7 @@ async function setLocale() {
 }
 
 setLocale();
+I18n.defaultLocale = 'en-US';
 I18n.fallbacks = false;
 I18n.translations = {
   default: en,

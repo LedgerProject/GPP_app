@@ -17,7 +17,7 @@ export const appMappings = {
 
 export const appThemes = {
   eva: {
-    light: eva.light,
+    light: appTheme,
     dark: eva.dark,
     brand: {
       light: appTheme,
@@ -28,8 +28,8 @@ export const appThemes = {
     light: material.light,
     dark: material.dark,
     brand: {
-      light: {},
-      dark: {},
+      light: appTheme,
+      dark: appTheme,
     },
   },
 };
