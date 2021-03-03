@@ -13,7 +13,7 @@ const IconProvider = (source: ImageRequireSource) => ({
 export const AppIconsPack = {
   name: 'app',
   icons: {
-    'docwallet': IconProvider(require('../assets/images/icon-docwallet.png')),
+    /*'docwallet': IconProvider(require('../assets/images/icon-docwallet.png')),
     'docwallet-dark': IconProvider(require('../assets/images/icon-docwallet-dark.png')),
     'structures': IconProvider(require('../assets/images/icon-structures.png')),
     'structures-dark': IconProvider(require('../assets/images/icon-structures-dark.png')),
@@ -77,5 +77,6 @@ export const AppIconsPack = {
     'tooltip-dark': IconProvider(require('../assets/images/icon-tooltip-dark.png')),
     'top-navigation': IconProvider(require('../assets/images/icon-top-navigation.png')),
     'top-navigation-dark': IconProvider(require('../assets/images/icon-top-navigation-dark.png')),
+    */
   },
 };

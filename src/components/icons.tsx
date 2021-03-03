@@ -112,9 +112,21 @@ export const ArrowBackIcon = (style: ImageStyle): IconElement => (
   <Icon {...style} name='arrow-back-outline' fill='#FFFFFF' />
 );
 
+export const MenuIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} name='menu' fill='#FFFFFF'/>
+);
+
+export const ListIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} name='list'/>
+);
+
+export const CloseIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} name='close'/>
+);
+
 /**DA RIMUOVERE I SEGUENTI **/
 
-export const ArrowIosBackIcon = (style: ImageStyle): IconElement => (
+/*export const ArrowIosBackIcon = (style: ImageStyle): IconElement => (
   <Icon {...style} name='arrow-ios-back'/>
 );
 
@@ -152,14 +164,6 @@ export const GridIcon = (style: ImageStyle): IconElement => (
 
 export const LayoutIcon = (style: ImageStyle): IconElement => (
   <Icon {...style} name='layout-outline'/>
-);
-
-export const ListIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='list'/>
-);
-
-export const MenuIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='menu' fill='#FFFFFF'/>
 );
 
 export const MoreVerticalIcon = (style: ImageStyle): IconElement => (
@@ -384,5 +388,5 @@ export const AssetTopNavigationIcon = (style: ImageStyle): IconElement => (
 
 export const AssetTopNavigationDarkIcon = (style: ImageStyle): IconElement => (
   <Icon {...style} pack='app' name='top-navigation-dark'/>
-);
+); */
 

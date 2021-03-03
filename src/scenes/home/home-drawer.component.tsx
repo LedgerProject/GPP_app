@@ -12,7 +12,7 @@ import {
   MenuItemType,
   Text,
 } from '@ui-kitten/components';
-import { AssetDashboardsIcon, BookOpenIcon, LockIcon, MapIcon, PersonIcon, Settings2Icon, LogoutIcon } from '../../components/icons';
+import { ListIcon, BookOpenIcon, LockIcon, MapIcon, PersonIcon, Settings2Icon, LogoutIcon } from '../../components/icons';
 import { SafeAreaLayout } from '../../components/safe-area-layout.component';
 import { WebBrowserService } from '../../services/web-browser.service';
 import { AppInfoService } from '../../services/app-info.service';
@@ -46,7 +46,7 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
 
   useEffect(() => {
     const menuObj = [
-      { title: I18n.t('Homepage'), icon: AssetDashboardsIcon },
+      { title: I18n.t('Homepage'), icon: ListIcon },
       { title: I18n.t('Document Wallet'), icon: BookOpenIcon },
       { title: I18n.t('Where I Am'), icon: MapIcon },
       { title: I18n.t('My Profile'), icon: PersonIcon },
