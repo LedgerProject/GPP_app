@@ -12,10 +12,18 @@ async function setLocale() {
   if (lang) {
     I18n.locale = lang;
   } else {
+    let currentLang = 'en-US';
     if (Array.isArray(locales)) {
-      I18n.locale = locales[0].languageTag;
-      AsyncStorage.setItem('lang', locales[0].languageTag);
+      // locales[0].languageTag;
+      // AsyncStorage.setItem('lang', locales[0].languageTag);
+      if (locales[0].languageCode === 'en') {
+        currentLang = 'en-US';
+      } else if (locales[0].languageCode === 'fr') {
+        currentLang = 'fr-FR';
+      }
     }
+    I18n.locale = currentLang;
+    AsyncStorage.setItem('lang', currentLang);
   }
 }
 
@@ -25,6 +33,7 @@ I18n.fallbacks = false;
 I18n.translations = {
   default: en,
   'en-US': en,
+  'fr-FR': fr,
   en,
   fr,
 };

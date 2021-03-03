@@ -2,8 +2,8 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { DocWalletNavigator } from './doc-wallet.navigator';
 import { StructuresNavigator } from './structures.navigator';
-import { HomepageScreen } from '../views/homepage';
 import { MyProfileScreen } from '../views/my-profile';
+import { HomepageScreen } from '../views/homepage';
 import { SettingsScreen } from '../views/settings';
 import { ChangePasswordScreen } from '../views/change-password';
 
