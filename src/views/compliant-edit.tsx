@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { Image, View, ListRenderItemInfo } from 'react-native';
 import { Button, Divider, List, Layout, StyleService, Text, TopNavigation,
-  TopNavigationAction, useStyleSheet, Modal as ModalUiKitten, Input, Icon } from '@ui-kitten/components';
+  TopNavigationAction, useStyleSheet, Modal as ModalUiKitten, Input, Icon, Toggle } from '@ui-kitten/components';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { MenuGridList } from '../components/menu-grid-list.component';
 import { DocumentItem } from './doc-wallet/document-item.component';
 import { requestCameraPermission, requestExternalWritePermission } from '../services/image-picker';
-import { MenuIcon } from '../components/icons';
+import { ArrowBackIcon, MenuIcon } from '../components/icons';
 import { Document } from './doc-wallet/data';
 import {
   ImagePickerResponse,
@@ -21,24 +21,10 @@ import I18n from './../i18n/i18n';
 import FormData from 'form-data';
 import slugify from '@sindresorhus/slugify';
 import Spinner from 'react-native-loading-spinner-overlay';
-
 import { ImageStyle, ImageSourcePropType } from 'react-native';
 import { ThemedIcon } from '../components/themed-icon.component';
-/*import {
- AssetTakePhotoDarkIcon,
- AssetTakePhotoIcon,
- AssetPhotoLibraryDarkIcon,
- AssetPhotoLibraryIcon,
-} from '../components/icons';*/
 import { MenuItem } from '../model/menu-item.model';
-/*const initialDocuments: Document[] = [
-  Document.passportDocument(),
-  Document.idDocument(),
-  Document.vaccinationPage1(),
-  Document.vaccinationPage2(),
-  Document.testDoc1(),
-  Document.testDoc2(),
-];*/
+import { KeyboardAvoidingView } from '../services/3rd-party';
 
 export interface LayoutData extends MenuItem {
   route: string;
@@ -61,26 +47,34 @@ export const CustomFromLibraryIcon = (props) => (
   <Icon {...props} name='custom-from-library' pack='assets' />
 );
 
-export const DocWalletScreen = (props): React.ReactElement => {
+export const CompliantEditScreen = (props): React.ReactElement => {
+
+  // const { item = null } = props.route.params;
+  const item = null;
+
   const styles = useStyleSheet(themedStyles);
   const [documents, setDocuments] = React.useState([]);
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
-  const [modalVisible, setmodalVisible] = React.useState(false);
   const [modalFileVisible, setmodalFileVisible] = React.useState(false);
   const [modalDeleteVisible, setModalDeleteVisible] = React.useState(false);
   const [documentDelete, setDocumentDelete] = React.useState((): any => {});
   const [documentDeleteIndex, setDocumentDeleteIndex] = React.useState(0);
   const [alertTitle, setAlertTitle] = React.useState('');
   const [alertMessage, setAlertMessage] = React.useState('');
-  const [generatedToken, setGeneratedToken ] = React.useState('');
   const [modalUploadImageVisible, setModalUploadImageVisible] = React.useState(false);
-  const [documentTitle, setDocumentTitle] = React.useState('');
+  const [compliantTitle, setCompliantTitle] = React.useState('');
+  const [compliantSharePosition, setCompliantSharePosition] = React.useState(false);
+  const [compliantDescription, setCompliantDescription] = React.useState('');
   const [fileResponse, setFileResponse] = React.useState<ImagePickerResponse>(initialFileResponse);
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState([]);
 
   const ZoomImage = (): void => {
     setmodalFileVisible(true);
+  };
+
+  const onCheckedChange = (isChecked) => {
+    setCompliantSharePosition(isChecked);
   };
 
   const onItemUploadPhotoPress = (index: number): void => {
@@ -123,41 +117,9 @@ export const DocWalletScreen = (props): React.ReactElement => {
     });
   }
 
-  async function LoadFile(document) {
-
-    setLoading(true);
-    const token = await AsyncStorage.getItem('token');
-    axios
-    .get(AppOptions.getServerUrl() + 'documents-base64/' + document.idDocument, {
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(function (response) {
-      setLoading(false);
-      const image = 'data:' + document.mimeType + ';base64,' + response.data;
-      props.navigation && props.navigation.navigate('DocDetails', { item: document, image: image });
-    })
-    .catch(function (error) {
-      // console.log(error);
-      setLoading(false);
-      // alert(JSON.stringify(error));
-      throw error;
-    });
-
-  }
-
   const onItemPress = (document: Document, index: number): void => {
-    LoadFile(document);
-  };
 
-  const renderDrawerAction = (): React.ReactElement => (
-    <TopNavigationAction
-      icon={MenuIcon}
-      onPress={props.navigation.toggleDrawer}
-    />
-  );
+  };
 
   const renderDocumentItem = (info: ListRenderItemInfo<Document>): React.ReactElement => (
     <DocumentItem
@@ -169,55 +131,25 @@ export const DocWalletScreen = (props): React.ReactElement => {
     />
   );
 
-  const onGenerateTokenButtonPress = async (): Promise<void> => {
-    setLoading(true);
-    const token = await AsyncStorage.getItem('token');
-
-    axios.post(AppOptions.getServerUrl() + 'users-token', null, {
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(function(response) {
-      setLoading(false);
-      setGeneratedToken(response.data.token);
-      setmodalVisible(true);
-    })
-    .catch(function (error) {
-      setLoading(false);
+  const onSendButtonPress = async (): Promise<void> => {
+    if (!compliantTitle) {
       showAlertMessage(
-        I18n.t('Error generating token'),
-        error.message,
+        I18n.t('Title missing'),
+        I18n.t('Please fill the compliant title'),
       );
-    });
+    } else if (!compliantDescription) {
+      showAlertMessage(
+        I18n.t('Description missing'),
+        I18n.t('Please fill the compliant descripton'),
+      );
+    } else {
+      alert('Send OK');
+    }
   };
 
-  async function getMyDocuments() {
-    setLoading(true);
-    const token = await AsyncStorage.getItem('token');
-    axios
-    .get(AppOptions.getServerUrl() + 'documents', {
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(function (response) {
-      setLoading(false);
-      setDocuments(response.data);
-      // alert(JSON.stringify(response));
-    })
-    .catch(function (error) {
-      setLoading(false);
-      // alert(JSON.stringify(error));
-      throw error;
-    });
-  }
-
   useEffect(() => {
+    // console.log(item);
     getButtons();
-    getMyDocuments();
   }, []);
 
   async function getButtons() {
@@ -333,52 +265,6 @@ export const DocWalletScreen = (props): React.ReactElement => {
     setModalUploadImageVisible(true);
   };
 
-  /* IMAGE UPLOAD */
-  const handleUpload = async () => {
-    if (!documentTitle) {
-      showAlertMessage(
-        I18n.t('Title missing'),
-        I18n.t('Please fill the document name'),
-      );
-    } else {
-      setLoading(true);
-      const token = await AsyncStorage.getItem('token');
-      const extension =  fileResponse.fileName.split('.').pop();
-      const fileName = slugify(documentTitle) + '.' + extension;
-
-      const dataupload = new FormData();
-      dataupload.append('file', {
-        uri: fileResponse.uri,
-        type: fileResponse.type,
-        name: fileName,
-      });
-
-      axios.post(AppOptions.getServerUrl() + 'documents/' + documentTitle, dataupload, {
-        headers: {
-          'Authorization': 'Bearer ' + token,
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then(function(response) {
-        setLoading(false);
-        setModalUploadImageVisible(false);
-        showAlertMessage(
-          I18n.t('Document uploaded successfully'),
-          I18n.t('Document uploaded successfully to IPFS!'),
-        );
-        getMyDocuments();
-      })
-      .catch(function (error) {
-        setLoading(false);
-        showAlertMessage(
-          I18n.t('Error uploading file'),
-          error.message,
-          // JSON.stringify(error)
-        );
-      });
-    }
-  };
-
   /* ALERT MESSAGE */
   const showAlertMessage = (title: string, message: string) => {
     setAlertTitle(title);
@@ -386,16 +272,34 @@ export const DocWalletScreen = (props): React.ReactElement => {
     setModalAlertVisible(true);
   };
 
+  const navigateBack = () => {
+    props.navigation.goBack();
+  };
+
+  const renderDrawerAction = (): React.ReactElement => (
+    <TopNavigationAction icon={ArrowBackIcon} onPress={navigateBack} />
+  );
+
   return (
     <SafeAreaLayout
       style={styles.safeArea}
       insets='top'>
+      { !item && (
       <TopNavigation
-        title={I18n.t('DocWallet')}
+        title={I18n.t('New Compliant')}
         titleStyle={styles.topBarTitle}
         leftControl={renderDrawerAction() }
         style={styles.topBar}
       />
+      )}
+      { item && (
+      <TopNavigation
+        title={I18n.t('Edit Compliant')}
+        titleStyle={styles.topBarTitle}
+        leftControl={renderDrawerAction() }
+        style={styles.topBar}
+      />
+      )}
       <Layout
       style={styles.container}
       level='2'>
@@ -404,34 +308,56 @@ export const DocWalletScreen = (props): React.ReactElement => {
           textContent={I18n.t('Loading') + '...'}
           textStyle={styles.spinnerTextStyle}
         />
+
         <View>
+        <Text
+          style={styles.infoSection}>
+          {I18n.t('Select the images, enter the title and description and then press the send button')
+          + '.' }
+        </Text>
           <MenuGridList
             data={data}
             onItemPress={onItemUploadPhotoPress}
           />
         </View>
         <Divider/>
-        <Text
-          style={styles.infoSection}>
-          {I18n.t('Tap on document for the preview') + '. '
-          + I18n.t('Swipe left on document to delete it') + '.' }
-        </Text>
+        <View style={styles.title}>
+        <Text category='s1'>{I18n.t('Insert title')}</Text>
+          <Input
+            placeholder={I18n.t('Title')}
+            value={compliantTitle}
+            onChangeText={setCompliantTitle}
+            style={styles.inputTitle}
+          />
+        </View>
+        <View  style={styles.description}>
+        <Text category='s1'>{I18n.t('Insert description')}</Text>
+        <Input
+        multiline={true}
+        textStyle={{ minHeight: 64 }}
+        placeholder='Description'
+        onChangeText={setCompliantDescription}
+        style={styles.inputDescription}
+        />
+        </View>
+        <View>
+        <Toggle checked={compliantSharePosition} onChange={onCheckedChange}>
+        <Text>{I18n.t('Share Current Position')}</Text>
+        </Toggle>
+        </View>
         <List
           data={documents}
           renderItem={renderDocumentItem}
         />
         <Divider/>
-        <Text
-          style={styles.infoSection}>
-          {I18n.t('Generate a 30-minute token to be communicated to')}
-        </Text>
         <Button
-          style={styles.generateTokenButton}
+          style={styles.sendButton}
           size='giant'
           appearance='outline'
-          onPress={onGenerateTokenButtonPress}>
-          {I18n.t('GENERATE A 30-MINUTE TOKEN')}
+          onPress={onSendButtonPress}>
+          {I18n.t('SEND')}
         </Button>
+
       </Layout>
 
 
@@ -441,32 +367,12 @@ export const DocWalletScreen = (props): React.ReactElement => {
         onBackdropPress={() => setModalUploadImageVisible(false)}
         >
         <Layout style={ styles.modal } >
-          <Text style={styles.modalTitle} category='s1'>{I18n.t('Please specify a title for your document')}</Text>
-          <Input
-            placeholder={I18n.t('Enter Document Name')}
-            value={documentTitle}
-            onChangeText={setDocumentTitle}
-          />
           <Layout style={styles.imageContainer}>
             <Image
                 source={{uri: fileResponse.uri}}
                 style={styles.imageStyle}
               />
           </Layout>
-          <Button onPress={handleUpload}>{I18n.t('UPLOAD TO IPFS')}</Button>
-          <Button status='basic' onPress={() => setModalUploadImageVisible(false)}>{I18n.t('CLOSE')}</Button>
-        </Layout>
-      </ModalUiKitten>
-
-      <ModalUiKitten
-        visible={ modalVisible }
-        backdropStyle={styles.backdrop}
-        onBackdropPress={() => setmodalVisible(false)}>
-        <Layout style={ styles.modal } >
-          <Text style={ styles.modalText } >{I18n.t('30-Minutes Token Generated')}</Text>
-          <Text style={ styles.modalText } category='h3' >{generatedToken}</Text>
-          <Text style={ styles.modalText } >{I18n.t('Communicate this token only')}</Text>
-          <Button status='basic' onPress={() => setmodalVisible(false)}>{I18n.t('CLOSE')}</Button>
         </Layout>
       </ModalUiKitten>
 
@@ -514,7 +420,7 @@ const themedStyles = StyleService.create({
     borderBottomWidth: 1,
     borderBottomColor: 'background-basic-color-3',
   },
-  generateTokenButton: {
+  sendButton: {
     marginHorizontal: 16,
     marginTop: 8,
     marginBottom: 10,
@@ -558,5 +464,21 @@ const themedStyles = StyleService.create({
   topBarIcon: {
     color: '#FFFFFF',
     tintColor: '#FFFFFF',
+  },
+  title: {
+    marginHorizontal: 16,
+    marginTop: 5,
+  },
+  description: {
+    marginHorizontal: 16,
+    marginTop: 5,
+    marginBottom: 10,
+  },
+  inputTitle: {
+    backgroundColor: '#FFFFFF',
+  },
+  inputDescription: {
+    textAlignVertical: 'top',
+    backgroundColor: '#FFFFFF',
   },
 });

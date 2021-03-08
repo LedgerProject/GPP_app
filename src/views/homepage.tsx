@@ -24,8 +24,12 @@ export const CustomDocWalletIcon = (props) => (
 export const CustomWhereIAmIcon = (props) => (
   <Icon {...props} name='custom-where-i-am' pack='assets' />
 );
-
-
+export const CustomNewCompliantIcon = (props) => (
+  <Icon {...props} name='custom-new-compliant' pack='assets' />
+);
+export const CustomCompliantsIcon = (props) => (
+  <Icon {...props} name='custom-compliants' pack='assets' />
+);
 
 export const HomepageScreen = (props): React.ReactElement => {
 
@@ -74,30 +78,30 @@ export const HomepageScreen = (props): React.ReactElement => {
         },
       },
     );
-    /*buttonsArray.push(
+    buttonsArray.push(
     {
-      title: I18n.t('Social'),
-      route: 'Social',
+      title: I18n.t('New Compliant'),
+      route: 'CompliantEdit',
       icon: (style: ImageStyle) => {
         return React.createElement(
           ThemedIcon,
-          { ...style, light: AssetSocialIcon, dark: AssetSocialDarkIcon },
+          { ...style, light: CustomNewCompliantIcon, dark: CustomNewCompliantIcon },
         );
       },
     },
-    );*/
-    /*buttonsArray.push(
+    );
+    buttonsArray.push(
     {
-      title: I18n.t('New Post'),
-      route: 'NewPost',
+      title: I18n.t('Compliants'),
+      route: 'Compliants',
       icon: (style: ImageStyle) => {
         return React.createElement(
           ThemedIcon,
-          { ...style, light: AssetNewPostIcon, dark: AssetNewPostDarkIcon },
+          { ...style, light: CustomCompliantsIcon, dark: CustomCompliantsIcon },
         );
       },
     },
-    );*/
+    );
     setData(buttonsArray);
   }
 

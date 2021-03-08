@@ -67,7 +67,7 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
     switch (index) {
       case 0: {
         navigation.toggleDrawer();
-        navigation.navigate('Homepage');
+        navigation.navigate('Home');
         return;
       }
       // Document Wallet
