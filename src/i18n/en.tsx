@@ -120,8 +120,10 @@ export default {
   'Insert title': 'Insert title',
   'Title': 'Title',
   'Insert description': 'Insert description',
-  'Share Current Position': 'Share Current Position',
+  'Share current position': 'Share current position',
+  'Share your full name': 'Share your full name',
   'Please fill the compliant title': 'Please fill the compliant title',
   'Description missing': 'Description missing',
   'Please fill the compliant descripton': 'Please fill the compliant descripton',
+
 };

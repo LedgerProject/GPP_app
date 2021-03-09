@@ -4,10 +4,11 @@ import { Button, Divider, List, Layout, StyleService, Text, TopNavigation,
   TopNavigationAction, useStyleSheet, Modal as ModalUiKitten, Input, Icon, Toggle } from '@ui-kitten/components';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { MenuGridList } from '../components/menu-grid-list.component';
-import { DocumentItem } from './doc-wallet/document-item.component';
+import { CompliantImage, CompliantImageModel } from './compliants/compliant-image.component';
+
 import { requestCameraPermission, requestExternalWritePermission } from '../services/image-picker';
 import { ArrowBackIcon, MenuIcon } from '../components/icons';
-import { Document } from './doc-wallet/data';
+
 import {
   ImagePickerResponse,
   MediaType,
@@ -61,9 +62,9 @@ export const CompliantEditScreen = (props): React.ReactElement => {
   const [documentDeleteIndex, setDocumentDeleteIndex] = React.useState(0);
   const [alertTitle, setAlertTitle] = React.useState('');
   const [alertMessage, setAlertMessage] = React.useState('');
-  const [modalUploadImageVisible, setModalUploadImageVisible] = React.useState(false);
   const [compliantTitle, setCompliantTitle] = React.useState('');
   const [compliantSharePosition, setCompliantSharePosition] = React.useState(false);
+  const [compliantShareName, setCompliantShareName] = React.useState(false);
   const [compliantDescription, setCompliantDescription] = React.useState('');
   const [fileResponse, setFileResponse] = React.useState<ImagePickerResponse>(initialFileResponse);
   const [loading, setLoading] = React.useState(false);
@@ -73,8 +74,11 @@ export const CompliantEditScreen = (props): React.ReactElement => {
     setmodalFileVisible(true);
   };
 
-  const onCheckedChange = (isChecked) => {
+  const onCheckedPositionChange = (isChecked) => {
     setCompliantSharePosition(isChecked);
+  };
+  const onCheckedNameChange = (isChecked) => {
+    setCompliantShareName(isChecked);
   };
 
   const onItemUploadPhotoPress = (index: number): void => {
@@ -85,9 +89,9 @@ export const CompliantEditScreen = (props): React.ReactElement => {
     }
   };
 
-  const onItemRemove = (document: Document, index: number): void => {
+  const onItemRemove = (compliantImage: CompliantImageModel, index: number): void => {
     // DeleteDocument(document,index);
-    setDocumentDelete(document);
+    setDocumentDelete(compliantImage);
     setDocumentDeleteIndex(index);
     setModalDeleteVisible(true);
 
@@ -95,7 +99,7 @@ export const CompliantEditScreen = (props): React.ReactElement => {
 
   async function DeleteDocument() {
     setLoading(true);
-    const token = await AsyncStorage.getItem('token');
+    /*const token = await AsyncStorage.getItem('token');
     axios
     .delete(AppOptions.getServerUrl() + 'documents/' + documentDelete.idDocument, {
       headers: {
@@ -103,31 +107,30 @@ export const CompliantEditScreen = (props): React.ReactElement => {
         'Content-Type': 'application/json',
       },
     })
-    .then(function (response) {
+    .then(function (response) {*/
       setLoading(false);
       documents.splice(documentDeleteIndex, 1);
       setDocuments([...documents]);
       setModalDeleteVisible(false);
       // alert('removed');
-    })
+    /*})
     .catch(function (error) {
       setLoading(false);
       // alert(JSON.stringify(error));
       throw error;
-    });
+    });*/
   }
 
-  const onItemPress = (document: Document, index: number): void => {
+  /*const onItemPress = (document: Document, index: number): void => {
 
-  };
+  };*/
 
-  const renderDocumentItem = (info: ListRenderItemInfo<Document>): React.ReactElement => (
-    <DocumentItem
+  const renderCompliantItem = (info: ListRenderItemInfo<CompliantImageModel>): React.ReactElement => (
+    <CompliantImage
       style={styles.item}
       index={info.index}
-      document={info.item}
+      compliantImage={info.item}
       onRemove={onItemRemove}
-      onItemPress={onItemPress}
     />
   );
 
@@ -260,9 +263,20 @@ export const CompliantEditScreen = (props): React.ReactElement => {
       );
       return;
     }
-
-    setFileResponse(response);
-    setModalUploadImageVisible(true);
+    // add to documents
+    const element: any = {
+      'id': response.fileName,
+      'name': response.fileName,
+      'uri': response.uri,
+      'size': response.fileSize,
+    };
+    const elements: any = documents;
+    // console.log(documents);
+    elements.push(element);
+    setDocuments(elements);
+    //
+    // setFileResponse(response);
+    // setModalUploadImageVisible(true);
   };
 
   /* ALERT MESSAGE */
@@ -284,22 +298,13 @@ export const CompliantEditScreen = (props): React.ReactElement => {
     <SafeAreaLayout
       style={styles.safeArea}
       insets='top'>
-      { !item && (
+    <KeyboardAvoidingView style= {styles.FlexGrowOne}>
       <TopNavigation
-        title={I18n.t('New Compliant')}
+        title={ item ? I18n.t('Edit Compliant') : I18n.t('New Compliant') }
         titleStyle={styles.topBarTitle}
         leftControl={renderDrawerAction() }
         style={styles.topBar}
       />
-      )}
-      { item && (
-      <TopNavigation
-        title={I18n.t('Edit Compliant')}
-        titleStyle={styles.topBarTitle}
-        leftControl={renderDrawerAction() }
-        style={styles.topBar}
-      />
-      )}
       <Layout
       style={styles.container}
       level='2'>
@@ -340,14 +345,24 @@ export const CompliantEditScreen = (props): React.ReactElement => {
         style={styles.inputDescription}
         />
         </View>
-        <View>
-        <Toggle checked={compliantSharePosition} onChange={onCheckedChange}>
-        <Text>{I18n.t('Share Current Position')}</Text>
+        <View style={styles.toggle}>
+        <Toggle
+        checked={compliantSharePosition}
+        onChange={onCheckedPositionChange}
+        text={I18n.t('Share current position')}>
+        </Toggle>
+        </View>
+        <View style={styles.toggle}>
+        <Toggle
+        checked={compliantShareName}
+        onChange={onCheckedNameChange}
+        text={I18n.t('Share your full name')}
+        >
         </Toggle>
         </View>
         <List
           data={documents}
-          renderItem={renderDocumentItem}
+          renderItem={renderCompliantItem}
         />
         <Divider/>
         <Button
@@ -357,24 +372,7 @@ export const CompliantEditScreen = (props): React.ReactElement => {
           onPress={onSendButtonPress}>
           {I18n.t('SEND')}
         </Button>
-
       </Layout>
-
-
-      <ModalUiKitten
-        visible={ modalUploadImageVisible }
-        backdropStyle={styles.backdrop}
-        onBackdropPress={() => setModalUploadImageVisible(false)}
-        >
-        <Layout style={ styles.modal } >
-          <Layout style={styles.imageContainer}>
-            <Image
-                source={{uri: fileResponse.uri}}
-                style={styles.imageStyle}
-              />
-          </Layout>
-        </Layout>
-      </ModalUiKitten>
 
       <ModalUiKitten
         visible={ modalAlertVisible }
@@ -399,11 +397,15 @@ export const CompliantEditScreen = (props): React.ReactElement => {
           <Button status='basic' onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>
         </Layout>
       </ModalUiKitten>
+      </KeyboardAvoidingView>
     </SafeAreaLayout>
   );
 };
 
 const themedStyles = StyleService.create({
+  FlexGrowOne: {
+    flexGrow : 1,
+  },
   container: {
     flex: 1,
   },
@@ -480,5 +482,15 @@ const themedStyles = StyleService.create({
   inputDescription: {
     textAlignVertical: 'top',
     backgroundColor: '#FFFFFF',
+  },
+  toggle: {
+    marginTop: 5,
+    marginBottom: 10,
+    marginLeft: 16,
+    marginRight: 16,
+    textAlign: 'left',
+    flex: 1,
+    flexDirection: 'row',
+
   },
 });
