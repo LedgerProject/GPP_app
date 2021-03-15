@@ -1,76 +1,182 @@
-# Kitten Tricks [<img src="https://i.imgur.com/oMcxwZ0.png" alt="Eva Design System" height="20px" />][link:eva] [![Build Status][badge:github-actions]][link:github-actions] [![runs with expo][badge:expo]][link:expo] [![Netlify Status][badge:netlify]][link:netlify]
+<!-- PROJECT LOGO -->
+<br />
+<p>
+  <h3>Global Passport Project App</h3>
+  <img src="logo.png" />
+</p>
 
-__
-This perfect starter kit is an app based on React Native and [**UI Kitten library**][link:ui-kitten] with Light and Dark themes support. It’s completely free and Open Source. 
-Compose the application from available screens, add backend integration and you will end up with A-grade cross-platform mobile application.
-The themes can be changed in the runtime, without any need of reloading the application.
+<!-- GETTING STARTED -->
+## Table of contents
 
-Download a live Demo published on both [App Store][link:app-store] and [Google Play][link:google-play]
- or simply run it yourself by cloning a GitHub repo. 
+* [Global Passport Project](#global-passport-project)
+* [Build with](#built-with)
+* [Software Used](#software-used)
+* [Side technologies](#side-technologies)
+* [Directory structure](#directory-structure)
+* [Starting a development environment](#starting-a-development-environment)
+* [Available scripts](#available-scripts)
+* [How the app works](#how-the-app-works)
 
-![Kitten Material](https://camo.githubusercontent.com/f0487d92194f3c685213539c53e9784113cd8a4b/68747470733a2f2f692e696d6775722e636f6d2f58384f344748622e706e67)
+## Global Passport Project
 
-![Preview](https://i.imgur.com/2E2nWHc.jpg)
+Global Passport Project is a breakthrough initiative that leverages on decentralized technology to support mixed migrants along their journey, protect their privacy while reporting human rights violations, and engage them as citizens integrating in their new communities. GPP will also enormously improve the capacity of NGOs and social enterprises to reach out to migrants and design their actions, thus streamlining their resources and improving their performance and records when applying for funds and calls.
 
-[<img src="http://i.imgur.com/7IxtMV0.png" width="200"/>][link:app-store]
-[<img src="http://i.imgur.com/pxFfB0S.png" width="200"/>][link:google-play]
+GPP is a blockchain-based platform with a website and mobile App through which mixed migrants can safely store important documents, access info on the countries crossed and the solidarity network in the area they are in, as well as report on abuses they might face along the journey. All data is personal and inviolable, and it will be kept on Blockchain with a double-level encryption component.
 
-## Key features:
- 
-- Built with **TypeScript**.
-- **Dark and Light themes** could be used simultaneously and changed on the fly. 
-- **40 ready-to-use stunning screens** – for any domain: e-commerce, social, fitness, etc. 
-- **Huge variety of customizable layouts**, use “as is” or add new blocks from the UI Kit.
-- **Integration with Eva Design System** allows you to create mobile application staying in brand style and get clean, consistency design
+* GPP’s key tool is the first ever DocWallet, a unique and innovative "safe space" where migrants can scan and upload their ID, educational or medical records that might get lost during their journey or might not be convenient to keep them physically with them. The lack of documentation is often a key issue in the migratory process.
 
-## Documentation:
+* GPP App will provide the user with a detailed and comprehensive mapping of solidarity structures in transit/destination countries: upon voluntary geolocalization, an interactive map will provide information on the structures (i.e. associations, collectives, unions, NGOs, lawyers, humanitarian protection) and also up-to-date information on the legislation in force in every country and territory crossed.
 
-This template is using [UI Kitten components][link:ui-kitten], [here you can find documentation and other useful articles][link:doc-ui-kitten].
+* GPP is also a multimedia tool for mixed migrant to report and document abuses faced along the journey after being provided with a brief tutorial on citizen journalism.
 
-## Mobile backend Bundles
+The platform is designed WITH migrants rather than FOR migrants: they are the main and ultimate beneficiaries of this project, whose aim is to enable them to embark in safer journeys and experience an easier settling, but also to engage them as active subjects of participatory democracy practices and a narrative process that will start from their first hand experiences as narrating subjects rather than narrated ones.
 
-Easy way to integrate UI Kitten with backend ([Java][link:ui-kitten-bundle-java], [.NET Core][link:ui-kitten-bundle-dotnet-core]).
+It is meant to serve as an innovative tool also for the third sector (NGOs, aid agencies) to access information and first-hand data that go beyond government control and a useful tool to improve and strengthen their interventions. GPP may also contribute to an in-depth reconsideration of the operational modalities which are very often blamed for adopting a top-down approach. The possibility to receive detailed information and to be able to directly get in contact with their targets and potential beneficiaries will allow to improve the effectiveness and efficiency of their actions, and ensure a streamlined use of the resources.
 
-[<img src="https://i.imgur.com/HVNZQGR.jpg">][link:ui-kitten-bundles]
+## Built with
 
-## How can I support the developers?
+* [React Native](https://reactnative.dev/)
+* [Typescript](https://www.typescriptlang.org)
+* [UI Kitten](https://akveo.github.io/react-native-ui-kitten/)
 
-- Star our GitHub repo :star:
-- Create pull requests, submit bugs, suggest new features or documentation updates :wrench:
-- Read us on [Medium][link:akveo-medium]
-- Follow us on [Twitter][link:akveo-twitter] :feet:
-- Like our page on [Facebook][link:akveo-facebook] :thumbsup:
+## Software used
 
-## License
+* [npm](https://www.npmjs.com)
+* [Visual Studio Code](https://code.visualstudio.com)
+* [Android Studio](https://developer.android.com/studio)
+* [Xcode](https://developer.apple.com/xcode/)
+* [Postman](https://www.postman.com)
+* [GitHub](https://github.com)
 
-[MIT](LICENSE.txt) license.
+## Side technologies
 
-## More from Akveo
+### Production dependencies
 
-- [Eva Icons][link:eva-icons] - 480+ beautiful Open Source icons
+* react: a JavaScript library for creating user interfaces.
+* react-dom: React package for working with the DOM.
+* react-native: a framework for building native apps using React.
+* react-native-app-intro-slider: simple and configurable app introduction slider for react native.
+* react-native-appearance: access operating system appearance information on iOS, Android, and web.
+* react-native-auto-height-image: load a remote image and automatically set image height to the image dimension which fits the provided width.
+* react-native-device-info: get device information using react-native.
+* react-native-flatlist-slider: React Native flatlist slider component.
+* react-native-geocoding: transform a description of a location (i.e. street address, town name, etc.) into geographic coordinates (i.e. latitude and longitude) and vice versa.
+* react-native-gesture-handler: declarative API for gesture handling in React Native.
+* react-native-get-location: React Native library to get device location for Android and iOS.
+* react-native-image-picker: React Native module that allows to use native UI to select media from the device library or directly from the camera.
+* react-native-image-zoom-viewer: React Native image zoom viewer.
+* react-native-keyboard-aware-scroll-view: React Native scrollview component that resizes when the keyboard appears.
+* react-native-loading-spinner-overlay: React Native iOS and Android loading spinner (progress bar indicator) overlay.
+* react-native-localize: toolbox for React Native app localization.
+* react-native-maps: React Native mapview component for iOS + Android.
+* react-native-open-maps: React Native library to perform cross-platform map actions (Google or Apple Maps).
+* react-native-reanimated: alternative to animated library for React Native.
+* react-native-restart: reload the app bundle during app runtime.
+* react-native-safari-view: React Native wrapper for Safari view controller.
+* react-native-safe-area-context: a flexible way to handle safe area, also works on Android and web.
+* react-native-screens: native navigation primitives for React Native app.
+* react-native-svg: SVG library for React Native.
+* react-native-tab-view: tab view component for React Native.
+* react-native-async-storage/async-storage: asynchronous, persistent, key-value storage system for React Native.
+* react-native-community/masked-view: React Native masked view for iOS and Android.
+* axios: promise based HTTP client for the browser and node.js. Make http requests from node.js
+* date-fns: JavaScript date utility library.
+* form-data: library to create readable "multipart/form-data" streams.
+* i18n-js: library to provide the I18n translations.
+* moment: library to parse, validate, manipulate, and display dates.
+* ui-kitten/components: React Native components based on Eva Design System.
+* ui-kitten/date-fns: date-fns services for UI Kitten.
+* ui-kitten/moment: moment.js services for UI Kitten.
+* react-navigation/bottom-tabs: bottom tab navigator following iOS design guidelines.
+* react-navigation/drawer: drawer navigator component for React Navigation.
+* react-navigation/material-top-tabs: integration for the animated tab view component from react-native-tab-view.
+* react-navigation/native: React Native integration for React Navigation.
+* react-navigation/stack: stack navigator component for React Navigation.
 
-## From Developers
+### Development dependencies
 
-Made with :heart: by [Akveo team][link:akveo-homepage]. Follow us on [Twitter][link:akveo-twitter] to get the latest news first!
-We're always happy to receive your feedback!
+* types/react-native: TypeScript definitions for React Native.
+* typescript-eslint/eslint-plugin: TypeScript plugin for ESLint.
+* typescript-eslint/parser: an ESLint custom parser which leverages TypeScript ESTree.
+* eslint: an AST-based pattern checker for JavaScript.
+* eslint-config-standard: JavaScript standard style - ESLint shareable config.
+* eslint-plugin-import: support linting of ES2015+ (ES6+) import/export syntax, and prevent issues with misspelling of file paths and import names.
+* eslint-plugin-node: additional ESLint's rules for Node.js.
+* eslint-plugin-promise: enforce best practices for JavaScript promises.
+* eslint-plugin-react: React specific linting rules for ESLint.
+* jetifier: jetifier from Android Studio, in npm package format.
+* typescript: TypeScript is a language for application scale JavaScript development.
 
-[badge:github-actions]: https://github.com/akveo/kittenTricks/workflows/Build/badge.svg
-[badge:expo]: https://img.shields.io/badge/Runs%20with%20Expo-000.svg?style=flat&logo=EXPO&labelColor=ffffff&logoColor=000
-[badge:netlify]: https://api.netlify.com/api/v1/badges/95cdef77-0d68-49a1-a497-b305bb5e3f98/deploy-status
+## Directory structure
 
-[link:github-actions]: https://github.com/akveo/kittenTricks/actions
-[link:expo]: https://expo.io/@ui-kitten/kitten-tricks
-[link:netlify]: https://kitten-tricks.netlify.com
-[link:eva]: https://eva.design?utm_campaign=eva_design%20-%20home%20-%20kitten_tricks%20github%20readme&utm_source=kitten_tricks&utm_medium=referral&utm_content=github_readme_eva
-[link:doc-ui-kitten]: https://akveo.github.io/react-native-ui-kitten?utm_campaign=ui_kitten%20-%20home%20-%20kitten_tricks%20github%20readme&utm_source=kitten_tricks&utm_medium=referral&utm_content=github_readme_kitten_tricks
-[link:ui-kitten]: https://github.com/akveo/react-native-ui-kitten
-[link:app-store]: https://itunes.apple.com/us/app/kitten-tricks/id1246143230
-[link:google-play]: https://play.google.com/store/apps/details?id=com.kosmopolis.gpp
-[link:eva-icons]: https://github.com/akveo/eva-icons
-[link:akveo-homepage]: https://www.akveo.com?utm_campaign=services%20-%20homepage%20-%20kitten_tricks%20github%20readme&utm_source=kitten_tricks&utm_medium=referral&utm_content=github_readme_kitten_tricks
-[link:akveo-medium]: https://medium.com/akveo-engineering
-[link:akveo-twitter]: https://twitter.com/akveo_inc
-[link:akveo-facebook]: https://www.facebook.com/akveo
-[link:ui-kitten-bundles]: https://store.akveo.com/search?q=UI%20Kitten&utm_campaign=akveo_store%20-%20mobile%20bundles%20-%20kitten_tricks%20github%20readme&utm_source=kitten_tricks&utm_medium=banner&utm_content=mobile_bundles_banner
-[link:ui-kitten-bundle-java]: https://store.akveo.com/collections/all/products/java-mobile-starter-bundle?utm_campaign=akveo_store%20-%20mobile%20bundles%20-%20kitten_tricks%20github%20readme&utm_source=kitten_tricks&utm_medium=referral&utm_content=java_bundle_link
-[link:ui-kitten-bundle-dotnet-core]: https://store.akveo.com/collections/all/products/net-core-mobile-starter-bundle?utm_campaign=akveo_store%20-%20mobile%20bundles%20-%20kitten_tricks%20github%20readme&utm_source=kitten_tricks&utm_medium=referral&utm_content=netcore_bundle_link
+* android: contains all the specific native code for Android. 
+* env: contains the development and productions files with the environment variables.
+* ios: contains all the specific native code for iOS. 
+* patches: directory containing node modules patches
+* src: TypeScript source code, having the following structure:
+  * app: application core
+  * assets: assets directory containing images and fonts.
+  * components: contains the custom application components.
+  * i18n: localization files in JSON format.
+  * model: oggetti dell'applicazione
+  * navigation: definizione delle routes
+  * scenes: menu laterale
+  * services: various services functions.
+  * views: application views. Each view is contained in a file which defines the operating logic and the UX.
+
+## Starting a development environment
+
+### Prerequisites
+
+* npm and node.js: first of all install npm and node.js (https://nodejs.org/it/download/)
+
+* React Native Community CLI: install the React Native Community CLI (https://github.com/react-native-community/cli)
+
+```sh
+npm install -g @react-native-community/cli
+```
+
+* GPP_backend: configure the GPP_backend environment, available at: (https://github.com/LedgerProject/GPP_backend)
+
+### Configure the environment
+
+Open a terminal and make a clone of this repository on your machine:
+
+```sh
+git clone https://github.com/LedgerProject/GPP_app
+```
+
+Install the npm packages. Go to the project directory and run:
+
+```sh
+npm install
+```
+
+After the modules installation, configure the environment. Open /env/env.dev.js (remember to edit also the /env/env.prod.js) and edit the following parameters:
+
+```sh
+# SECTION 1 - TODO
+TODO
+
+# SECTION 2 - TODO
+TODO
+
+# SECTION 3 - TODO
+TODO
+```
+
+To test the application with Android, start an emulator with Android Studio and then run this script:
+
+```sh
+npx react-native run-android
+```
+
+To test the application with iOS, start an emulator with Xcode and then run this script:
+
+```sh
+npx react-native run-ios
+```
+
+## How the app works
+
+TODO

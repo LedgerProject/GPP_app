@@ -1,9 +1,7 @@
 {
   "name": "gpp-app",
   "description": "Global Passport Project Mobile Application",
-  "version": "0.0.1",
-  "private": true,
-  "license": "MIT",
+  "version": "0.8.3",
   "author": "antoniodibattista <antonio.dibattista@gmail.com>",
   "main": "./index.js",
   "workspaces": {
@@ -22,7 +20,6 @@
     "build:web": "expo build:web",
     "clean": "rimraf ./dist ./web-build",
     "lint": "tslint -c ./tslint.json ./src/**/*.{ts,tsx}",
-    "changelog": "conventional-changelog -i ./CHANGELOG.md -s",
     "postinstall": "jetify"
   },
   "dependencies": {
