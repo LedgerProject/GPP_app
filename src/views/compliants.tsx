@@ -9,7 +9,7 @@ import { Compliant } from './compliants/data';
 import data_compliants from './compliants/data';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppOptions } from '../services/app-options';
+import { AppOptions } from '../services/app-env';
 import I18n from './../i18n/i18n';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { MenuItem } from '../model/menu-item.model';

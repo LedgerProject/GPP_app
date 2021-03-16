@@ -12,10 +12,10 @@ module.exports = {
     "src/layouts/**/assets/*",
   ],
   dependencies: {
-    'some-unsupported-package': {
+    /*'some-unsupported-package': {
       platforms: {
         android: null, // disable Android platform, other platforms will still autolink if provided
       },
-    },
+    },*/
   },
 };

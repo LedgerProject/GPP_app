@@ -28,10 +28,12 @@ const moduleResolverConfig = {
 module.exports = function (api) {
   api.cache(true);
 
-  const presets = [];
+  const presets = [
+    'babel-preset-expo',
+  ];
 
   const plugins = [
-    ['module-resolver', moduleResolverConfig],
+    ['module-resolver', moduleResolverConfig]
   ];
 
   return { presets, plugins };

@@ -7,7 +7,7 @@ import { KeyboardAvoidingView } from '../services/3rd-party';
 import I18n from './../i18n/i18n';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppOptions } from '../services/app-options';
+import { AppOptions } from '../services/app-env';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 export default ({ navigation }): React.ReactElement => {

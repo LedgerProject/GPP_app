@@ -17,7 +17,7 @@ import {
 } from 'react-native-image-picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppOptions } from '../services/app-options';
+import { AppOptions } from '../services/app-env';
 import I18n from './../i18n/i18n';
 import FormData from 'form-data';
 import slugify from '@sindresorhus/slugify';

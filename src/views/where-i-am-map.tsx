@@ -13,7 +13,7 @@ import { Region } from 'react-native-maps';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppOptions } from '../services/app-options';
+import { AppOptions } from '../services/app-env';
 import Geocoder from 'react-native-geocoding';
 import I18n from './../i18n/i18n';
 import GetLocation from 'react-native-get-location';

@@ -2,12 +2,11 @@ import React, { useEffect } from 'react';
 import { View, ScrollView } from 'react-native';
 import { Button, Divider, StyleService, Text, TopNavigation, TopNavigationAction, useStyleSheet, Layout, Icon } from '@ui-kitten/components';
 import { ArrowBackIcon, MenuIcon } from '../components/icons';
-import { TopNavigationScreen } from 'src/scenes/components/top-navigation/top-navigation.component';
-
+//import { TopNavigationScreen } from 'src/scenes/components/top-navigation/top-navigation.component';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppOptions } from '../services/app-options';
+import { AppOptions } from '../services/app-env';
 import I18n from './../i18n/i18n';
 import Spinner from 'react-native-loading-spinner-overlay';
 

@@ -9,8 +9,4 @@ export class AppInfoService {
   static getBuildNumber = (): string => {
     return DeviceInfo.getBuildNumber();
   };
-
-  static getServerUrl = (): string => {
-    return 'https://www.globalpassportproject.org/gpp-backend/';
-  };
 }
