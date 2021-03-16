@@ -153,7 +153,7 @@ Install the npm packages. Go to the project directory and run:
 npm install
 ```
 
-After the modules installation, configure the environment. Make a copy of the /src/services/app-env-example.ts named /src/services/app-env-example.ts and edit the new file:
+After the modules installation, configure the environment. Make a copy of the /src/services/app-env-example.ts named /src/services/app-env.ts and edit the new file:
 
 ```sh
 <backend url> change with the backend URL (please configure the GPP_backend environment, available at: (https://github.com/LedgerProject/GPP_backend)
