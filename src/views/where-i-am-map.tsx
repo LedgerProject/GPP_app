@@ -7,7 +7,8 @@ import {
 import { MenuIcon } from '../components/icons';
 // import { categoryOptions } from './where-i-am/data-category';
 import { getBoundByRegion } from '../services/maps';
-import MapView, {PROVIDER_GOOGLE, Marker, Callout, CalloutSubview } from 'react-native-maps';
+import {PROVIDER_GOOGLE, Marker, Callout, CalloutSubview } from 'react-native-maps';
+import MapView from 'react-native-map-clustering';
 import { Region } from 'react-native-maps';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import axios from 'axios';
@@ -44,6 +45,14 @@ const initialBoudaries: RegionBoudaries = {
   northWestLongitude: 0,
   southEastLatitude: 0,
   southEastLongitude: 0,
+};
+
+
+const INITIAL_REGION = {
+  latitude: 52.5,
+  longitude: 19.2,
+  latitudeDelta: 8.5,
+  longitudeDelta: 8.5,
 };
 
 export const WhereIAmMapScreen = (props): React.ReactElement => {
@@ -150,64 +159,65 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
 
     // Remove the current markers on the map
     setMarkers([]);
-if (delta < 1.5) {
-    setLoading(true);
-    // Define the category filter
-    let addCategory = '';
-    if (filterCat) {
-      addCategory = ' ,"idCategory": "' + filterCat.idCategory + '" ';
-    }
 
-    // Get current token
-    const token = await AsyncStorage.getItem('token');
+    if (delta < 1.5) {
+      setLoading(true);
+      // Define the category filter
+      let addCategory = '';
+      if (filterCat) {
+        addCategory = ' ,"idCategory": "' + filterCat.idCategory + '" ';
+      }
 
-    // Define filters
-    const where = `"where": {`
-        + `"latitudeNorthWest": ` + northWestLatitude
-        + `,"longitudeNorthWest": ` + northWestLongitude
-        + `,"latitudeSouthEast": ` + southEastLatitude
-        + `,"longitudeSouthEast": ` + southEastLongitude
-        + addCategory
-      + `},`;
+      // Get current token
+      const token = await AsyncStorage.getItem('token');
 
-    // Define fields
-    const fields = `"fields": {`
-        + `"idStructure": true`
-        + `,"idOrganization": false`
-        + `,"organizationname": false`
-        + `,"alias": true`
-        + `,"structurename": true`
-        + `,"address": true`
-        + `,"city": true`
-        + `,"latitude": true`
-        + `,"longitude": true`
-        + `,"email": false`
-        + `,"email": false`
-        + `,"phoneNumberPrefix": false`
-        + `,"phoneNumber": false`
-        + `,"website": false`
-        + `,"idIcon": false`
-        + `,"iconimage": false`
-        + `,"iconmarker": true`
-      + `}`;
+      // Define filters
+      const where = `"where": {`
+          + `"latitudeNorthWest": ` + northWestLatitude
+          + `,"longitudeNorthWest": ` + northWestLongitude
+          + `,"latitudeSouthEast": ` + southEastLatitude
+          + `,"longitudeSouthEast": ` + southEastLongitude
+          + addCategory
+        + `},`;
 
-    // Get the structures based on coordinates and filters
-    axios
-      .get(AppOptions.getServerUrl() + 'structures/?filter={' + where + fields + '}', {
-        headers: {
-          'Authorization': 'Bearer ' + token,
-          'Content-Type': 'application/json',
-        },
-      })
-      .then(function (response) {
-        setLoading(false);
-        setMarkers(response.data);
-      })
-      .catch(function (error) {
-        setLoading(false);
-        // alert(JSON.stringify(error));
-        throw error;
-      });
+      // Define fields
+      const fields = `"fields": {`
+          + `"idStructure": true`
+          + `,"idOrganization": false`
+          + `,"organizationname": false`
+          + `,"alias": true`
+          + `,"structurename": true`
+          + `,"address": true`
+          + `,"city": true`
+          + `,"latitude": true`
+          + `,"longitude": true`
+          + `,"email": false`
+          + `,"email": false`
+          + `,"phoneNumberPrefix": false`
+          + `,"phoneNumber": false`
+          + `,"website": false`
+          + `,"idIcon": false`
+          + `,"iconimage": false`
+          + `,"iconmarker": true`
+        + `}`;
+
+      // Get the structures based on coordinates and filters
+      axios
+        .get(AppOptions.getServerUrl() + 'structures/?filter={' + where + fields + '}', {
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json',
+          },
+        })
+        .then(function (response) {
+          setLoading(false);
+          setMarkers(response.data);
+        })
+        .catch(function (error) {
+          setLoading(false);
+          // alert(JSON.stringify(error));
+          throw error;
+        });
     }
   }
 
@@ -347,6 +357,7 @@ if (delta < 1.5) {
           { zoom >= 1.5 && (
           <Text style={styles.info}>{I18n.t('Zoom in to view the structures')}</Text>
           )}
+          {mapRegion && (
           <MapView
             provider={PROVIDER_GOOGLE}
             style={isMapReady ? styles.Map : {}}
@@ -397,7 +408,7 @@ if (delta < 1.5) {
                 >
                 </Marker>
             ) }
-            </MapView>
+            </MapView>)}
         </Layout>
         <Layout style={styles.buttonsContainer}>
          <Layout style={styles.buttonLeft} >
