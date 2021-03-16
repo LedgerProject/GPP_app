@@ -28,9 +28,7 @@ const moduleResolverConfig = {
 module.exports = function (api) {
   api.cache(true);
 
-  const presets = [
-    'babel-preset-expo',
-  ];
+  const presets = [];
 
   const plugins = [
     ['module-resolver', moduleResolverConfig],

@@ -17,18 +17,6 @@ node_modules/
 node_modules/**/*
 npm-debug.log
 
-# env
-env/index.js
-
-# expo
-
-.expo
-.expo/*
-.expo-shared/
-web-build/
-
-dist
-
 # Bundle artifact
 *.jsbundle
 

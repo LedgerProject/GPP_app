@@ -17,7 +17,6 @@
     "start:dev": "npm run env -- dev && react-native start --reset-cache",
     "env": "node ./env/set-env.js",
     "build": "tsc -p ./tsconfig.json",
-    "build:web": "expo build:web",
     "clean": "rimraf ./dist ./web-build",
     "lint": "tslint -c ./tslint.json ./src/**/*.{ts,tsx}",
     "postinstall": "jetify"
@@ -78,7 +77,6 @@
     "@typescript-eslint/eslint-plugin": "^4.13.0",
     "@typescript-eslint/parser": "^4.13.0",
     "babel-plugin-module-resolver": "^4.0.0",
-    "babel-preset-expo": "^8.0.0",
     "conventional-changelog-cli": "^2.0.21",
     "eslint": "^7.18.0",
     "eslint-config-standard": "^16.0.2",
