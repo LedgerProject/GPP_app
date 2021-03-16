@@ -69,6 +69,7 @@ It is meant to serve as an innovative tool also for the third sector (NGOs, aid 
 * react-native-loading-spinner-overlay: React Native iOS and Android loading spinner (progress bar indicator) overlay.
 * react-native-localize: toolbox for React Native app localization.
 * react-native-maps: React Native mapview component for iOS + Android.
+* react-native-map-clustering: React Native mapview for markers clustering.
 * react-native-open-maps: React Native library to perform cross-platform map actions (Google or Apple Maps).
 * react-native-reanimated: alternative to animated library for React Native.
 * react-native-restart: reload the app bundle during app runtime.
@@ -110,7 +111,7 @@ It is meant to serve as an innovative tool also for the third sector (NGOs, aid 
 ## Directory structure
 
 * android: contains all the specific native code for Android. 
-* env: contains the development and productions files with the environment variables.
+* env: contains the development and productions files with the UI environment variables.
 * ios: contains all the specific native code for iOS. 
 * patches: directory containing node modules patches
 * src: TypeScript source code, having the following structure:
@@ -121,7 +122,7 @@ It is meant to serve as an innovative tool also for the third sector (NGOs, aid 
   * model: oggetti dell'applicazione
   * navigation: definizione delle routes
   * scenes: menu laterale
-  * services: various services functions.
+  * services: various services functions and environment variables.
   * views: application views. Each view is contained in a file which defines the operating logic and the UX.
 
 ## Starting a development environment
@@ -152,18 +153,14 @@ Install the npm packages. Go to the project directory and run:
 npm install
 ```
 
-After the modules installation, configure the environment. Open /env/env.dev.js (remember to edit also the /env/env.prod.js) and edit the following parameters:
+After the modules installation, configure the environment. Make a copy of the /src/services/app-env-example.ts named /src/services/app-env-example.ts and edit the new file:
 
 ```sh
-# SECTION 1 - TODO
-TODO
-
-# SECTION 2 - TODO
-TODO
-
-# SECTION 3 - TODO
-TODO
+<backend url> change with the backend URL (please configure the GPP_backend environment, available at: (https://github.com/LedgerProject/GPP_backend)
+<google maps api key> change with your Google Maps API key (remember Maps SDK for Android and Maps SDK for iOS)
 ```
+
+### Available scripts
 
 To test the application with Android, start an emulator with Android Studio and then run this script:
 
