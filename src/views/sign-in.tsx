@@ -65,8 +65,8 @@ export default ({ navigation }): React.ReactElement => {
   };
 
   useEffect(() => {
-    setEmail('test@globalpassportproject.me');
-    setPassword('12345678');
+    setEmail('');
+    setPassword('');
   }, []);
 
   return (
