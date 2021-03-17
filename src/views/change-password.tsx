@@ -101,7 +101,7 @@ export const ChangePasswordScreen = (props): React.ReactElement => {
           break;
           case 201: case 202:
             setSuccess(I18n.t(
-              'Congratulations! Your password has been updated successfully',
+              'Password updated successfully',
               ));
             setNewPassword('');
             setConfirmNewPassword('');

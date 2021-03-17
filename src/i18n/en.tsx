@@ -136,5 +136,6 @@ export default {
   'Passwords not match': 'Passwords not match',
   'Current password is wrong': 'Current password is wrong',
   'New password at least 8 characters': 'New password at least 8 characters',
-  'Congratulations! Your password has been updated successfully': 'Congratulations! Your password has been updated successfully',
+  'Password updated successfully': 'Password updated successfully',
+  'Profile updated successfully': 'Profile updated successfully',
 };

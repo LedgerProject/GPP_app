@@ -11,7 +11,7 @@ import {
   TopNavigation,
   TopNavigationAction,
   Divider,
-  Datepicker,
+  Datepicker, Modal,
 } from '@ui-kitten/components';
 import { ProfileAvatar } from '../services/profile-avatar.component';
 import { PersonIcon, PlusIcon } from '../components/icons';
@@ -28,6 +28,7 @@ import { AppOptions } from '../services/app-env';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 export const MyProfileScreen = (props): React.ReactElement => {
+  const [idUser, setIdUser] = React.useState<string>();
   const [firstName, setFirstName] = React.useState<string>();
   const [lastName, setLastName] = React.useState<string>();
   const [gender, setGender] = React.useState(props.selectedOption);
@@ -35,10 +36,15 @@ export const MyProfileScreen = (props): React.ReactElement => {
   const [birthday, setBirthday] = React.useState<Date>();
   const [loading, setLoading] = React.useState(false);
   const [nationalityOptions, setNationalityOptions] = React.useState([]);
+  const [nationalityObjects, setNationalityObjects] = React.useState([]);
   const today = new Date();
   const firstDayCalendar = new Date(1900, 1, 1);
 
   const styles = useStyleSheet(themedStyles);
+
+  const [success, setSuccess] = React.useState<string>();
+  const [error, setError] = React.useState<string>();
+  const [modalVisible, setmodalVisible] = React.useState(false);
 
   const onSelectGender = (option) => {
     setGender(option);
@@ -48,11 +54,73 @@ export const MyProfileScreen = (props): React.ReactElement => {
     setNationality(option);
   };
 
-  const onSaveButtonPress = (): void => {
+  async function onSaveButtonPress() {
+    setError('');
+    setSuccess('');
+    if (!firstName) {
+      setError(I18n.t('Please fill First Name'));
+      setmodalVisible(true);
+      return;
+    }
+    if (!lastName) {
+      setError(I18n.t('Please fill Last Name'));
+      setmodalVisible(true);
+      return;
+    }
+    const token = await AsyncStorage.getItem('token');
     setLoading(true);
-    // TODO
-    setLoading(false);
-  };
+    const postParams = {
+        firstName: firstName,
+        lastName: lastName,
+      };
+      let key = '';
+      if (gender) {
+        const gender_value = gender.text;
+        key = 'gender';
+        postParams[key] = gender_value;
+      }
+      if (nationality) {
+        const nationality_identifier = nationality.text;
+        let nationality_value = '';
+        // search nationality
+        nationalityObjects.forEach(element => {
+          if (element.identifier === nationality_identifier) {
+            nationality_value = element.idNationality;
+            key = 'idNationality';
+            postParams[key] = nationality_value;
+          }
+        });
+        //
+      }
+      if (birthday) {
+        key = 'birthday';
+        postParams[key] = birthday;
+      }
+
+      axios
+      .patch(AppOptions.getServerUrl() + 'users/' + idUser, postParams, {
+        headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+        },
+      })
+      .then(function (response) {
+        setLoading(false);
+            setSuccess(I18n.t(
+              'Profile updated successfully',
+              ));
+        setmodalVisible(true);
+      })
+      .catch(errors => {
+
+        setLoading(false);
+        setError(I18n.t('An error has occurred, please try again'));
+        setmodalVisible(true);
+        throw error;
+        return;
+      });
+
+  }
 
   const onDeleteButtonPress = (): void => {
     setLoading(true);
@@ -95,22 +163,107 @@ export const MyProfileScreen = (props): React.ReactElement => {
         .then(function (response) {
           setLoading(false);
           const data: any = response.data;
+          setNationalityObjects(data);
           const options = [];
           data.map ( (element) => {
             const option = { text: element.identifier };
             options.push( option );
           });
           setNationalityOptions(options);
+
+          // Getuser
+          axios
+          .get(AppOptions.getServerUrl() + 'users/logged-user', {
+            headers: {
+              'Authorization': 'Bearer ' + token,
+              'Content-Type': 'application/json',
+            },
+          })
+          .then(function (user_response) {
+            setLoading(false);
+            const user_data: any = user_response.data;
+            if (user_data) {
+              let bday = user_data.birthday;
+              if (bday) {
+                bday = bday.substring(0, 10);
+                const bday_date = new Date(bday + ' 00:00:00');
+                setBirthday(bday_date);
+              }
+              setIdUser(user_data.idUser);
+              setFirstName(user_data.firstName);
+              setLastName(user_data.lastName);
+              if (user_data.gender) {
+                setGender({ text: user_data.gender});
+              }
+              if (user_data.idNationality) {
+                data.forEach( element => {
+                  if (element.idNationality === user_data.idNationality) {
+                    setNationality({ text: element.identifier});
+                  }
+                });
+              }
+            }
+          })
+          .catch(function () {
+            // setLoading(false);
+            // throw error;
+          });
+
+          //
+
         })
-        .catch(function (error) {
+        .catch(function () {
           setLoading(false);
           // alert(JSON.stringify(error));
           throw error;
         });
     }
 
+    async function getUser() {
+      setLoading(true);
+      const token = await AsyncStorage.getItem('token');
+      axios
+        .get(AppOptions.getServerUrl() + 'users/logged-user', {
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json',
+          },
+        })
+        .then(function (response) {
+          setLoading(false);
+          const data: any = response.data;
+          if (data) {
+            let bday = data.birthday;
+            if (bday) {
+              bday = bday.substring(0, 10);
+              const bday_date = new Date(bday + ' 00:00:00');
+              setBirthday(bday_date);
+            }
+            setIdUser(data.idUser);
+            setFirstName(data.firstName);
+            setLastName(data.lastName);
+            if (data.gender) {
+              setGender({ text: data.gender});
+            }
+            if (data.idNationality) {
+              nationalityObjects.forEach( element => {
+                if (element.idNationality === data.idNationality) {
+                  setNationality({ text: element.identifier});
+                }
+              });
+            }
+          }
+        })
+        .catch(function () {
+          setLoading(false);
+          throw error;
+        });
+    }
+
+
   useEffect(() => {
     getNationalities();
+    // getUser();
   }, []);
 
   return (
@@ -209,6 +362,20 @@ export const MyProfileScreen = (props): React.ReactElement => {
           </KeyboardAvoidingView>
         </ScrollView>
       </View>
+      <Modal
+      visible={ modalVisible }
+      backdropStyle={styles.backdrop}
+      onBackdropPress={ () => setmodalVisible(false)}
+      >
+      <Layout style={ styles.modal } >
+      <Text style={ styles.modalText } status={error ? 'danger' : 'success' }>{error ? error : success}</Text>
+      <Button
+      status={error ? 'basic' : 'primary' }
+      onPress={ () => setmodalVisible(false) }>
+        { I18n.t('CLOSE') }
+        </Button>
+      </Layout>
+      </Modal>
     </SafeAreaLayout>
   );
 };
@@ -273,9 +440,6 @@ const themedStyles = StyleService.create({
     marginVertical: 12,
     marginHorizontal: 16,
   },
-  spinnerTextStyle: {
-    color: '#FFF',
-  },
   topBar: {
     backgroundColor: 'color-primary-default',
   },
@@ -285,5 +449,20 @@ const themedStyles = StyleService.create({
   topBarIcon: {
     color: '#FFFFFF',
     tintColor: '#FFFFFF',
+  },
+  backdrop: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+  modal: {
+    textAlign: 'center',
+    margin: 12,
+    padding: 12,
+    minWidth: 192,
+  },
+  modalText: {
+    marginTop: 10,
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });
