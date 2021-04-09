@@ -472,6 +472,6 @@ const themedStyles = StyleService.create({
     alignSelf: 'center',
     marginTop: 16,
     marginBottom: 4,
-  },  
+  },
 });
 
