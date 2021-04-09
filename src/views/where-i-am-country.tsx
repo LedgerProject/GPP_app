@@ -10,12 +10,22 @@ import { AppOptions } from '../services/app-env';
 import I18n from './../i18n/i18n';
 import Spinner from 'react-native-loading-spinner-overlay';
 
+// REDUX
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  manageToken,
+  selectToken,
+} from '../app/tokenSlice';
+
 export const WhereIAmCountryScreen = (props): React.ReactElement => {
   const { Country } = props.route.params;
   const styles = useStyleSheet(themedStyles);
   const [countryName, setCountryName] = React.useState('');
   const [topics, setTopics] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+
+  // Get Token from REDUX
+  const token = useSelector(selectToken);
 
   const navigateBack = () => {
     props.navigation.goBack();
@@ -32,7 +42,7 @@ export const WhereIAmCountryScreen = (props): React.ReactElement => {
 
   async function getCountry() {
     setLoading(true);
-    const token = await AsyncStorage.getItem('token');
+    // const token = await AsyncStorage.getItem('token');
     let lang = await AsyncStorage.getItem('lang');
     lang = lang.substring(0, 2);
     axios

@@ -10,6 +10,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppOptions } from '../services/app-env';
 import Spinner from 'react-native-loading-spinner-overlay';
 
+// REDUX
+import { useSelector, useDispatch } from 'react-redux';
+import { manageToken, selectToken } from '../app/tokenSlice';
+import { manageEmail, selectEmail } from '../app/emailSlice';
+
 export default ({ navigation }): React.ReactElement => {
   const [email, setEmail] = React.useState<string>();
   const [password, setPassword] = React.useState<string>();
@@ -19,11 +24,15 @@ export default ({ navigation }): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
   const [loading, setLoading] = React.useState(false);
 
+  // REDUX
+  const dispatch = useDispatch();
+
   const onSignUpButtonPress = (): void => {
     navigation && navigation.navigate('SignUp');
   };
 
   const onForgotPasswordButtonPress = (): void => {
+    dispatch(manageEmail(email));
     navigation && navigation.navigate('ForgotPassword');
   };
 
@@ -49,7 +58,8 @@ export default ({ navigation }): React.ReactElement => {
       .then(function (response) {
         // handle success
         setLoading(false);
-        AsyncStorage.setItem('token', response.data.token);
+        // AsyncStorage.setItem('token', response.data.token);
+        dispatch(manageToken(response.data.token));
         navigation && navigation.navigate('Homepage');
       })
       .catch(function () { // (error) {
@@ -65,8 +75,8 @@ export default ({ navigation }): React.ReactElement => {
   };
 
   useEffect(() => {
-    setEmail('');
-    setPassword('');
+    setEmail('test@globalpassportproject.me');
+    setPassword('12345678');
   }, []);
 
   return (
@@ -82,6 +92,7 @@ export default ({ navigation }): React.ReactElement => {
             style={styles.imageAuth}
             source={require('../assets/images/auth-background.png')}>
           </ImageBackground>
+
           <Text
             style={styles.signInLabel}
             category='s1'

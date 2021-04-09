@@ -6,6 +6,12 @@ import { EyeIcon, EyeOffIcon, EmailIcon } from '../components/icons';
 import { KeyboardAvoidingView } from '../services/3rd-party';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppIntroSlider from 'react-native-app-intro-slider';
+// REDUX
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  manageIntro,
+  selectIntro,
+} from '../app/introSlice';
 
 const slides = [
   {
@@ -54,6 +60,7 @@ const slides = [
 
 export default ({ navigation }): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
+  const dispatch = useDispatch();
 
   const renderItem = ({ item }) => {
   return (
@@ -69,7 +76,8 @@ export default ({ navigation }): React.ReactElement => {
   );
   };
   const onDone = () => {
-    AsyncStorage.setItem('intro', '1');
+    dispatch(manageIntro('1'));
+    // AsyncStorage.setItem('intro', '1');
     navigation && navigation.navigate('SignIn');
   };
 

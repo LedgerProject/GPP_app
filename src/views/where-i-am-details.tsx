@@ -17,6 +17,13 @@ import I18n from './../i18n/i18n';
 import openMap from 'react-native-open-maps';
 import Spinner from 'react-native-loading-spinner-overlay';
 
+// REDUX
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  manageToken,
+  selectToken,
+} from '../app/tokenSlice';
+
 /* export class Structure {
   constructor(
     readonly idStructure: string,
@@ -46,6 +53,9 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
   const [alertMessage, setAlertMessage] = React.useState('');
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+
+  // Get Token from REDUX
+  const token = useSelector(selectToken);
 
   const navigateBack = () => {
     props.navigation.goBack();
@@ -82,7 +92,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
       );
     } else {
       setLoading(true);
-      const token = await AsyncStorage.getItem('token');
+      // const token = await AsyncStorage.getItem('token');
 
 
       setLoading(false);
@@ -97,7 +107,7 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
 
    async function getStructure() {
     setLoading(true);
-    const token = await AsyncStorage.getItem('token');
+    // const token = await AsyncStorage.getItem('token');
     let lang = await AsyncStorage.getItem('lang');
     lang = lang.substring(0, 2);
     axios
@@ -325,11 +335,17 @@ onBackdropPress={ () => setmodalContactVisible(false) }
             value={contactMessage}
             onChangeText={setContactMessage}
             multiline={true}
-            textStyle={{ minHeight: 64 }}
+            textStyle={{ minHeight: 90, textAlignVertical: 'top' }}
           />
+  <Layout style={styles.buttonsContainer}>
+         <Layout style={styles.buttonLeftModal} >
           <Button onPress={handleSend}>{I18n.t('SEND')}</Button>
+         </Layout>
+         <Layout style={styles.buttonRightModal} >
           <Button status='basic' onPress={() => setmodalContactVisible(false)}>{I18n.t('CLOSE')}</Button>
-        </Layout>
+         </Layout>
+  </Layout>
+</Layout>
 </ModalUiKitten>
 
 <ModalUiKitten
@@ -443,6 +459,18 @@ const themedStyles = StyleService.create({
     marginLeft: 10,
     marginRight: 5,
     alignItems: 'center',
+  },
+  buttonRightModal: {
+    width: '50%',
+    height: 'auto',
+    flex: 1,
+    marginLeft: 5,
+  },
+  buttonLeftModal: {
+    width: '50%',
+    height: 'auto',
+    flex: 1,
+    marginRight: 5,
   },
   button: { width: '100%' },
   backdrop: { /* backgroundColor: 'rgba(0, 0, 0, 0.5)', */ },

@@ -22,6 +22,13 @@ import FormData from 'form-data';
 import slugify from '@sindresorhus/slugify';
 import Spinner from 'react-native-loading-spinner-overlay';
 
+// REDUX
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  manageToken,
+  selectToken,
+} from '../app/tokenSlice';
+
 import { ImageStyle, ImageSourcePropType } from 'react-native';
 import { ThemedIcon } from '../components/themed-icon.component';
 /*import {
@@ -64,6 +71,7 @@ export const CustomFromLibraryIcon = (props) => (
 export const DocWalletScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
   const [documents, setDocuments] = React.useState([]);
+  const [selectedDocuments, setSelectedDocuments] = React.useState([]);
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
   const [modalVisible, setmodalVisible] = React.useState(false);
   const [modalFileVisible, setmodalFileVisible] = React.useState(false);
@@ -78,6 +86,9 @@ export const DocWalletScreen = (props): React.ReactElement => {
   const [fileResponse, setFileResponse] = React.useState<ImagePickerResponse>(initialFileResponse);
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState([]);
+
+  // Get Token from REDUX
+  const token = useSelector(selectToken);
 
   const ZoomImage = (): void => {
     setmodalFileVisible(true);
@@ -101,7 +112,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
 
   async function DeleteDocument() {
     setLoading(true);
-    const token = await AsyncStorage.getItem('token');
+    // const token = await AsyncStorage.getItem('token');
     axios
     .delete(AppOptions.getServerUrl() + 'documents/' + documentDelete.idDocument, {
       headers: {
@@ -126,7 +137,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
   async function LoadFile(document) {
 
     setLoading(true);
-    const token = await AsyncStorage.getItem('token');
+    // const token = await AsyncStorage.getItem('token');
     axios
     .get(AppOptions.getServerUrl() + 'documents-base64/' + document.idDocument, {
       headers: {
@@ -152,6 +163,19 @@ export const DocWalletScreen = (props): React.ReactElement => {
     LoadFile(document);
   };
 
+  const onCheckboxChange = (value: boolean, document: Document, index: number): void => {
+
+    const all_documents = documents;
+    const all_selectedDocuments = [];
+    all_documents[index].isChecked = value;
+    all_documents.forEach( (element) => {
+      if (element.isChecked === true) {
+        all_selectedDocuments.push(element.idDocument);
+      }
+    });
+    setSelectedDocuments(selectedDocuments);
+  };
+
   const renderDrawerAction = (): React.ReactElement => (
     <TopNavigationAction
       icon={MenuIcon}
@@ -166,13 +190,22 @@ export const DocWalletScreen = (props): React.ReactElement => {
       document={info.item}
       onRemove={onItemRemove}
       onItemPress={onItemPress}
+      onCheckboxPress={onCheckboxChange}
     />
   );
 
   const onGenerateTokenButtonPress = async (): Promise<void> => {
     setLoading(true);
-    const token = await AsyncStorage.getItem('token');
+    // const token = await AsyncStorage.getItem('token');
+    if (selectedDocuments.length === 0) {
+      setLoading(false);
+      showAlertMessage(
+        I18n.t('No Document Selected'),
+        I18n.t('Please select at least one Document'),
+      );
+    } else {
 
+    // alert(JSON.stringify(selectedDocuments));
     axios.post(AppOptions.getServerUrl() + 'users-token', null, {
       headers: {
         'Authorization': 'Bearer ' + token,
@@ -191,11 +224,13 @@ export const DocWalletScreen = (props): React.ReactElement => {
         error.message,
       );
     });
+
+    }
   };
 
   async function getMyDocuments() {
     setLoading(true);
-    const token = await AsyncStorage.getItem('token');
+    // const token = await AsyncStorage.getItem('token');
     axios
     .get(AppOptions.getServerUrl() + 'documents', {
       headers: {
@@ -205,7 +240,11 @@ export const DocWalletScreen = (props): React.ReactElement => {
     })
     .then(function (response) {
       setLoading(false);
-      setDocuments(response.data);
+      const all_documents = response.data;
+      all_documents.forEach( (element, index) => {
+        all_documents[index].isChecked = false;
+      });
+      setDocuments(documents);
       // alert(JSON.stringify(response));
     })
     .catch(function (error) {
@@ -342,7 +381,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
       );
     } else {
       setLoading(true);
-      const token = await AsyncStorage.getItem('token');
+      // const token = await AsyncStorage.getItem('token');
       const extension =  fileResponse.fileName.split('.').pop();
       const fileName = slugify(documentTitle) + '.' + extension;
 

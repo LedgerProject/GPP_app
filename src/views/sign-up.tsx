@@ -33,8 +33,69 @@ export default ({ navigation }): React.ReactElement => {
   const [success, setSuccess] = React.useState<string>();
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
-
+  const [step2, setStep2] = React.useState(false);
   const styles = useStyleSheet(themedStyles);
+  const [answer1, setAnswer1] = React.useState<string>();
+  const [answer2, setAnswer2] = React.useState<string>();
+  const [answer3, setAnswer3] = React.useState<string>();
+  const [answer4, setAnswer4] = React.useState<string>();
+  const [answer5, setAnswer5] = React.useState<string>();
+
+  const onStep2ButtonPress = (): void => {
+      // navigation && navigation.goBack();
+      setError('');
+      setSuccess('');
+      if (!firstName) {
+        setError(I18n.t('Please fill First Name'));
+        setmodalVisible(true);
+        return;
+      }
+      if (!lastName) {
+        setError(I18n.t('Please fill Last Name'));
+        setmodalVisible(true);
+        return;
+      }
+      if (!email) {
+        setError(I18n.t('Please fill Email'));
+        setmodalVisible(true);
+        return;
+      }
+      if (!confirmEmail) {
+        setError(I18n.t('Please confirm Email'));
+        setmodalVisible(true);
+        return;
+      }
+      if (email !== confirmEmail) {
+        setError(I18n.t('Email and confirm Email do not match'));
+        setmodalVisible(true);
+        return;
+      }
+      if (!password) {
+        setError(I18n.t('Please fill Password'));
+        setmodalVisible(true);
+        return;
+      }
+      if (!confirmPassword) {
+        setError(I18n.t('Please confirm Password'));
+        setmodalVisible(true);
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError(I18n.t('Password and confirm Password do not match'));
+        setmodalVisible(true);
+        return;
+      }
+      if (!termsAccepted) {
+        setError(I18n.t('Please accept terms and conditions'));
+        setmodalVisible(true);
+        return;
+      }
+      setStep2(true);
+  };
+
+  const onBackButtonPress = (): void => {
+    setStep2(false);
+  };
 
   const onSignUpButtonPress = (): void => {
     // navigation && navigation.goBack();
@@ -85,6 +146,32 @@ export default ({ navigation }): React.ReactElement => {
       setmodalVisible(true);
       return;
     }
+    if (!answer1) {
+      setError(I18n.t('Please fill Answer 1'));
+      setmodalVisible(true);
+      return;
+    }
+    if (!answer2) {
+      setError(I18n.t('Please fill Answer 2'));
+      setmodalVisible(true);
+      return;
+    }
+    if (!answer3) {
+      setError(I18n.t('Please fill Answer 3'));
+      setmodalVisible(true);
+      return;
+    }
+    if (!answer4) {
+      setError(I18n.t('Please fill Answer 4'));
+      setmodalVisible(true);
+      return;
+    }
+    if (!answer5) {
+      setError(I18n.t('Please fill Answer 5'));
+      setmodalVisible(true);
+      return;
+    }
+
     setLoading(true);
     const postParams = {
         userType: 'user',
@@ -145,6 +232,7 @@ export default ({ navigation }): React.ReactElement => {
             {I18n.t('Please register to Global Passport Project')}
           </Text>
         </View>
+        { step2 === false && (
         <Layout
           style={styles.formContainer}
           level='1'>
@@ -208,13 +296,87 @@ export default ({ navigation }): React.ReactElement => {
             checked={termsAccepted}
             onChange={(checked: boolean) => setTermsAccepted(checked)}
           />
-        </Layout>
+        <Button
+          style={styles.signUpButton}
+          size='giant'
+          onPress={onStep2ButtonPress}>
+           {I18n.t('CONTINUE')}
+        </Button>
+      </Layout>
+      )}
+      { step2 === true && (
+      <Layout
+          style={styles.formContainer}
+          level='1'>
+        <Button
+          style={styles.signInButton}
+          appearance='ghost'
+          status='basic'
+          onPress={onBackButtonPress}>
+          {I18n.t('Go back')}
+        </Button>
+        <Text
+            style={styles.enterEmailLabel}>
+            {I18n.t('Question 1')}
+          </Text>
+          <Input
+          style={styles.nameInput}
+            placeholder={I18n.t('Answer 1')}
+            value={answer1}
+            onChangeText={setAnswer1}
+          />
+          <Text
+            style={styles.enterEmailLabel}>
+            {I18n.t('Question 2')}
+          </Text>
+          <Input
+          style={styles.nameInput}
+            placeholder={I18n.t('Answer 2')}
+            value={answer2}
+            onChangeText={setAnswer2}
+          />
+
+<Text
+            style={styles.enterEmailLabel}>
+            {I18n.t('Question 3')}
+          </Text>
+          <Input
+          style={styles.nameInput}
+            placeholder={I18n.t('Answer 3')}
+            value={answer3}
+            onChangeText={setAnswer3}
+          />
+
+<Text
+            style={styles.enterEmailLabel}>
+            {I18n.t('Question 4')}
+          </Text>
+          <Input
+          style={styles.nameInput}
+            placeholder={I18n.t('Answer 4')}
+            value={answer4}
+            onChangeText={setAnswer4}
+          />
+
+<Text
+            style={styles.enterEmailLabel}>
+            {I18n.t('Question 5')}
+          </Text>
+          <Input
+          style={styles.nameInput}
+            placeholder={I18n.t('Answer 5')}
+            value={answer5}
+            onChangeText={setAnswer5}
+          />
         <Button
           style={styles.signUpButton}
           size='giant'
           onPress={onSignUpButtonPress}>
            {I18n.t('SIGN UP')}
         </Button>
+      </Layout>
+      )}
+
         <Button
           style={styles.signInButton}
           appearance='ghost'
@@ -305,5 +467,11 @@ const themedStyles = StyleService.create({
   spinnerTextStyle: {
     color: '#FFF',
   },
+  enterEmailLabel: {
+    zIndex: 1,
+    alignSelf: 'center',
+    marginTop: 16,
+    marginBottom: 4,
+  },  
 });
 

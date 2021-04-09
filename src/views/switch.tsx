@@ -5,13 +5,19 @@ import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { EyeIcon, EyeOffIcon, EmailIcon } from '../components/icons';
 import { KeyboardAvoidingView } from '../services/3rd-party';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+// REDUX
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  manageIntro,
+  selectIntro,
+} from '../app/introSlice';
 
 export default ({ navigation }): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
-
+  const intro = useSelector(selectIntro);
   useEffect(() => {
     async function getIntroStatus() {
-      const intro = await AsyncStorage.getItem('intro');
+      // const intro = await AsyncStorage.getItem('intro');
        if (intro === '1') {
         navigation && navigation.navigate('SignIn');
        } else {

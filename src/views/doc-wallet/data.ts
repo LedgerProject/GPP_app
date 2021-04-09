@@ -43,6 +43,7 @@ export class Document {
               readonly title: string,
               readonly size: string,
               readonly mimeType: string,
+              public isChecked: boolean,
               // readonly image: ImageSourcePropType
               ) {
   }

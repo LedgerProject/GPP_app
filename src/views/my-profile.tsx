@@ -27,6 +27,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppOptions } from '../services/app-env';
 import Spinner from 'react-native-loading-spinner-overlay';
 
+// REDUX
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  manageToken,
+  selectToken,
+} from '../app/tokenSlice';
+
 export const MyProfileScreen = (props): React.ReactElement => {
   const [idUser, setIdUser] = React.useState<string>();
   const [firstName, setFirstName] = React.useState<string>();
@@ -45,6 +52,9 @@ export const MyProfileScreen = (props): React.ReactElement => {
   const [success, setSuccess] = React.useState<string>();
   const [error, setError] = React.useState<string>();
   const [modalVisible, setmodalVisible] = React.useState(false);
+
+  // Get Token from REDUX
+  const token = useSelector(selectToken);
 
   const onSelectGender = (option) => {
     setGender(option);
@@ -67,7 +77,7 @@ export const MyProfileScreen = (props): React.ReactElement => {
       setmodalVisible(true);
       return;
     }
-    const token = await AsyncStorage.getItem('token');
+    // const token = await AsyncStorage.getItem('token');
     setLoading(true);
     const postParams = {
         firstName: firstName,
@@ -145,7 +155,7 @@ export const MyProfileScreen = (props): React.ReactElement => {
 
   async function getNationalities() {
       setLoading(true);
-      const token = await AsyncStorage.getItem('token');
+      // const token = await AsyncStorage.getItem('token');
       let lang = await AsyncStorage.getItem('lang');
       lang = lang.substring(0, 2);
       axios
@@ -183,10 +193,9 @@ export const MyProfileScreen = (props): React.ReactElement => {
             setLoading(false);
             const user_data: any = user_response.data;
             if (user_data) {
-              let bday = user_data.birthday;
+              const bday = user_data.birthday;
               if (bday) {
-                bday = bday.substring(0, 10);
-                const bday_date = new Date(bday + ' 00:00:00');
+                const bday_date = new Date(bday);
                 setBirthday(bday_date);
               }
               setIdUser(user_data.idUser);
@@ -221,7 +230,7 @@ export const MyProfileScreen = (props): React.ReactElement => {
 
     async function getUser() {
       setLoading(true);
-      const token = await AsyncStorage.getItem('token');
+      // const token = await AsyncStorage.getItem('token');
       axios
         .get(AppOptions.getServerUrl() + 'users/logged-user', {
           headers: {

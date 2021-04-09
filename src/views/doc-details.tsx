@@ -15,12 +15,22 @@ import I18n from './../i18n/i18n';
 // import {Buffer} from 'buffer';
 import AutoHeightImage from 'react-native-auto-height-image';
 
+// REDUX
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  manageToken,
+  selectToken,
+} from '../app/tokenSlice';
+
 export const DocDetailsScreen = (props): React.ReactElement => {
 
   const { item, image } = props.route.params;
   const [modalVisible, setmodalVisible] = React.useState(false);
   const styles = useStyleSheet(themedStyles);
   const { height, width } = Dimensions.get( 'window' );
+
+  // Get Token from REDUX
+  const token = useSelector(selectToken);
 
   const navigateBack = () => {
     props.navigation.goBack();

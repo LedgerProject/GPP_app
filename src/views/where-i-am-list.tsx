@@ -16,6 +16,12 @@ import { AppOptions } from '../services/app-env';
 import I18n from './../i18n/i18n';
 import Spinner from 'react-native-loading-spinner-overlay';
 
+// REDUX
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  manageToken,
+  selectToken,
+} from '../app/tokenSlice';
 
 export const WhereIAmListScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
@@ -31,6 +37,9 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
   const [alertTitle, setAlertTitle] = React.useState('');
   const [alertMessage, setAlertMessage] = React.useState('');
+
+  // Get Token from REDUX
+  const token = useSelector(selectToken);
 
   const onSelectFilter = (selected_option) => {
     setFilter(selected_option);
@@ -58,7 +67,7 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
     // get position
 
     // ask structures
-    const token = await AsyncStorage.getItem('token');
+    // const token = await AsyncStorage.getItem('token');
     // console.log(token);
     const where = `"where": {`
         + `"latitudeNorthWest": ` + Lat1
@@ -118,7 +127,7 @@ export const WhereIAmListScreen = (props): React.ReactElement => {
 
   async function getCategories() {
     let x = 0;
-    const token = await AsyncStorage.getItem('token');
+    // const token = await AsyncStorage.getItem('token');
     axios
     .get(AppOptions.getServerUrl() + 'categories', {
       headers: {

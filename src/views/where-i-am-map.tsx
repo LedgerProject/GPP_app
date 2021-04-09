@@ -19,6 +19,14 @@ import I18n from './../i18n/i18n';
 import GetLocation from 'react-native-get-location';
 import Spinner from 'react-native-loading-spinner-overlay';
 
+// REDUX
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  manageToken,
+  selectToken,
+} from '../app/tokenSlice';
+
+
 // Initialize the module (needs to be done only once)
 Geocoder.init( AppOptions.getGeocoderApiKey() , {language : 'en'});
 
@@ -75,6 +83,9 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   const [alertMessage, setAlertMessage] = React.useState('');
   const [currentPosition, setCurrentPosition] = React.useState((): any => {});
 
+  // Get Token from REDUX
+  const token = useSelector(selectToken);
+
   // Init functions
   useEffect(() => {
     getCategories();
@@ -121,7 +132,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
   // Get the filter categories
   async function getCategories() {
     let x = 0;
-    const token = await AsyncStorage.getItem('token');
+    // const token = await AsyncStorage.getItem('token');
 
     axios
       .get(AppOptions.getServerUrl() + 'categories', {
@@ -169,7 +180,7 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
       }
 
       // Get current token
-      const token = await AsyncStorage.getItem('token');
+      // const token = await AsyncStorage.getItem('token');
 
       // Define filters
       const where = `"where": {`

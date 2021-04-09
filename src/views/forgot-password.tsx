@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, ImageBackground } from 'react-native';
 import { Button, Input, Layout, Text, StyleService, useStyleSheet, Modal } from '@ui-kitten/components';
 import { EmailIcon } from '../components/icons';
@@ -8,9 +8,16 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import I18n from './../i18n/i18n';
 import axios from 'axios';
 import { AppOptions } from '../services/app-env';
+import { useSelector, useDispatch } from 'react-redux';
+import { manageEmail, selectEmail } from '../app/emailSlice';
 
 export default ({ navigation }): React.ReactElement => {
-  const [email, setEmail] = React.useState<string>();
+  const [email, setEmail] = React.useState<string>(useSelector(selectEmail));
+  const [answer1, setAnswer1] = React.useState<string>();
+  const [answer2, setAnswer2] = React.useState<string>();
+  const [answer3, setAnswer3] = React.useState<string>();
+  const [answer4, setAnswer4] = React.useState<string>();
+  const [answer5, setAnswer5] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
   const [success, setSuccess] = React.useState<string>();
   const [error, setError] = React.useState<string>();
@@ -31,6 +38,32 @@ export default ({ navigation }): React.ReactElement => {
       setmodalVisible(true);
       return;
     }
+    if (!answer1) {
+      setError(I18n.t('Please fill Answer 1'));
+      setmodalVisible(true);
+      return;
+    }
+    if (!answer2) {
+      setError(I18n.t('Please fill Answer 2'));
+      setmodalVisible(true);
+      return;
+    }
+    if (!answer3) {
+      setError(I18n.t('Please fill Answer 3'));
+      setmodalVisible(true);
+      return;
+    }
+    if (!answer4) {
+      setError(I18n.t('Please fill Answer 4'));
+      setmodalVisible(true);
+      return;
+    }
+    if (!answer5) {
+      setError(I18n.t('Please fill Answer 5'));
+      setmodalVisible(true);
+      return;
+    }
+
     setLoading(true);
     const postParams = {
         email: email,
@@ -91,23 +124,76 @@ export default ({ navigation }): React.ReactElement => {
             style={styles.forgotPasswordLabel}
             category='s1'
             status='control'>
-            Forgot password?
+            {I18n.t('Forgot password?')}
           </Text>
         </View>
+
         <Layout
           style={styles.formContainer}
           level='1'>
           <Text
             style={styles.enterEmailLabel}>
-            Please enter your email address
+            {I18n.t('Please enter your email address')}
           </Text>
           <Input
-            placeholder='E-Mail'
+            placeholder={I18n.t('Email')}
             icon={EmailIcon}
             value={email}
             onChangeText={setEmail}
           />
-        </Layout>
+
+
+          <Text
+            style={styles.enterEmailLabel}>
+            {I18n.t('Question 1')}
+          </Text>
+          <Input
+            placeholder={I18n.t('Answer 1')}
+            value={answer1}
+            onChangeText={setAnswer1}
+          />
+
+          <Text
+            style={styles.enterEmailLabel}>
+            {I18n.t('Question 2')}
+          </Text>
+          <Input
+            placeholder={I18n.t('Answer 2')}
+            value={answer2}
+            onChangeText={setAnswer2}
+          />
+
+          <Text
+            style={styles.enterEmailLabel}>
+            {I18n.t('Question 3')}
+          </Text>
+          <Input
+            placeholder={I18n.t('Answer 3')}
+            value={answer3}
+            onChangeText={setAnswer3}
+          />
+
+          <Text
+            style={styles.enterEmailLabel}>
+            {I18n.t('Question 4')}
+          </Text>
+          <Input
+            placeholder={I18n.t('Answer 4')}
+            value={answer4}
+            onChangeText={setAnswer4}
+          />
+
+          <Text
+            style={styles.enterEmailLabel}>
+            {I18n.t('Question 5')}
+          </Text>
+          <Input
+            placeholder={I18n.t('Answer 5')}
+            value={answer5}
+            onChangeText={setAnswer5}
+          />
+
+</Layout>
         <Button
           style={styles.resetPasswordButton}
           size='giant'

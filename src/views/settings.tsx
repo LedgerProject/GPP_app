@@ -21,12 +21,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import I18n from './../i18n/i18n';
 import RNRestart from 'react-native-restart';
 
+// REDUX
+/*import { useSelector, useDispatch } from 'react-redux';
+import {
+  manageLang,
+  selectLang,
+} from '../app/langSlice';*/
+
 export const SettingsScreen = (props): React.ReactElement => {
   const [language, setLanguage] = React.useState(props.selectedOption);
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
   const [alertTitle, setAlertTitle] = React.useState('');
   const [alertMessage, setAlertMessage] = React.useState('');
 
+  // const dispatch = useDispatch();
   const styles = useStyleSheet(themedStyles);
 
   const onSelectLanguage = (option) => {
@@ -41,6 +49,7 @@ export const SettingsScreen = (props): React.ReactElement => {
         ('Language Options'),
         ('Language updated successfully'),
       );
+      // dispatch(manageLang(language.lang));
       I18n.locale = language.lang;
       RNRestart.Restart();
     }

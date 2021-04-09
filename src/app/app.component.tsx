@@ -13,6 +13,13 @@ import { AppNavigator } from '../navigation/app.navigator';
 import { AppStorage } from '../services/app-storage.service';
 import { Mapping, Theme, Theming } from '../services/theme.service';
 
+import store from '../app/store';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { persistStore } from 'redux-persist';
+const persistor = persistStore(store);
+
+
 const loadingTasks: Task[] = [
   // Should be used it when running Expo.
   // In Bare RN Project this is configured by react-native.config.js
@@ -36,6 +43,8 @@ const App = ({ mapping, theme }): React.ReactElement => {
 
   return (
     <React.Fragment>
+      <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
       {/*<IconRegistry icons={[EvaIconsPack, AppIconsPack, CustomIconsPack]}/>*/}
       <IconRegistry icons={[EvaIconsPack, CustomIconsPack]}/>
       <AppearanceProvider>
@@ -50,6 +59,8 @@ const App = ({ mapping, theme }): React.ReactElement => {
           </Theming.MappingContext.Provider>
         </ApplicationProvider>
       </AppearanceProvider>
+      </PersistGate>
+      </Provider>
     </React.Fragment>
   );
 };

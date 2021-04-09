@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, ImageStyle, Image } from 'react-native';
-import { Divider, TopNavigation, TopNavigationAction, Icon, StyleService, useStyleSheet } from '@ui-kitten/components';
+import { Divider, TopNavigation, TopNavigationAction, Icon, StyleService, useStyleSheet, Text } from '@ui-kitten/components';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { MenuGridList } from '../components/menu-grid-list.component';
 import { MenuIcon } from '../components/icons';
@@ -17,6 +17,15 @@ import { ThemedIcon } from './../components/themed-icon.component';
   AssetNewPostIcon,
   AssetNewPostDarkIcon,
 } from './../components/icons';*/
+
+// REDUX
+/*
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  manageToken,
+  selectToken,
+} from '../app/tokenSlice';
+*/
 
 export const CustomDocWalletIcon = (props) => (
   <Icon {...props} name='custom-doc-wallet' pack='assets' />
@@ -35,6 +44,9 @@ export const HomepageScreen = (props): React.ReactElement => {
 
   const [data, setData] = React.useState([]);
   const styles = useStyleSheet(themedStyles);
+
+  // const token = useSelector(selectToken);
+  // const dispatch = useDispatch();
 
   const onItemPress = (index: number): void => {
     props.navigation.navigate(data[index].route);
