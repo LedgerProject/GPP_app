@@ -95,9 +95,9 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
       // const token = await AsyncStorage.getItem('token');
       const postParams = {
         structureMessage: contactMessage,
-      };      
+      };
       axios
-      .post(AppOptions.getServerUrl() + 'structures/'+ idStructure +'/send-message', postParams, {
+      .post(AppOptions.getServerUrl() + 'structures/' + idStructure + '/send-message', postParams, {
         headers: {
           'Authorization': 'Bearer ' + token,
           'Content-Type': 'application/json',
@@ -109,8 +109,8 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
         showAlertMessage(
           I18n.t('Congratulations'),
           I18n.t('Message sent successfully'),
-        );        
-    
+        );
+
       })
       .catch(function (error) {
         // console.log(error);

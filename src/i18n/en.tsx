@@ -162,5 +162,5 @@ export default {
   'Go back': 'Go back',
   'Error': 'Error',
   'Congratulations': 'Congratulations',
-  'Message sent successfully': 'Message sent successfully'
+  'Message sent successfully': 'Message sent successfully',
 };
