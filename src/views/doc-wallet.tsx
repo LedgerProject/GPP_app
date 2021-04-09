@@ -238,13 +238,13 @@ export const DocWalletScreen = (props): React.ReactElement => {
         'Content-Type': 'application/json',
       },
     })
-    .then(function (response) {
+    .then(function (response) {      
       setLoading(false);
       const all_documents = response.data;
       all_documents.forEach( (element, index) => {
         all_documents[index].isChecked = false;
       });
-      setDocuments(documents);
+      setDocuments(all_documents);
       // alert(JSON.stringify(response));
     })
     .catch(function (error) {

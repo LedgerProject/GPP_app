@@ -160,4 +160,7 @@ export default {
   'Please fill Answer 5': 'Please fill Answer 5',
   'CONTINUE': 'CONTINUE',
   'Go back': 'Go back',
+  'Error': 'Error',
+  'Congratulations': 'Congratulations',
+  'Message sent successfully': 'Message sent successfully'
 };
