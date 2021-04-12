@@ -59,6 +59,7 @@ export const DocumentItem = (props: DocumentItemProps): React.ReactElement => {
       >
       <View>
       <CheckBox
+      style={styles.checkbox}
       checked={checked}
       onChange={nextChecked => onCheckboxChange(nextChecked)}>
     </CheckBox>
@@ -110,5 +111,10 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     paddingHorizontal: 0,
+  },
+  checkbox: {
+    top: 10,
+    left: 10,
+    marginRight: 10,
   },
 });
