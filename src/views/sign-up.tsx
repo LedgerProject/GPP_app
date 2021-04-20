@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect} from 'react';
 import { View, ImageBackground } from 'react-native';
 import {
   Button,
@@ -9,6 +9,7 @@ import {
   Text,
   useStyleSheet,
   Modal,
+  List,
 } from '@ui-kitten/components';
 import { EmailIcon, EyeIcon, EyeOffIcon, PersonIcon } from '../components/icons';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
@@ -17,6 +18,9 @@ import axios from 'axios';
 import I18n from './../i18n/i18n';
 import { AppOptions } from '../services/app-env';
 import Spinner from 'react-native-loading-spinner-overlay';
+// import {  } from 'keypair-lib';
+import { QuestionItem } from './sign-up/question-item.component';
+import { getSafetyQuestions, sanitizeAnswers, recoveryKeypair } from 'keypair-lib'
 
 export default ({ navigation }): React.ReactElement => {
 
@@ -30,67 +34,126 @@ export default ({ navigation }): React.ReactElement => {
   const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = React.useState<boolean>(false);
   const [modalVisible, setmodalVisible] = React.useState(false);
+  const [modalAnswerVisible, setmodalAnswerVisible] = React.useState(false);
   const [success, setSuccess] = React.useState<string>();
   const [error, setError] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
   const [step2, setStep2] = React.useState(false);
   const styles = useStyleSheet(themedStyles);
-  const [answer1, setAnswer1] = React.useState<string>();
-  const [answer2, setAnswer2] = React.useState<string>();
-  const [answer3, setAnswer3] = React.useState<string>();
-  const [answer4, setAnswer4] = React.useState<string>();
-  const [answer5, setAnswer5] = React.useState<string>();
+  const [answer, setAnswer] = React.useState<string>();
+  const [answered, setAnswered] = React.useState<number>(0);
+  const [currentAnswer, setCurrentAnswer] = React.useState<number>(0);
+  const [currentQuestion, setCurrentQuestion] = React.useState<string>();
+  const [questions, setQuestions] = React.useState([]);
+  const [pbkdf, setPbkdf] = React.useState<string>();
 
   const onStep2ButtonPress = (): void => {
+      setLoading(true);
       // navigation && navigation.goBack();
       setError('');
       setSuccess('');
       if (!firstName) {
         setError(I18n.t('Please fill First Name'));
         setmodalVisible(true);
+        setLoading(false);
         return;
       }
       if (!lastName) {
         setError(I18n.t('Please fill Last Name'));
         setmodalVisible(true);
+        setLoading(false);
         return;
       }
       if (!email) {
         setError(I18n.t('Please fill Email'));
         setmodalVisible(true);
+        setLoading(false);
         return;
       }
       if (!confirmEmail) {
         setError(I18n.t('Please confirm Email'));
         setmodalVisible(true);
+        setLoading(false);
         return;
       }
       if (email !== confirmEmail) {
         setError(I18n.t('Email and confirm Email do not match'));
         setmodalVisible(true);
+        setLoading(false);
         return;
       }
       if (!password) {
         setError(I18n.t('Please fill Password'));
         setmodalVisible(true);
+        setLoading(false);
         return;
       }
       if (!confirmPassword) {
         setError(I18n.t('Please confirm Password'));
         setmodalVisible(true);
+        setLoading(false);
         return;
       }
       if (password !== confirmPassword) {
         setError(I18n.t('Password and confirm Password do not match'));
         setmodalVisible(true);
+        setLoading(false);
         return;
       }
       if (!termsAccepted) {
         setError(I18n.t('Please accept terms and conditions'));
         setmodalVisible(true);
+        setLoading(false);
         return;
       }
-      setStep2(true);
+      const postParams = {
+        email: email,
+      };
+      /*axios
+      .post(AppOptions.getServerUrl() + 'users/signup', postParams)
+      .then(function (response) {
+        setLoading(false);
+        setStep2(true);
+        // handle success
+        // navigation && navigation.navigate('Homepage');
+        setSuccess(I18n.t('Congratulations! Registration completed'));
+        setmodalVisible(true);
+      })
+      .catch(function () { // error) {
+        setLoading(false);
+        // alert(error.message);
+        setError(I18n.t('An error has occurred, please try again'));
+        setmodalVisible(true);
+        return;
+      });*/
+
+      
+      axios
+      .post(AppOptions.getServerUrl() + 'users/pbkdf', postParams)
+      .then(function (response) { 
+        const data = response.data.pbkdfResponse;                
+        setLoading(false);
+        if (data.code === '20') {
+          setError(I18n.t('Email already exists'));
+          setmodalVisible(true);
+        } else if (data.code === '202') {
+          // PBKDF generated
+          setPbkdf(data.pbkdf);
+          setStep2(true);
+        }
+        // handle success
+        // navigation && navigation.navigate('Homepage');
+        //setSuccess(I18n.t('Congratulations! Registration completed'));
+        //setmodalVisible(true);
+      })
+      .catch(function (error) { // error) {
+        //console.log(error);
+        setLoading(false);
+        // alert(error.message);
+        setError(I18n.t('An error has occurred, please try again'));
+        setmodalVisible(true);
+        return;
+      })
   };
 
   const onBackButtonPress = (): void => {
@@ -99,80 +162,122 @@ export default ({ navigation }): React.ReactElement => {
 
   const onSignUpButtonPress = (): void => {
     // navigation && navigation.goBack();
+    setLoading(true);
     setError('');
     setSuccess('');
     if (!firstName) {
       setError(I18n.t('Please fill First Name'));
       setmodalVisible(true);
+      setLoading(false);
       return;
     }
     if (!lastName) {
       setError(I18n.t('Please fill Last Name'));
       setmodalVisible(true);
+      setLoading(false);
       return;
     }
     if (!email) {
       setError(I18n.t('Please fill Email'));
       setmodalVisible(true);
+      setLoading(false);
       return;
     }
     if (!confirmEmail) {
       setError(I18n.t('Please confirm Email'));
       setmodalVisible(true);
+      setLoading(false);
       return;
     }
     if (email !== confirmEmail) {
       setError(I18n.t('Email and confirm Email do not match'));
       setmodalVisible(true);
+      setLoading(false);
       return;
     }
     if (!password) {
       setError(I18n.t('Please fill Password'));
       setmodalVisible(true);
+      setLoading(false);
       return;
     }
     if (!confirmPassword) {
       setError(I18n.t('Please confirm Password'));
       setmodalVisible(true);
+      setLoading(false);
       return;
     }
     if (password !== confirmPassword) {
       setError(I18n.t('Password and confirm Password do not match'));
       setmodalVisible(true);
+      setLoading(false);
       return;
     }
     if (!termsAccepted) {
       setError(I18n.t('Please accept terms and conditions'));
       setmodalVisible(true);
+      setLoading(false);
       return;
     }
-    if (!answer1) {
+    /*if (!answer1) {
       setError(I18n.t('Please fill Answer 1'));
       setmodalVisible(true);
+      setLoading(false);
       return;
     }
     if (!answer2) {
       setError(I18n.t('Please fill Answer 2'));
       setmodalVisible(true);
+      setLoading(false);
       return;
     }
     if (!answer3) {
       setError(I18n.t('Please fill Answer 3'));
       setmodalVisible(true);
+      setLoading(false);
       return;
     }
     if (!answer4) {
       setError(I18n.t('Please fill Answer 4'));
       setmodalVisible(true);
+      setLoading(false);
       return;
     }
     if (!answer5) {
       setError(I18n.t('Please fill Answer 5'));
       setmodalVisible(true);
+      setLoading(false);
       return;
+    }*/
+
+    let answers = {
+      question1: "null",
+      question2: "null",
+      question3: "null",
+      question4: "null",
+      question5: "null",
+    };
+
+    if (questions[0].answer) {
+      answers.question1 = questions[0].answer;
+    }
+    if (questions[1].answer) {
+      answers.question2 = questions[1].answer;
+    }
+    if (questions[2].answer) {
+      answers.question3 = questions[2].answer;
+    }
+    if (questions[3].answer) {
+      answers.question4 = questions[3].answer;
+    }
+    if (questions[4].answer) {
+      answers.question5 = questions[4].answer;
     }
 
-    setLoading(true);
+    //answers = sanitizeAnswers(answers);    
+
+
+    // setLoading(true);
     const postParams = {
         userType: 'user',
         email: email,
@@ -211,6 +316,55 @@ export default ({ navigation }): React.ReactElement => {
   const onConfirmPasswordIconPress = (): void => {
     setConfirmPasswordVisible(!confirmPasswordVisible);
   };
+
+  const onConfirmButtonPress = (index): void => {    
+
+    let questions_array = [];   
+    let count: number = 0;
+    questions.forEach( (question,qindex) => {
+      if (index === qindex) {
+        question.answer = answer.trim();
+      }
+      if (question.answer) {
+        count++;
+      }
+      questions_array.push(question);
+    })    
+    setQuestions(questions_array);
+    setAnswered(count); 
+    setmodalAnswerVisible(false);
+  };
+
+  const onPressItem = (index: number, item: any): void => {
+    if (answered == 3) {
+      setError(I18n.t('You cannot select more than 3 questions'));
+      setmodalVisible(true);
+    } else {
+      setCurrentAnswer(index);
+      setCurrentQuestion(questions[index].question);
+      setAnswer(questions[index].answer);
+      setmodalAnswerVisible(true);        
+    }
+  };  
+
+  const renderQuestionItem = ({ item, index }) => (
+    <QuestionItem
+      index={index}
+      item={item}
+      onListviewButtonPress={onPressItem}
+      />
+  );
+
+  useEffect(() => {
+    // console.log(getSafetyQuestions('en_GB'));
+    setQuestions([
+      {'question': I18n.t('Where my parents met?'), 'answer': '' },
+      {'question': I18n.t('What is the name of your first pet?'), 'answer': '' },
+      {'question': I18n.t('What is your home town?'), 'answer': '' },
+      {'question': I18n.t('What is the name of your first teacher?'), 'answer': '' },
+      {'question': I18n.t('What is the surname of your mother before wedding?'), 'answer': '' }
+    ]);
+  }, []);
 
   return (
     <SafeAreaLayout insets='top' style={styles.safeArea}>
@@ -302,6 +456,13 @@ export default ({ navigation }): React.ReactElement => {
           onPress={onStep2ButtonPress}>
            {I18n.t('CONTINUE')}
         </Button>
+        <Button
+          style={styles.signInButton}
+          appearance='ghost'
+          status='basic'
+          onPress={onSignInButtonPress}>
+          {I18n.t('Already have an account? Sign In')}
+        </Button>        
       </Layout>
       )}
       { step2 === true && (
@@ -315,75 +476,23 @@ export default ({ navigation }): React.ReactElement => {
           onPress={onBackButtonPress}>
           {I18n.t('Go back')}
         </Button>
-        <Text
-            style={styles.enterEmailLabel}>
-            {I18n.t('Question 1')}
-          </Text>
-          <Input
-          style={styles.nameInput}
-            placeholder={I18n.t('Answer 1')}
-            value={answer1}
-            onChangeText={setAnswer1}
-          />
-          <Text
-            style={styles.enterEmailLabel}>
-            {I18n.t('Question 2')}
-          </Text>
-          <Input
-          style={styles.nameInput}
-            placeholder={I18n.t('Answer 2')}
-            value={answer2}
-            onChangeText={setAnswer2}
-          />
 
-<Text
-            style={styles.enterEmailLabel}>
-            {I18n.t('Question 3')}
-          </Text>
-          <Input
-          style={styles.nameInput}
-            placeholder={I18n.t('Answer 3')}
-            value={answer3}
-            onChangeText={setAnswer3}
-          />
+        <Text style={styles.selectQuestions}>{I18n.t('Please Select 3 Questions of 5')}</Text>
 
-<Text
-            style={styles.enterEmailLabel}>
-            {I18n.t('Question 4')}
-          </Text>
-          <Input
-          style={styles.nameInput}
-            placeholder={I18n.t('Answer 4')}
-            value={answer4}
-            onChangeText={setAnswer4}
-          />
+        <List data={questions} renderItem={renderQuestionItem} />
 
-<Text
-            style={styles.enterEmailLabel}>
-            {I18n.t('Question 5')}
-          </Text>
-          <Input
-          style={styles.nameInput}
-            placeholder={I18n.t('Answer 5')}
-            value={answer5}
-            onChangeText={setAnswer5}
-          />
+        { answered === 3 && (
         <Button
           style={styles.signUpButton}
           size='giant'
           onPress={onSignUpButtonPress}>
            {I18n.t('SIGN UP')}
         </Button>
+        )}
       </Layout>
       )}
+      
 
-        <Button
-          style={styles.signInButton}
-          appearance='ghost'
-          status='basic'
-          onPress={onSignInButtonPress}>
-          {I18n.t('Already have an account? Sign In')}
-        </Button>
       </KeyboardAvoidingView>
       <Modal
       visible={ modalVisible }
@@ -399,6 +508,34 @@ export default ({ navigation }): React.ReactElement => {
         </Button>
       </Layout>
       </Modal>
+      <Modal
+      visible={ modalAnswerVisible }
+      backdropStyle={styles.backdrop}
+      onBackdropPress={() => setmodalAnswerVisible(false)}
+      >
+      <Layout style={ styles.modalQuestions } >
+      <Text style={ styles.modalText }>{ currentQuestion }</Text>
+      <Input style={styles.nameInput}
+        placeholder={I18n.t('Your answer')}
+        value={answer}
+        onChangeText={setAnswer}
+      />
+      <View style={styles.buttonsContainer}>
+        <View style={styles.buttonLeft}>
+          <Button style={styles.button} status={'basic'}
+            onPress={() => setmodalAnswerVisible(false)}>
+            {I18n.t('Cancel')}
+          </Button>
+        </View>
+        <View style={styles.buttonRight}>
+          <Button style={styles.button} status={'primary'}
+            onPress={() => onConfirmButtonPress(currentAnswer) }>
+            {I18n.t('Confirm')}
+          </Button>
+        </View>
+      </View>  
+      </Layout>
+      </Modal>      
     </SafeAreaLayout>
   );
 };
@@ -437,6 +574,7 @@ const themedStyles = StyleService.create({
   },
   termsCheckBox: {
     marginTop: 16,
+    marginBottom: 16,
   },
   termsCheckBoxText: {
     color: 'text-hint-color',
@@ -459,6 +597,12 @@ const themedStyles = StyleService.create({
     padding: 12,
     minWidth: 192,
   },
+  modalQuestions: {
+    textAlign: 'center',
+    margin: 12,
+    padding: 12,
+    minWidth: 300,
+  },  
   modalText: {
     marginTop: 10,
     marginBottom: 10,
@@ -473,5 +617,20 @@ const themedStyles = StyleService.create({
     marginTop: 16,
     marginBottom: 4,
   },
+  selectQuestions: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  buttonRight: {
+    width: '50%', height: 'auto', flex: 1, marginLeft: 5, marginRight: 10, alignItems: 'center',
+  },
+  buttonLeft: {
+    width: '50%', height: 'auto', flex: 1, marginLeft: 10, marginRight: 5, alignItems: 'center',
+  },
+  buttonsContainer: {
+    flexDirection: 'row', marginTop: 10,
+  },
+  button: { width: '100%' },
 });
 
