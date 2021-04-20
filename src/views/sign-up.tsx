@@ -20,7 +20,7 @@ import { AppOptions } from '../services/app-env';
 import Spinner from 'react-native-loading-spinner-overlay';
 // import {  } from 'keypair-lib';
 import { QuestionItem } from './sign-up/question-item.component';
-import { getSafetyQuestions, sanitizeAnswers, recoveryKeypair } from 'keypair-lib'
+import { getSafetyQuestions, sanitizeAnswers, recoveryKeypair } from 'keypair-lib';
 
 export default ({ navigation }): React.ReactElement => {
 
@@ -127,11 +127,11 @@ export default ({ navigation }): React.ReactElement => {
         return;
       });*/
 
-      
+
       axios
       .post(AppOptions.getServerUrl() + 'users/pbkdf', postParams)
-      .then(function (response) { 
-        const data = response.data.pbkdfResponse;                
+      .then(function (response) {
+        const data = response.data.pbkdfResponse;
         setLoading(false);
         if (data.code === '20') {
           setError(I18n.t('Email already exists'));
@@ -143,17 +143,18 @@ export default ({ navigation }): React.ReactElement => {
         }
         // handle success
         // navigation && navigation.navigate('Homepage');
-        //setSuccess(I18n.t('Congratulations! Registration completed'));
-        //setmodalVisible(true);
+        // setSuccess(I18n.t('Congratulations! Registration completed'));
+        // setmodalVisible(true);
       })
-      .catch(function (error) { // error) {
-        //console.log(error);
+      .catch(function () {
+      // .catch(function (error) { // error) {
+        // console.log(error);
         setLoading(false);
         // alert(error.message);
         setError(I18n.t('An error has occurred, please try again'));
         setmodalVisible(true);
         return;
-      })
+      });
   };
 
   const onBackButtonPress = (): void => {
@@ -250,12 +251,12 @@ export default ({ navigation }): React.ReactElement => {
       return;
     }*/
 
-    let answers = {
-      question1: "null",
-      question2: "null",
-      question3: "null",
-      question4: "null",
-      question5: "null",
+    const answers = {
+      question1: 'null',
+      question2: 'null',
+      question3: 'null',
+      question4: 'null',
+      question5: 'null',
     };
 
     if (questions[0].answer) {
@@ -274,7 +275,7 @@ export default ({ navigation }): React.ReactElement => {
       answers.question5 = questions[4].answer;
     }
 
-    //answers = sanitizeAnswers(answers);    
+    // answers = sanitizeAnswers(answers);
 
 
     // setLoading(true);
@@ -317,11 +318,11 @@ export default ({ navigation }): React.ReactElement => {
     setConfirmPasswordVisible(!confirmPasswordVisible);
   };
 
-  const onConfirmButtonPress = (index): void => {    
+  const onConfirmButtonPress = (index): void => {
 
-    let questions_array = [];   
+    const questions_array = [];
     let count: number = 0;
-    questions.forEach( (question,qindex) => {
+    questions.forEach( (question, qindex) => {
       if (index === qindex) {
         question.answer = answer.trim();
       }
@@ -329,23 +330,23 @@ export default ({ navigation }): React.ReactElement => {
         count++;
       }
       questions_array.push(question);
-    })    
+    });
     setQuestions(questions_array);
-    setAnswered(count); 
+    setAnswered(count);
     setmodalAnswerVisible(false);
   };
 
   const onPressItem = (index: number, item: any): void => {
-    if (answered == 3) {
+    if (answered === 3) {
       setError(I18n.t('You cannot select more than 3 questions'));
       setmodalVisible(true);
     } else {
       setCurrentAnswer(index);
       setCurrentQuestion(questions[index].question);
       setAnswer(questions[index].answer);
-      setmodalAnswerVisible(true);        
+      setmodalAnswerVisible(true);
     }
-  };  
+  };
 
   const renderQuestionItem = ({ item, index }) => (
     <QuestionItem
@@ -362,7 +363,7 @@ export default ({ navigation }): React.ReactElement => {
       {'question': I18n.t('What is the name of your first pet?'), 'answer': '' },
       {'question': I18n.t('What is your home town?'), 'answer': '' },
       {'question': I18n.t('What is the name of your first teacher?'), 'answer': '' },
-      {'question': I18n.t('What is the surname of your mother before wedding?'), 'answer': '' }
+      {'question': I18n.t('What is the surname of your mother before wedding?'), 'answer': '' },
     ]);
   }, []);
 
@@ -462,7 +463,7 @@ export default ({ navigation }): React.ReactElement => {
           status='basic'
           onPress={onSignInButtonPress}>
           {I18n.t('Already have an account? Sign In')}
-        </Button>        
+        </Button>
       </Layout>
       )}
       { step2 === true && (
@@ -491,7 +492,7 @@ export default ({ navigation }): React.ReactElement => {
         )}
       </Layout>
       )}
-      
+
 
       </KeyboardAvoidingView>
       <Modal
@@ -533,9 +534,9 @@ export default ({ navigation }): React.ReactElement => {
             {I18n.t('Confirm')}
           </Button>
         </View>
-      </View>  
+      </View>
       </Layout>
-      </Modal>      
+      </Modal>
     </SafeAreaLayout>
   );
 };
@@ -602,7 +603,7 @@ const themedStyles = StyleService.create({
     margin: 12,
     padding: 12,
     minWidth: 300,
-  },  
+  },
   modalText: {
     marginTop: 10,
     marginBottom: 10,
