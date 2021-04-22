@@ -1,7 +1,7 @@
 {
   "rules": {
     "trailing-comma": [
-      true,
+      false,
       {
         "multiline": "always",
         "singleline": "never",
@@ -68,8 +68,8 @@
     ],
     "prefer-const": true,
     "quotemark": [
-      true,
-      "single"
+      false,
+      "double"
     ],
     "radix": true,
     "semicolon": [

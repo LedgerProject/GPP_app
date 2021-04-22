@@ -19,7 +19,8 @@
     "build": "tsc -p ./tsconfig.json",
     "clean": "rimraf ./dist ./web-build",
     "lint": "tslint -c ./tslint.json ./src/**/*.{ts,tsx}",
-    "postinstall": "jetify"
+    "postinstall": "jetify",
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
     "@eva-design/eva": "^1.4.0",
@@ -93,6 +94,7 @@
     "jetifier": "^1.6.5",
     "rimraf": "^2.6.2",
     "tslint": "^6.0.0",
-    "typescript": "^3.7.5"
+    "typescript": "^3.7.5",
+    "prettier": "^2.2.1"
   }
 }

@@ -1,10 +1,9 @@
 export class AppOptions {
-
   static getServerUrl = (): string => {
-    return '<backend url>';
+    return "<backend url>";
   };
 
   static getGeocoderApiKey = (): string => {
-    return '<google maps api key>';
-  }
+    return "<google maps api key>";
+  };
 }

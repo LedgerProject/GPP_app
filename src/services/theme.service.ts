@@ -1,9 +1,13 @@
-import React from 'react';
-import { Appearance, AppearancePreferences, ColorSchemeName } from 'react-native-appearance';
-import { AppStorage } from './app-storage.service';
+import React from "react";
+import {
+  Appearance,
+  AppearancePreferences,
+  ColorSchemeName,
+} from "react-native-appearance";
+import { AppStorage } from "./app-storage.service";
 
-export type Mapping = 'eva' | 'material';
-export type Theme = 'light' | 'dark' | 'brand';
+export type Mapping = "eva" | "material";
+export type Theme = "light" | "dark" | "brand";
 
 export interface MappingContextValue {
   /**
@@ -40,7 +44,6 @@ export interface ThemeContextValue {
 }
 
 export class Theming {
-
   static MappingContext = React.createContext<MappingContextValue>(null);
   static ThemeContext = React.createContext<ThemeContextValue>(null);
 
@@ -60,9 +63,10 @@ export class Theming {
    * - value to be set in `MappingContext.Provider`
    * - and `mapping` and `customMapping` to be set in `ApplicationProvider`.
    */
-  static useMapping = (mappings: Record<Mapping, any>,
-                       mapping: Mapping): [MappingContextValue, any] => {
-
+  static useMapping = (
+    mappings: Record<Mapping, any>,
+    mapping: Mapping
+  ): [MappingContextValue, any] => {
     /**
      * Currently, there is no way to switch during the run time,
      * so the Async Storage and Expo Updates is used.
@@ -74,7 +78,7 @@ export class Theming {
     };
 
     const isEva = (): boolean => {
-      return mapping === 'eva';
+      return mapping === "eva";
     };
 
     const mappingContext: MappingContextValue = {
@@ -104,30 +108,36 @@ export class Theming {
    * - value to be set in `ThemeContext.Provider`
    * - and theme to be set in `ApplicationProvider`.
    */
-  static useTheming = (themes: Record<Mapping, Record<Theme, any>>,
-                       mapping: Mapping,
-                       theme: Theme): [ThemeContextValue, any] => {
-
+  static useTheming = (
+    themes: Record<Mapping, Record<Theme, any>>,
+    mapping: Mapping,
+    theme: Theme
+  ): [ThemeContextValue, any] => {
     const [currentTheme, setCurrentTheme] = React.useState<Theme>(theme);
 
     React.useEffect(() => {
-      const subscription = Appearance.addChangeListener((preferences: AppearancePreferences): void => {
-        const appearanceTheme: Theme = Theming.createAppearanceTheme(
-          preferences.colorScheme,
-          theme,
-        );
-        setCurrentTheme(appearanceTheme);
-      });
+      const subscription = Appearance.addChangeListener(
+        (preferences: AppearancePreferences): void => {
+          const appearanceTheme: Theme = Theming.createAppearanceTheme(
+            preferences.colorScheme,
+            theme
+          );
+          setCurrentTheme(appearanceTheme);
+        }
+      );
 
       return () => subscription.remove();
     }, []);
 
     const isDarkMode = (): boolean => {
-      return currentTheme === 'dark';
+      return currentTheme === "dark";
     };
 
     const createTheme = (upstreamTheme: Theme): any => {
-      return { ...themes[mapping][currentTheme], ...themes[mapping][upstreamTheme][currentTheme] };
+      return {
+        ...themes[mapping][currentTheme],
+        ...themes[mapping][upstreamTheme][currentTheme],
+      };
     };
 
     const themeContext: ThemeContextValue = {
@@ -144,19 +154,19 @@ export class Theming {
   };
 
   static useTheme = (upstreamTheme: Theme): any => {
-    const themeContext: ThemeContextValue = React.useContext(Theming.ThemeContext);
+    const themeContext: ThemeContextValue = React.useContext(
+      Theming.ThemeContext
+    );
     return themeContext.createTheme(upstreamTheme);
   };
 
-  private static createAppearanceTheme = (appearance: ColorSchemeName,
-                                          preferredTheme: Theme): Theme => {
-    if (appearance === 'no-preference') {
+  private static createAppearanceTheme = (
+    appearance: ColorSchemeName,
+    preferredTheme: Theme
+  ): Theme => {
+    if (appearance === "no-preference") {
       return preferredTheme;
     }
     return appearance;
   };
 }
-
-
-
-

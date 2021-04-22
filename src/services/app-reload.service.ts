@@ -1,7 +1,6 @@
-import { NativeModules } from 'react-native';
+import { NativeModules } from "react-native";
 
-export class AppReloadService  {
-
+export class AppReloadService {
   static reload = (): void => {
     NativeModules.DevMenu.reload();
   };

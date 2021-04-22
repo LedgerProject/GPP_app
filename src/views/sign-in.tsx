@@ -10,6 +10,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppOptions } from '../services/app-env';
 import Spinner from 'react-native-loading-spinner-overlay';
 
+// ZENROOM
+import { recoveryKeypair, verifyAnswers } from '../services/zenroom-service';
+import clientSideContract from '../api/zenroom/client.zen';
+
 // REDUX
 import { useSelector, useDispatch } from 'react-redux';
 import { manageToken, selectToken } from '../app/tokenSlice';
@@ -77,7 +81,41 @@ export default ({ navigation }): React.ReactElement => {
   useEffect(() => {
     setEmail('test@globalpassportproject.me');
     setPassword('12345678');
+
+    getKeypair();
+
+    verifyKeypair();
   }, []);
+
+  const verifyKeypair = async () => {
+    const publicKey = 'BDYfET6GOWSTizMYIRfcthw2MKksTpg+f8LR0ndq6fRxOLfhT7d1IjvwkvV0LzlzHuGat8SF9unNwhA3alpQ8So=';
+
+    const answers = {
+      question1: 'Paris',
+      question2: 'ScoobyDoo',
+      question3: 'Amsterdam',
+      question4: 'null',
+      question5: 'null',
+    };
+    const PBKDF = "qf3skXnPGFMrE28UJS7S8BdT8g==";
+
+    const response = await verifyAnswers(clientSideContract, answers, PBKDF, publicKey);
+    // console.log(response);
+  };
+
+  const getKeypair = async () => {
+    const answers = {
+      question1: "Paris",
+      question2: "ScoobyDoo",
+      question3: "Amsterdam",
+      question4: "null",
+      question5: "null",
+    };
+    const PBKDF = "qf3skXnPGFMrE28UJS7S8BdT8g==";
+
+    const keypair = await recoveryKeypair(clientSideContract, answers, PBKDF);
+    // console.log(keypair);
+  };
 
   return (
     <SafeAreaLayout insets='top' style={styles.safeArea}>

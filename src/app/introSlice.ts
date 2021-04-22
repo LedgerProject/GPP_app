@@ -1,9 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 export const sliceIntro = createSlice({
-  name: 'intro',
+  name: "intro",
   initialState: {
-    value: '',
+    value: "",
   },
   reducers: {
     manageIntro: (state, action) => {
@@ -14,6 +14,6 @@ export const sliceIntro = createSlice({
 
 export const { manageIntro } = sliceIntro.actions;
 
-export const selectIntro = state => state.intro.value;
+export const selectIntro = (state) => state.intro.value;
 
 export default sliceIntro.reducer;

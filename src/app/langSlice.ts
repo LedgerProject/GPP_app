@@ -1,9 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 export const slice = createSlice({
-  name: 'lang',
+  name: "lang",
   initialState: {
-    value: '',
+    value: "",
   },
   reducers: {
     manageLang: (state, action) => {
@@ -14,6 +14,6 @@ export const slice = createSlice({
 
 export const { manageLang } = slice.actions;
 
-export const selectLang = state => state.lang.value;
+export const selectLang = (state) => state.lang.value;
 
 export default slice.reducer;

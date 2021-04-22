@@ -1,9 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 export const sliceEmail = createSlice({
-  name: 'email',
+  name: "email",
   initialState: {
-    value: '',
+    value: "",
   },
   reducers: {
     manageEmail: (state, action) => {
@@ -14,6 +14,6 @@ export const sliceEmail = createSlice({
 
 export const { manageEmail } = sliceEmail.actions;
 
-export const selectEmail = state => state.email.value;
+export const selectEmail = (state) => state.email.value;
 
 export default sliceEmail.reducer;

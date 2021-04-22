@@ -1,7 +1,6 @@
-import DeviceInfo from 'react-native-device-info';
+import DeviceInfo from "react-native-device-info";
 
 export class AppInfoService {
-
   static getVersion = (): string => {
     return DeviceInfo.getVersion();
   };

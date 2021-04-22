@@ -1,13 +1,13 @@
-import { SelectOptionType } from '@ui-kitten/components';
+import { SelectOptionType } from "@ui-kitten/components";
 
 export const genderOptions: SelectOptionType[] = [
-    { text: 'Not Specified'},
-    { text: 'Male' },
-    { text: 'Female' },
+  { text: "Not Specified" },
+  { text: "Male" },
+  { text: "Female" },
 ];
 
 export const nationalityOptions: SelectOptionType[] = [
-    { text: 'English'},
-    { text: 'French' },
-    { text: 'Italian' },
+  { text: "English" },
+  { text: "French" },
+  { text: "Italian" },
 ];

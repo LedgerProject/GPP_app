@@ -1,14 +1,14 @@
-import React from 'react';
- import { ImageStyle, ImageSourcePropType } from 'react-native';
- import { ThemedIcon } from '../../components/themed-icon.component';
- import {
+import React from "react";
+import { ImageStyle, ImageSourcePropType } from "react-native";
+import { ThemedIcon } from "../../components/themed-icon.component";
+import {
   AssetTakePhotoDarkIcon,
   AssetTakePhotoIcon,
   AssetPhotoLibraryDarkIcon,
   AssetPhotoLibraryIcon,
-} from '../../components/icons';
-import { MenuItem } from '../../model/menu-item.model';
-import I18n from './../../i18n/i18n';
+} from "../../components/icons";
+import { MenuItem } from "../../model/menu-item.model";
+import I18n from "./../../i18n/i18n";
 
 export interface LayoutData extends MenuItem {
   route: string;
@@ -16,43 +16,45 @@ export interface LayoutData extends MenuItem {
 
 export const data: LayoutData[] = [
   {
-    title: I18n.t('Take Photo'), // 'Take Photo',
-    route: 'TakePhoto',
+    title: I18n.t("Take Photo"), // 'Take Photo',
+    route: "TakePhoto",
     icon: (style: ImageStyle) => {
-      return React.createElement(
-        ThemedIcon,
-        { ...style, light: AssetTakePhotoIcon, dark: AssetTakePhotoDarkIcon },
-      );
+      return React.createElement(ThemedIcon, {
+        ...style,
+        light: AssetTakePhotoIcon,
+        dark: AssetTakePhotoDarkIcon,
+      });
     },
   },
   {
-    title: I18n.t('From Library'), // 'From Library',
-    route: 'LibraryPhoto',
+    title: I18n.t("From Library"), // 'From Library',
+    route: "LibraryPhoto",
     icon: (style: ImageStyle) => {
-      return React.createElement(
-        ThemedIcon,
-        { ...style, light: AssetPhotoLibraryIcon, dark: AssetPhotoLibraryDarkIcon },
-      );
+      return React.createElement(ThemedIcon, {
+        ...style,
+        light: AssetPhotoLibraryIcon,
+        dark: AssetPhotoLibraryDarkIcon,
+      });
     },
   },
 ];
 
 export class Document {
+  constructor(
+    readonly idDocument: string,
+    readonly title: string,
+    readonly size: string,
+    readonly mimeType: string,
+    public isChecked: boolean
+  ) {}
+  // readonly image: ImageSourcePropType
 
-  constructor(readonly idDocument: string,
-              readonly title: string,
-              readonly size: string,
-              readonly mimeType: string,
-              public isChecked: boolean,
-              // readonly image: ImageSourcePropType
-              ) {
-  }
 
   /*get formattedSize(): string {
     return `$${this.size}`;
   }*/
 
-/*  static passportDocument(): Document {
+  /*  static passportDocument(): Document {
     return new Document(
       1,
       'Passport',
