@@ -10,6 +10,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppOptions } from '../services/app-env';
 import Spinner from 'react-native-loading-spinner-overlay';
 
+// ZENROOM
+import clientSideContract from '../assets/zenroom/client-contract.zen';
+import { recoveryKeypair } from 'react-native-keypair-lib';
+
 // REDUX
 import { useSelector, useDispatch } from 'react-redux';
 import { manageToken, selectToken } from '../app/tokenSlice';
@@ -77,7 +81,22 @@ export default ({ navigation }): React.ReactElement => {
   useEffect(() => {
     setEmail('test@globalpassportproject.me');
     setPassword('12345678');
+
+    getKeypair();
   }, []);
+
+  const getKeypair = async () => {
+    const answers = {
+      question1: 'Paris',
+      question2: 'ScoobyDoo',
+      question3: 'Amsterdam',
+      question4: 'null',
+      question5: 'null',
+    };
+    const PBKDF = 'qf3skXnPGFMrE28UJS7S8BdT8g==';
+
+    const keypair = await recoveryKeypair(clientSideContract, answers, PBKDF);
+  };
 
   return (
     <SafeAreaLayout insets='top' style={styles.safeArea}>

@@ -15,6 +15,7 @@
 		3DE4DAD41476765101945408 /* libPods-GPPApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D43FF9D506E70904424FA7E9 /* libPods-GPPApp.a */; };
 		9B681C55E6874CBF9FC5064D /* opensans-regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C8E7E14A50964D7E8D245E25 /* opensans-regular.ttf */; };
 		CE44FFFAAB90459FA524E097 /* roboto-regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D54A57879B074B9A92968DDF /* roboto-regular.ttf */; };
+		7B0C13B88052461593DE85EB /* libReactNativeKeypairLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 178A550D59AC4795A3F1584B /* libReactNativeKeypairLib.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,8 @@
 		D54A57879B074B9A92968DDF /* roboto-regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "roboto-regular.ttf"; path = "../src/assets/fonts/roboto-regular.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
+		B2DA24B00FF14D80B4F116E7 /* ReactNativeKeypairLib.xcodeproj */ = {isa = PBXFileReference; name = "ReactNativeKeypairLib.xcodeproj"; path = "../node_modules/react-native-keypair-lib/lib/ios/ReactNativeKeypairLib.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		178A550D59AC4795A3F1584B /* libReactNativeKeypairLib.a */ = {isa = PBXFileReference; name = "libReactNativeKeypairLib.a"; path = "libReactNativeKeypairLib.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +47,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3DE4DAD41476765101945408 /* libPods-GPPApp.a in Frameworks */,
+				7B0C13B88052461593DE85EB /* libReactNativeKeypairLib.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,6 +108,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				B2DA24B00FF14D80B4F116E7 /* ReactNativeKeypairLib.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -336,6 +341,14 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/GPPApp\"",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/..",
+				);
 			};
 			name = Debug;
 		};
@@ -360,6 +373,10 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/..",
+				);
 			};
 			name = Release;
 		};

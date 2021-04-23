@@ -1,3 +1,5 @@
 rootProject.name = 'GPPApp'
+include ':react-native-keypair-lib'
+project(':react-native-keypair-lib').projectDir = new File(settingsDir, '../node_modules/react-native-keypair-lib/android')
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'
