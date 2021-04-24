@@ -93,7 +93,7 @@ export default ({ navigation }): React.ReactElement => {
       question4: 'null',
       question5: 'null',
     };
-    const PBKDF = "qf3skXnPGFMrE28UJS7S8BdT8g==";
+    const PBKDF = 'qf3skXnPGFMrE28UJS7S8BdT8g==';
 
     const keypair = await recoveryKeypair(clientSideContract, answers, PBKDF);
   };
