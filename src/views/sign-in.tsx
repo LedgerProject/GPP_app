@@ -87,16 +87,15 @@ export default ({ navigation }): React.ReactElement => {
 
   const getKeypair = async () => {
     const answers = {
-      question1: "Paris",
-      question2: "ScoobyDoo",
-      question3: "Amsterdam",
-      question4: "null",
-      question5: "null",
+      question1: 'Paris',
+      question2: 'ScoobyDoo',
+      question3: 'Amsterdam',
+      question4: 'null',
+      question5: 'null',
     };
     const PBKDF = "qf3skXnPGFMrE28UJS7S8BdT8g==";
 
     const keypair = await recoveryKeypair(clientSideContract, answers, PBKDF);
-    console.log(keypair);
   };
 
   return (
