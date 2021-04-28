@@ -1,7 +1,7 @@
 const REGULAR_EXPRESSION = /\W/gi;
-const EMPTY_STRING = "";
-const DEFAULT_USER = "user";
-import zenroom from "./zenroom-client";
+const EMPTY_STRING = '';
+const DEFAULT_USER = 'user';
+import zenroom from './zenroom-client';
 /*
   This function is using zenroom to encrypt a given string with the password
 */
@@ -19,12 +19,12 @@ export function sanitizeAnswers(answers: any) {
 export async function recoveryKeypair(
   clientSideContractText: string,
   answers: any,
-  PBKDF: string
+  PBKDF: string,
 ) {
   const keys = {
     userChallenges: answers,
     username: DEFAULT_USER,
-    key_derivation: PBKDF
+    key_derivation: PBKDF,
   };
 
   const data = {};
@@ -37,7 +37,7 @@ export async function recoveryKeypair(
       response = await zenroom.execute(
         clientSideContractText,
         jsonKeys,
-        jsonData
+        jsonData,
       );
     }
     return response;
@@ -47,12 +47,12 @@ export async function verifyAnswers(
   clientSideContractText: string,
   answers: any,
   PBKDF: string,
-  userPublicKey: string
+  userPublicKey: string,
 ) {
   const execution = await recoveryKeypair(
     clientSideContractText,
     answers,
-    PBKDF
+    PBKDF,
   );
   return userPublicKey === execution[DEFAULT_USER].keypair.public_key;
 }

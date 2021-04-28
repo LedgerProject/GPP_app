@@ -580,7 +580,7 @@ const themedStyles = StyleService.create({
     marginHorizontal: 16,
   },
   backdrop: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modal: {
     textAlign: 'center',

@@ -86,18 +86,18 @@ export default ({ navigation }): React.ReactElement => {
         // Open the homepage page
         navigation && navigation.navigate('Homepage');
       })
-      .catch(function (error) {
+      .catch(function (err) {
         // Set the error message
         let errDescription = '';
 
-        if (error.response) {
-          switch (error.response.data.error.statusCode) {
+        if (err.response) {
+          switch (err.response.data.error.statusCode) {
             case 401:
               errDescription = 'Please check e-mail or password';
             break;
 
             default:
-              errDescription = error.response.data.error.message;
+              errDescription = err.response.data.error.message;
             break;
           }
         } else {
@@ -243,7 +243,7 @@ const themedStyles = StyleService.create({
     paddingHorizontal: 0,
   },
   backdrop: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modal: {
     textAlign: 'center',
