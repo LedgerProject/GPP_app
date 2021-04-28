@@ -1,16 +1,6 @@
 import React, { useEffect} from 'react';
 import { View, ImageBackground } from 'react-native';
-import {
-  Button,
-  CheckBox,
-  Input,
-  Layout,
-  StyleService,
-  Text,
-  useStyleSheet,
-  Modal,
-  List,
-} from '@ui-kitten/components';
+import { Button, CheckBox, Input, Layout, StyleService, Text, useStyleSheet, Modal, List } from '@ui-kitten/components';
 import { EmailIcon, EyeIcon, EyeOffIcon, PersonIcon } from '../components/icons';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { KeyboardAvoidingView } from '../services/3rd-party';
@@ -18,12 +8,9 @@ import axios from 'axios';
 import I18n from './../i18n/i18n';
 import { AppOptions } from '../services/app-env';
 import Spinner from 'react-native-loading-spinner-overlay';
-// import {  } from 'keypair-lib';
 import { QuestionItem } from './sign-up/question-item.component';
-import { getSafetyQuestions, sanitizeAnswers, recoveryKeypair } from 'keypair-lib';
 
 export default ({ navigation }): React.ReactElement => {
-
   const [firstName, setFirstName] = React.useState<string>();
   const [lastName, setLastName] = React.useState<string>();
   const [email, setEmail] = React.useState<string>();
@@ -546,10 +533,10 @@ const themedStyles = StyleService.create({
     flex: 1,
   },
   container: {
-    backgroundColor: 'background-basic-color-1',
+    backgroundColor: 'background-basic-color-4',
   },
   imageAuth: {
-    height: 160,
+    height: 180,
     flex: 1,
     width: '100%',
   },
@@ -561,8 +548,9 @@ const themedStyles = StyleService.create({
   },
   formContainer: {
     flex: 1,
-    paddingTop: 8,
+    paddingTop: 16,
     paddingHorizontal: 16,
+    backgroundColor: 'background-basic-color-4',
   },
   nameInput: {
     marginTop: 8,
@@ -591,7 +579,9 @@ const themedStyles = StyleService.create({
     marginVertical: 12,
     marginHorizontal: 16,
   },
-  backdrop: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+  backdrop: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
   modal: {
     textAlign: 'center',
     margin: 12,
