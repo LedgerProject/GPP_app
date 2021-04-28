@@ -2,7 +2,7 @@
   "name": "gpp-app",
   "description": "Global Passport Project Mobile Application",
   "version": "0.8.3",
-  "author": "antoniodibattista <antonio.dibattista@gmail.com>",
+  "author": "antonio.dibattista <antonio.dibattista@gmail.com>",
   "main": "./index.js",
   "workspaces": {
     "nohoist": [
@@ -44,7 +44,6 @@
     "date-fns": "^1.30.1",
     "form-data": "^3.0.0",
     "i18n-js": "^3.8.0",
-    "keypair-lib": "^1.0.7",
     "moment": "^2.24.0",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",

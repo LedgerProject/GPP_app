@@ -14,6 +14,10 @@
 		1CF9A4AA23EC64D700485270 /* SplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CF9A4A923EC64D700485270 /* SplashScreen.m */; };
 		3DE4DAD41476765101945408 /* libPods-GPPApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D43FF9D506E70904424FA7E9 /* libPods-GPPApp.a */; };
 		9B681C55E6874CBF9FC5064D /* opensans-regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C8E7E14A50964D7E8D245E25 /* opensans-regular.ttf */; };
+		C19629282639596E003D3651 /* zenroom-ios-arm64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C19629222639596E003D3651 /* zenroom-ios-arm64.a */; };
+		C19629292639596E003D3651 /* zenroom-ios-x86_64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C19629232639596E003D3651 /* zenroom-ios-x86_64.a */; };
+		C196292A2639596E003D3651 /* zenroom-ios-armv7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C19629242639596E003D3651 /* zenroom-ios-armv7.a */; };
+		C1CF74592639612F00901803 /* Zenroom.m in Sources */ = {isa = PBXBuildFile; fileRef = C1CF74582639612F00901803 /* Zenroom.m */; };
 		CE44FFFAAB90459FA524E097 /* roboto-regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D54A57879B074B9A92968DDF /* roboto-regular.ttf */; };
 /* End PBXBuildFile section */
 
@@ -31,6 +35,12 @@
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B47C5AFCB8BDE514B7D1AC6 /* Pods-GPPApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GPPApp.debug.xcconfig"; path = "Target Support Files/Pods-GPPApp/Pods-GPPApp.debug.xcconfig"; sourceTree = "<group>"; };
 		8AC623DBF3A3E2CB072F81F2 /* Pods-GPPApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GPPApp.release.xcconfig"; path = "Target Support Files/Pods-GPPApp/Pods-GPPApp.release.xcconfig"; sourceTree = "<group>"; };
+		C19629222639596E003D3651 /* zenroom-ios-arm64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "zenroom-ios-arm64.a"; sourceTree = "<group>"; };
+		C19629232639596E003D3651 /* zenroom-ios-x86_64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "zenroom-ios-x86_64.a"; sourceTree = "<group>"; };
+		C19629242639596E003D3651 /* zenroom-ios-armv7.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "zenroom-ios-armv7.a"; sourceTree = "<group>"; };
+		C1CF74562639612F00901803 /* zenroomInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zenroomInternal.h; sourceTree = "<group>"; };
+		C1CF74572639612F00901803 /* Zenroom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Zenroom.h; sourceTree = "<group>"; };
+		C1CF74582639612F00901803 /* Zenroom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Zenroom.m; sourceTree = "<group>"; };
 		C8E7E14A50964D7E8D245E25 /* opensans-regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "opensans-regular.ttf"; path = "../src/assets/fonts/opensans-regular.ttf"; sourceTree = "<group>"; };
 		D43FF9D506E70904424FA7E9 /* libPods-GPPApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GPPApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D54A57879B074B9A92968DDF /* roboto-regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "roboto-regular.ttf"; path = "../src/assets/fonts/roboto-regular.ttf"; sourceTree = "<group>"; };
@@ -44,6 +54,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				3DE4DAD41476765101945408 /* libPods-GPPApp.a in Frameworks */,
+				C19629282639596E003D3651 /* zenroom-ios-arm64.a in Frameworks */,
+				C196292A2639596E003D3651 /* zenroom-ios-armv7.a in Frameworks */,
+				C19629292639596E003D3651 /* zenroom-ios-x86_64.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,6 +117,12 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				C1CF74572639612F00901803 /* Zenroom.h */,
+				C1CF74582639612F00901803 /* Zenroom.m */,
+				C1CF74562639612F00901803 /* zenroomInternal.h */,
+				C19629222639596E003D3651 /* zenroom-ios-arm64.a */,
+				C19629242639596E003D3651 /* zenroom-ios-armv7.a */,
+				C19629232639596E003D3651 /* zenroom-ios-x86_64.a */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -295,6 +314,7 @@
 			files = (
 				1CF9A4AA23EC64D700485270 /* SplashScreen.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				C1CF74592639612F00901803 /* Zenroom.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -325,6 +345,10 @@
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = GPPApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				MARKETING_VERSION = 0.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -335,6 +359,7 @@
 				PRODUCT_NAME = GPPApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -349,6 +374,10 @@
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = GPPApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				MARKETING_VERSION = 0.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -359,6 +388,7 @@
 				PRODUCT_NAME = gppapp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -394,6 +424,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;

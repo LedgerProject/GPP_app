@@ -10,6 +10,7 @@ import com.facebook.soloader.SoLoader;
 import com.kosmopolis.gpp.packages.splash.SplashScreenPackage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import decode.zenroom.ZenroomPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -25,6 +26,7 @@ public class MainApplication extends Application implements ReactApplication {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
           packages.add(new SplashScreenPackage());
+          packages.add(new ZenroomPackage());
           return packages;
         }
 
