@@ -107,14 +107,13 @@ export const WhereIAmCountryScreen = (props): React.ReactElement => {
         leftControl={renderDrawerAction() }
         style={styles.topBar}
       />
-      <Divider/>
       <Spinner
           visible={loading}
           textContent={I18n.t('Loading') + '...'}
           textStyle={styles.spinnerTextStyle}
         />
       <ScrollView>
-
+      <Layout style={styles.container}>
       <Layout style={styles.mainTitleContainer}>
         <Text category='h4' style={styles.mainTitle}>{countryName}</Text>
       </Layout>
@@ -127,6 +126,7 @@ export const WhereIAmCountryScreen = (props): React.ReactElement => {
       </Layout>
          ))
       }
+      </Layout>
       </ScrollView>
       </SafeAreaLayout>
   );
@@ -136,20 +136,26 @@ const themedStyles = StyleService.create({
   safeArea: {
     flex: 1,
   },
+  container: {
+    backgroundColor: 'background-basic-color-4',
+  },
   mainTitleContainer: {
-    padding: 16, marginBottom: 10,
+    padding: 16, paddingBottom: 10,
+    backgroundColor: 'background-basic-color-4',
   },
   mainTitle: {
     textAlign: 'center',
+    color: 'color-light-100',
   },
   elementContainer: {
     padding: 6, marginBottom: 10, flexDirection: 'column',
+    backgroundColor: 'background-basic-color-4',
   },
   elementTitle: {
-    color: '#444', fontWeight: 'bold',
+    color: 'color-light-100', fontWeight: 'bold',
   },
   elementDescription: {
-    color: '#666', marginBottom: 4,
+    color: 'color-light-100', marginBottom: 4,
   },
   spinnerTextStyle: {
     color: '#FFF',

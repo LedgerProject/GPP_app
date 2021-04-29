@@ -362,11 +362,13 @@ export default ({ navigation }): React.ReactElement => {
           textContent={I18n.t('Loading') + '...'}
           textStyle={styles.spinnerTextStyle}
         />
-        <View style={styles.headerContainer}>
+        <View style={styles.logoContainer}>
           <ImageBackground
             style={styles.imageAuth}
-            source={require('../assets/images/auth-background.png')}>
+            source={require('../assets/images/red-logo.png')}>
           </ImageBackground>
+        </View>  
+        <View style={styles.headerContainer}>    
           <Text
             style={styles.signUpLabel}
             category='s1'
@@ -536,10 +538,17 @@ const themedStyles = StyleService.create({
     backgroundColor: 'background-basic-color-4',
   },
   imageAuth: {
-    height: 180,
+    height: 123.9,
     flex: 1,
-    width: '100%',
+    width: 120,
   },
+  logoContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 30,
+    padding: 30,
+    backgroundColor: 'color-light-100',
+  }, 
   headerContainer: {
     justifyContent: 'center',
     alignItems: 'center',

@@ -346,7 +346,6 @@ export const WhereIAmMapScreen = (props): React.ReactElement => {
         leftControl={renderDrawerAction() }
         style={styles.topBar}
       />
-      <Divider/>
       <Spinner
           visible={loading}
           textContent={I18n.t('Loading') + '...'}
@@ -477,15 +476,18 @@ const themedStyles = StyleService.create({
   },
   downContainer: {
     flexDirection: 'column',
-    marginTop: 10,
+    paddingTop: 10,
+    backgroundColor: 'background-basic-color-4',
   },
   downText: {
     textAlign: 'center',
+    color: 'color-light-100',
   },
   downTextBold: {
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 16,
+    color: 'color-light-100',
   },
   buttonRight: {
     width: '50%',
@@ -494,6 +496,7 @@ const themedStyles = StyleService.create({
     marginLeft: 5,
     marginRight: 10,
     alignItems: 'center',
+    backgroundColor: 'background-basic-color-4',
   },
   buttonLeft: {
     width: '50%',
@@ -502,16 +505,21 @@ const themedStyles = StyleService.create({
     marginLeft: 10,
     marginRight: 5,
     alignItems: 'center',
+    backgroundColor: 'background-basic-color-4',
   },
   buttonsContainer: {
     flexDirection: 'row',
-    marginTop: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: 'background-basic-color-4',
   },
   filtersContainer: {
-    marginHorizontal: 10,
+    paddingHorizontal: 10,
+    backgroundColor: 'background-basic-color-4',
   },
   mapContainer: {
     width: '100%',
+    backgroundColor: 'background-basic-color-4',
   },
   Map: {
     width: '100%',

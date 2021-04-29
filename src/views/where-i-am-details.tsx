@@ -244,7 +244,6 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
         leftControl={renderDrawerAction() }
         style={styles.topBar}
       />
-      <Divider/>
       <Spinner
           visible={loading}
           textContent={I18n.t('Loading') + '...'}
@@ -315,10 +314,10 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
     </Layout>
 
     <View style={styles.elementSubcontainer}>
-          <Text>{I18n.t('Latitude') + ':'} <Text>{structure.latitude}</Text></Text>
+          <Text style={styles.latlon}>{I18n.t('Latitude') + ':'} <Text style={styles.latlon}>{structure.latitude}</Text></Text>
     </View>
     <View style={styles.elementSubcontainer}>
-          <Text>{I18n.t('Longitude') + ':'} <Text>{structure.longitude}</Text></Text>
+          <Text style={styles.latlon}>{I18n.t('Longitude') + ':'} <Text style={styles.latlon}>{structure.longitude}</Text></Text>
     </View>
 
   </Layout>
@@ -363,7 +362,7 @@ onBackdropPress={ () => setmodalContactVisible(false) }
             multiline={true}
             textStyle={{ minHeight: 90, textAlignVertical: 'top' }}
           />
-  <Layout style={styles.buttonsContainer}>
+  <Layout style={styles.modalButtonsContainer}>
          <Layout style={styles.buttonLeftModal} >
           <Button onPress={handleSend}>{I18n.t('SEND')}</Button>
          </Layout>
@@ -395,14 +394,15 @@ const themedStyles = StyleService.create({
   },
   container: {
     flex: 1,
-    backgroundColor: 'background-basic-color-2',
+    backgroundColor: 'background-basic-color-4',
   },
   commentList: {
     flex: 1,
     backgroundColor: 'transparent',
   },
   header: {
-    marginBottom: 8,
+    paddingBottom: 8,
+    backgroundColor: 'background-basic-color-4',
   },
   image: {
     height: 340,
@@ -411,20 +411,25 @@ const themedStyles = StyleService.create({
   detailsContainer: {
     paddingVertical: 24,
     paddingHorizontal: 16,
+    backgroundColor: 'background-basic-color-4',
   },
   subtitle: {
     marginTop: 4,
+    color: 'color-light-100',
   },
   price: {
     position: 'absolute',
     top: 24,
     right: 16,
+    color: 'color-light-100',
   },
   description: {
     marginVertical: 16,
+    color: 'color-light-100',
   },
   size: {
     marginBottom: 16,
+    color: 'color-light-100',
   },
   colorGroup: {
     flexDirection: 'row',
@@ -444,6 +449,7 @@ const themedStyles = StyleService.create({
   },
   sectionLabel: {
     marginVertical: 8,
+    color: 'color-light-100',
   },
   commentInputLabel: {
     fontSize: 16,
@@ -465,10 +471,17 @@ const themedStyles = StyleService.create({
   elementSubcontainer: {
     flexDirection: 'row',
     marginTop: 4,
+    backgroundColor: 'background-basic-color-4',
+    color: 'color-light-100',
   },
+  modalButtonsContainer: {
+    flexDirection: 'row',
+    paddingTop: 10,
+  },  
   buttonsContainer: {
     flexDirection: 'row',
-    marginTop: 10,
+    paddingTop: 10,
+    backgroundColor: 'background-basic-color-4',
   },
   buttonRight: {
     width: '50%',
@@ -477,6 +490,7 @@ const themedStyles = StyleService.create({
     marginLeft: 5,
     marginRight: 10,
     alignItems: 'center',
+    backgroundColor: 'background-basic-color-4',
   },
   buttonLeft: {
     width: '50%',
@@ -485,6 +499,7 @@ const themedStyles = StyleService.create({
     marginLeft: 10,
     marginRight: 5,
     alignItems: 'center',
+    backgroundColor: 'background-basic-color-4',
   },
   buttonRightModal: {
     width: '50%',
@@ -521,6 +536,10 @@ const themedStyles = StyleService.create({
   },
   structureName: {
     paddingRight: 90,
+    color: 'color-light-100',
+  },
+  latlon: {
+    color: 'color-light-100',
   },
   topBar: {
     backgroundColor: 'color-primary-default',

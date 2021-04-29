@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, ImageStyle, Image } from 'react-native';
-import { Divider, TopNavigation, TopNavigationAction, Icon, StyleService, useStyleSheet, Text } from '@ui-kitten/components';
+import { StyleSheet, ImageStyle, Image, View, ImageBackground, ScrollView } from 'react-native';
+import { Divider, TopNavigation, TopNavigationAction, Icon, StyleService, useStyleSheet, Text, Layout } from '@ui-kitten/components';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { MenuGridList } from '../components/menu-grid-list.component';
 import { MenuIcon } from '../components/icons';
@@ -127,11 +127,24 @@ export const HomepageScreen = (props): React.ReactElement => {
         leftControl={renderDrawerAction() }
         style={styles.topBar}
       />
-      <Divider/>
-      <MenuGridList
+      <ScrollView>
+      <Layout
+      style={styles.container}
+      level='2'>
+      <View>
+      <MenuGridList style={styles.buttonsContainer}
         data={data}
         onItemPress={onItemPress}
       />
+      </View>
+      <View style={styles.logoContainer}>
+          <ImageBackground
+            style={styles.imageLogo}
+            source={require('../assets/images/white-logo.png')}>
+          </ImageBackground>
+      </View>
+      </Layout>
+      </ScrollView>
     </SafeAreaLayout>
   );
 };
@@ -139,7 +152,14 @@ export const HomepageScreen = (props): React.ReactElement => {
 const themedStyles = StyleService.create({
   safeArea: {
     flex: 1,
+    backgroundColor: 'background-basic-color-4',
   },
+  container: {
+    flex: 1,    
+  },  
+  buttonsContainer: {
+    backgroundColor: 'background-basic-color-4',
+  },  
   topBar: {
     backgroundColor: 'color-primary-default',
   },
@@ -150,4 +170,16 @@ const themedStyles = StyleService.create({
     color: '#FFFFFF',
     tintColor: '#FFFFFF',
   },
+  imageLogo: {
+    height: 123.9,
+    flex: 1,
+    width: 120,
+  },
+  logoContainer: {
+    paddingTop: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 30,
+    backgroundColor: 'background-basic-color-4',
+  },  
 });

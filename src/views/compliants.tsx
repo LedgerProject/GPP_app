@@ -143,13 +143,12 @@ export const CompliantsScreen = (props): React.ReactElement => {
           textContent={I18n.t('Loading') + '...'}
           textStyle={styles.spinnerTextStyle}
         />
-        <Divider/>
         <Text
           style={styles.infoSection}>
           {I18n.t('Tap on compliant for the preview') + '. '
           + I18n.t('Swipe left on compliant to delete it') + '.' }
         </Text>
-        <List
+        <List style={styles.container}
           data={compliants}
           renderItem={renderCompliantItem}
         />
@@ -185,6 +184,7 @@ export const CompliantsScreen = (props): React.ReactElement => {
 const themedStyles = StyleService.create({
   container: {
     flex: 1,
+    backgroundColor: 'background-basic-color-4',
   },
   safeArea: {
     flex: 1,
@@ -194,6 +194,7 @@ const themedStyles = StyleService.create({
     alignItems: 'center',
     padding: 4,
     marginHorizontal: 16,
+    color: 'color-light-100',
   },
   item: {
     borderBottomWidth: 1,

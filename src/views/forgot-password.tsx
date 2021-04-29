@@ -115,11 +115,13 @@ export default ({ navigation }): React.ReactElement => {
           textContent={I18n.t('Loading') + '...'}
           textStyle={styles.spinnerTextStyle}
         />
-        <View style={styles.headerContainer}>
+        <View style={styles.logoContainer}>
           <ImageBackground
             style={styles.imageAuth}
-            source={require('../assets/images/auth-background.png')}>
+            source={require('../assets/images/red-logo.png')}>
           </ImageBackground>
+        </View>  
+        <View style={styles.headerContainer}>  
           <Text
             style={styles.forgotPasswordLabel}
             category='s1'
@@ -132,7 +134,7 @@ export default ({ navigation }): React.ReactElement => {
           style={styles.formContainer}
           level='1'>
           <Text
-            style={styles.enterEmailLabel}>
+            style={styles.enterFieldLabel}>
             {I18n.t('Please enter your email address')}
           </Text>
           <Input
@@ -144,7 +146,7 @@ export default ({ navigation }): React.ReactElement => {
 
 
           <Text
-            style={styles.enterEmailLabel}>
+            style={styles.enterFieldLabel}>
             {I18n.t('Question 1')}
           </Text>
           <Input
@@ -154,7 +156,7 @@ export default ({ navigation }): React.ReactElement => {
           />
 
           <Text
-            style={styles.enterEmailLabel}>
+            style={styles.enterFieldLabel}>
             {I18n.t('Question 2')}
           </Text>
           <Input
@@ -164,7 +166,7 @@ export default ({ navigation }): React.ReactElement => {
           />
 
           <Text
-            style={styles.enterEmailLabel}>
+            style={styles.enterFieldLabel}>
             {I18n.t('Question 3')}
           </Text>
           <Input
@@ -174,7 +176,7 @@ export default ({ navigation }): React.ReactElement => {
           />
 
           <Text
-            style={styles.enterEmailLabel}>
+            style={styles.enterFieldLabel}>
             {I18n.t('Question 4')}
           </Text>
           <Input
@@ -184,7 +186,7 @@ export default ({ navigation }): React.ReactElement => {
           />
 
           <Text
-            style={styles.enterEmailLabel}>
+            style={styles.enterFieldLabel}>
             {I18n.t('Question 5')}
           </Text>
           <Input
@@ -192,8 +194,6 @@ export default ({ navigation }): React.ReactElement => {
             value={answer5}
             onChangeText={setAnswer5}
           />
-
-</Layout>
         <Button
           style={styles.resetPasswordButton}
           size='giant'
@@ -207,6 +207,8 @@ export default ({ navigation }): React.ReactElement => {
           onPress={onBackToLoginButtonPress}>
           Back to login
         </Button>
+
+</Layout>
       </KeyboardAvoidingView>
       <Modal
       visible={ modalVisible }
@@ -234,10 +236,17 @@ const themedStyles = StyleService.create({
     backgroundColor: 'background-basic-color-1',
   },
   imageAuth: {
-    height: 160,
+    height: 123.9,
     flex: 1,
-    width: '100%',
+    width: 120,
   },
+  logoContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 30,
+    padding: 30,
+    backgroundColor: 'color-light-100',
+  },  
   headerContainer: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -248,22 +257,24 @@ const themedStyles = StyleService.create({
     flex: 1,
     paddingTop: 32,
     paddingHorizontal: 16,
+    backgroundColor: 'background-basic-color-4',
   },
   forgotPasswordLabel: {
     marginTop: 8,
     marginBottom: 8,
   },
-  enterEmailLabel: {
+  enterFieldLabel: {
     zIndex: 1,
     alignSelf: 'center',
     marginTop: 16,
     marginBottom: 4,
+    color: 'color-light-100',
   },
   resetPasswordButton: {
-    marginHorizontal: 16,
+    margin: 16,
   },
   backToLoginButton: {
-    marginVertical: 12,
+    marginBottom: 12,
     marginHorizontal: 16,
   },
   forgotPasswordContainer: {

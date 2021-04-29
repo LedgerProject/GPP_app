@@ -320,14 +320,14 @@ export const CompliantEditScreen = (props): React.ReactElement => {
           {I18n.t('Select the images, enter the title and description and then press the send button')
           + '.' }
         </Text>
-          <MenuGridList
+          <MenuGridList style={styles.buttonsContainer}
             data={data}
             onItemPress={onItemUploadPhotoPress}
           />
         </View>
-        <Divider/>
+        <Divider style={styles.divider} />
         <View style={styles.title}>
-        <Text category='s1'>{I18n.t('Insert title')}</Text>
+        <Text category='s1' style={styles.label}>{I18n.t('Insert title')}</Text>
           <Input
             placeholder={I18n.t('Title')}
             value={compliantTitle}
@@ -336,7 +336,7 @@ export const CompliantEditScreen = (props): React.ReactElement => {
           />
         </View>
         <View  style={styles.description}>
-        <Text category='s1'>{I18n.t('Insert description')}</Text>
+        <Text category='s1' style={styles.label}>{I18n.t('Insert description')}</Text>
         <Input
         multiline={true}
         textStyle={{ minHeight: 64 }}
@@ -346,16 +346,18 @@ export const CompliantEditScreen = (props): React.ReactElement => {
         />
         </View>
         <View style={styles.toggle}>
-        <Toggle
+        <Toggle style={styles.label}
         checked={compliantSharePosition}
         onChange={onCheckedPositionChange}
+        status='control'
         text={I18n.t('Share current position')}>
         </Toggle>
         </View>
         <View style={styles.toggle}>
-        <Toggle
+        <Toggle style={styles.label}
         checked={compliantShareName}
         onChange={onCheckedNameChange}
+        status='control'
         text={I18n.t('Share your full name')}
         >
         </Toggle>
@@ -408,6 +410,10 @@ const themedStyles = StyleService.create({
   },
   container: {
     flex: 1,
+    backgroundColor: 'background-basic-color-4',
+  },
+  buttonsContainer: {
+    backgroundColor: 'background-basic-color-4',
   },
   safeArea: {
     flex: 1,
@@ -417,7 +423,14 @@ const themedStyles = StyleService.create({
     alignItems: 'center',
     padding: 4,
     marginHorizontal: 16,
+    color: 'color-light-100',
   },
+  label: {
+    color: 'color-light-100',
+  },
+  divider: {
+    backgroundColor: 'color-primary-default',
+  },  
   item: {
     borderBottomWidth: 1,
     borderBottomColor: 'background-basic-color-3',
@@ -475,6 +488,7 @@ const themedStyles = StyleService.create({
     marginHorizontal: 16,
     marginTop: 5,
     marginBottom: 10,
+    color: 'color-light-100',
   },
   inputTitle: {
     backgroundColor: '#FFFFFF',
@@ -491,6 +505,6 @@ const themedStyles = StyleService.create({
     textAlign: 'left',
     flex: 1,
     flexDirection: 'row',
-
+    color: 'color-light-100',
   },
 });
