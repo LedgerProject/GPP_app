@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text as TextNative } from 'react-native';
+import { View } from 'react-native';
 import { ListItem, ListItemProps, Text, useStyleSheet, StyleService } from '@ui-kitten/components';
 
 export type QuestionItemProps = ListItemProps & {
@@ -43,25 +43,27 @@ const themedStyles = StyleService.create({
     alignItems: 'flex-start',
     paddingHorizontal: 0,
     paddingVertical: 0,
-    marginBottom: 4,
+    marginBottom: 10,
   },
   questionContainer: {
     flex: 1,
     height: '100%',
-    padding: 16,
+    paddingLeft: 16,
     backgroundColor: 'color-dark-100',
     paddingTop: 10,
     paddingRight: 10,
     borderRadius: 5,
+    margin: 5,
   },
   questionAnsweredContainer: {
     flex: 1,
     height: '100%',
-    padding: 16,
+    paddingLeft: 16,
     backgroundColor: 'color-info-transparent-300',
     paddingTop: 10,
     paddingRight: 10,
     borderRadius: 5,
+    margin: 5,
   },
   question: {
     fontSize: 15,

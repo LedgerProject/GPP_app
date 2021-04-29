@@ -168,7 +168,27 @@ To test the application with Android, start an emulator with Android Studio and 
 npx react-native run-android
 ```
 
-To test the application with iOS, start an emulator with Xcode and then run this script:
+To test the application with iOS, follow these steps:
+
+Step one: is necessary apply a patch for images visualization. Install the patch-package package:
+
+```sh
+npm i -g patch-package
+```
+
+and then, to apply the patch (present in /patches folder), run the following script:
+
+```sh
+npx patch-package
+```
+
+Step two: go to /ios folder and run the script:
+
+```sh
+pod install --repo-update
+```
+
+Step three: start an emulator with Xcode and then run this script or run the project with Xcode:
 
 ```sh
 npx react-native run-ios

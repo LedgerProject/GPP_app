@@ -67,9 +67,7 @@ export const DocDetailsScreen = (props): React.ReactElement => {
         leftControl={renderDrawerAction() }
         style={styles.topBar}
       />
-      <Divider/>
       <ScrollView>
-  <Layout style={styles.header}>
   <Layout
     style={styles.detailsContainer}
     level='1'>
@@ -82,7 +80,6 @@ export const DocDetailsScreen = (props): React.ReactElement => {
       ) }
     <Button style={styles.zoomButton} onPress={ZoomImage}>{I18n.t('Zoom')}</Button>
   </Layout>
-</Layout>
 </ScrollView>
 
 <Modal
@@ -106,14 +103,10 @@ const themedStyles = StyleService.create({
   },
   container: {
     flex: 1,
-    backgroundColor: 'background-basic-color-2',
   },
   commentList: {
     flex: 1,
     backgroundColor: 'transparent',
-  },
-  header: {
-    marginBottom: 8,
   },
   image: {
     height: 340,
@@ -122,6 +115,8 @@ const themedStyles = StyleService.create({
   detailsContainer: {
     paddingVertical: 24,
     paddingHorizontal: 16,
+    backgroundColor: 'background-basic-color-4',
+    paddingBottom: 8,
   },
   subtitle: {
     marginTop: 4,
@@ -199,7 +194,10 @@ const themedStyles = StyleService.create({
   },
   button: { width: '100%' },
   backdrop: { /* backgroundColor: 'rgba(0, 0, 0, 0.5)', */ },
-  documentTitle: { textAlign: 'center' },
+  documentTitle: {
+    textAlign: 'center',
+    color: 'color-light-100',
+  },
   zoomButton: { marginTop: 6 },
   topBar: {
     backgroundColor: 'color-primary-default',

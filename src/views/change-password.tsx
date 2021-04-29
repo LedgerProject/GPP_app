@@ -145,8 +145,7 @@ export const ChangePasswordScreen = (props): React.ReactElement => {
           leftControl={renderDrawerAction() }
           style={styles.topBar}
         />
-        <Divider />
-        <ScrollView>
+        <ScrollView style={styles.container}>
           <KeyboardAvoidingView style={styles.container}>
           <Spinner
           visible={loading}
@@ -223,12 +222,13 @@ const themedStyles = StyleService.create({
     flex: 1,
   },
   container: {
-    backgroundColor: 'background-basic-color-1',
+    backgroundColor: 'background-basic-color-4',
   },
   formContainer: {
     flex: 1,
     paddingTop: 32,
     paddingHorizontal: 16,
+    backgroundColor: 'background-basic-color-4',
   },
   passwordInput: {
     marginBottom: 8,
@@ -239,6 +239,7 @@ const themedStyles = StyleService.create({
     textAlign: 'center',
     padding: 4,
     marginHorizontal: 16,
+    color: 'color-light-100',
   },
   saveButton: {
     marginHorizontal: 16,

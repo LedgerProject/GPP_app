@@ -444,12 +444,12 @@ export const DocWalletScreen = (props): React.ReactElement => {
           textStyle={styles.spinnerTextStyle}
         />
         <View>
-          <MenuGridList
+          <MenuGridList style={styles.buttonsContainer}
             data={data}
             onItemPress={onItemUploadPhotoPress}
           />
         </View>
-        <Divider/>
+        { /*<Divider style={styles.divider} />*/ }
         <Text
           style={styles.infoSection}>
           {I18n.t('Tap on document for the preview') + '. '
@@ -528,8 +528,14 @@ export const DocWalletScreen = (props): React.ReactElement => {
           <Text style={ styles.modalText } category='h6' >
             {I18n.t('Are you sure to delete the selected document?')}
           </Text>
-          <Button status='primary' onPress={DeleteDocument}>{I18n.t('DELETE')}</Button>
+          <View style={styles.modalButtonsContainer}>
+          <View style={styles.modalButtonLeft} >
           <Button status='basic' onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>
+          </View>
+          <View style={styles.modalButtonRight} >
+          <Button status='primary' onPress={DeleteDocument}>{I18n.t('DELETE')}</Button>
+          </View>
+          </View>
         </Layout>
       </ModalUiKitten>
     </SafeAreaLayout>
@@ -539,6 +545,13 @@ export const DocWalletScreen = (props): React.ReactElement => {
 const themedStyles = StyleService.create({
   container: {
     flex: 1,
+    backgroundColor: 'background-basic-color-4',
+  },
+  buttonsContainer: {
+    backgroundColor: 'background-basic-color-4',
+  },
+  divider: {
+    backgroundColor: 'color-primary-default',
   },
   safeArea: {
     flex: 1,
@@ -548,6 +561,7 @@ const themedStyles = StyleService.create({
     alignItems: 'center',
     padding: 4,
     marginHorizontal: 16,
+    color: 'color-light-100',
   },
   item: {
     borderBottomWidth: 1,
@@ -597,5 +611,14 @@ const themedStyles = StyleService.create({
   topBarIcon: {
     color: '#FFFFFF',
     tintColor: '#FFFFFF',
+  },
+  modalButtonRight: {
+    width: '100%', height: 'auto', flex: 1, alignItems: 'center',
+  },
+  modalButtonLeft: {
+    width: '100%', height: 'auto', flex: 1, alignItems: 'center',
+  },
+  modalButtonsContainer: {
+    flexDirection: 'row', marginTop: 10,
   },
 });

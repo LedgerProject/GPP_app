@@ -1,7 +1,10 @@
 {  
-  "color-primary-500": "#E5142E",
+  "background-basic-color-1": "$color-basic-100",
+  "background-basic-color-4": "#32343C",
+  "color-primary-500": "#BF222D",
   "color-primary-600": "#C40E36",
   "color-dark-100": "#111111",
+  "color-light-100": "#FFFFFF",
 
   "color-primary-100": "#FDDACF",
   "color-primary-200": "#FCAEA0",
@@ -240,10 +243,8 @@
     "color-control-transparent-default-border": "$color-basic-100",
     "color-control-transparent-active-border": "$color-basic-100",
     "color-control-transparent-disabled-border": "$color-basic-transparent-300",
-    "background-basic-color-1": "$color-basic-100",
     "background-basic-color-2": "$color-basic-200",
     "background-basic-color-3": "$color-basic-300",
-    "background-basic-color-4": "$color-basic-400",
     "background-alternative-color-1": "$color-basic-800",
     "background-alternative-color-2": "$color-basic-900",
     "background-alternative-color-3": "$color-basic-1000",

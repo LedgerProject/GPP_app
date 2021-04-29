@@ -285,13 +285,12 @@ export const MyProfileScreen = (props): React.ReactElement => {
           leftControl={renderDrawerAction() }
           style={styles.topBar}
         />
-        <Divider />
         <Spinner
           visible={loading}
           textContent={I18n.t('Loading') + '...'}
           textStyle={styles.spinnerTextStyle}
         />
-        <ScrollView>
+        <ScrollView style={styles.container}>
           <KeyboardAvoidingView style={styles.container}>
             {/*<View style={styles.headerContainer}>
               <ProfileAvatar
@@ -394,7 +393,7 @@ const themedStyles = StyleService.create({
     flex: 1,
   },
   container: {
-    backgroundColor: 'background-basic-color-1',
+    backgroundColor: 'background-basic-color-4',
   },
   headerContainer: {
     justifyContent: 'center',
@@ -419,6 +418,7 @@ const themedStyles = StyleService.create({
     flex: 1,
     paddingTop: 32,
     paddingHorizontal: 16,
+    backgroundColor: 'background-basic-color-4',
   },
   nameInput: {
     marginTop: 8,
@@ -441,6 +441,7 @@ const themedStyles = StyleService.create({
     textAlign: 'center',
     padding: 4,
     marginHorizontal: 16,
+    color: 'color-light-100',
   },
   saveButton: {
     marginHorizontal: 16,
