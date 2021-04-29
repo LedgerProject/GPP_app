@@ -4,11 +4,12 @@ import { Button, CheckBox, Input, Layout, StyleService, Text, useStyleSheet, Mod
 import { EmailIcon, EyeIcon, EyeOffIcon, PersonIcon } from '../components/icons';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { KeyboardAvoidingView } from '../services/3rd-party';
+import { AppOptions } from '../services/app-env';
+import { QuestionItem } from './sign-up/question-item.component';
 import axios from 'axios';
 import I18n from './../i18n/i18n';
-import { AppOptions } from '../services/app-env';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { QuestionItem } from './sign-up/question-item.component';
+import { ScrollView } from 'react-native-gesture-handler';
 
 export default ({ navigation }): React.ReactElement => {
   const [firstName, setFirstName] = React.useState<string>();
@@ -34,210 +35,158 @@ export default ({ navigation }): React.ReactElement => {
   const [questions, setQuestions] = React.useState([]);
   const [pbkdf, setPbkdf] = React.useState<string>();
 
-  const onStep2ButtonPress = (): void => {
-      setLoading(true);
-      // navigation && navigation.goBack();
-      setError('');
-      setSuccess('');
-      if (!firstName) {
-        setError(I18n.t('Please fill First Name'));
-        setmodalVisible(true);
-        setLoading(false);
-        return;
-      }
-      if (!lastName) {
-        setError(I18n.t('Please fill Last Name'));
-        setmodalVisible(true);
-        setLoading(false);
-        return;
-      }
-      if (!email) {
-        setError(I18n.t('Please fill Email'));
-        setmodalVisible(true);
-        setLoading(false);
-        return;
-      }
-      if (!confirmEmail) {
-        setError(I18n.t('Please confirm Email'));
-        setmodalVisible(true);
-        setLoading(false);
-        return;
-      }
-      if (email !== confirmEmail) {
-        setError(I18n.t('Email and confirm Email do not match'));
-        setmodalVisible(true);
-        setLoading(false);
-        return;
-      }
-      if (!password) {
-        setError(I18n.t('Please fill Password'));
-        setmodalVisible(true);
-        setLoading(false);
-        return;
-      }
-      if (!confirmPassword) {
-        setError(I18n.t('Please confirm Password'));
-        setmodalVisible(true);
-        setLoading(false);
-        return;
-      }
-      if (password !== confirmPassword) {
-        setError(I18n.t('Password and confirm Password do not match'));
-        setmodalVisible(true);
-        setLoading(false);
-        return;
-      }
-      if (!termsAccepted) {
-        setError(I18n.t('Please accept terms and conditions'));
-        setmodalVisible(true);
-        setLoading(false);
-        return;
-      }
-      const postParams = {
-        email: email,
-      };
-      /*axios
-      .post(AppOptions.getServerUrl() + 'users/signup', postParams)
-      .then(function (response) {
-        setLoading(false);
-        setStep2(true);
-        // handle success
-        // navigation && navigation.navigate('Homepage');
-        setSuccess(I18n.t('Congratulations! Registration completed'));
-        setmodalVisible(true);
-      })
-      .catch(function () { // error) {
-        setLoading(false);
-        // alert(error.message);
-        setError(I18n.t('An error has occurred, please try again'));
-        setmodalVisible(true);
-        return;
-      });*/
+  // Use effect
+  useEffect(() => {
+    setQuestions([
+      {'question': I18n.t('Where my parents met?'), 'answer': '' },
+      {'question': I18n.t('What is the name of your first pet?'), 'answer': '' },
+      {'question': I18n.t('What is your home town?'), 'answer': '' },
+      {'question': I18n.t('What is the name of your first teacher?'), 'answer': '' },
+      {'question': I18n.t('What is the surname of your mother before wedding?'), 'answer': '' },
+    ]);
+  }, []);
 
+  // Sign-up: step 1
+  const onSignUpStep1ButtonPress = (): void => {
+    // Initialize the error and success messages
+    setError('');
+    setSuccess('');
 
-      axios
+    // Check if first name is entered
+    if (!firstName) {
+      setError(I18n.t('Please enter your first name'));
+      setmodalVisible(true);
+      return;
+    }
+
+    // Check if last name is entered
+    if (!lastName) {
+      setError(I18n.t('Please enter your last name'));
+      setmodalVisible(true);
+      return;
+    }
+
+    // Check if the email is entered
+    if (!email) {
+      setError(I18n.t('Please enter your e-mail'));
+      setmodalVisible(true);
+      return;
+    }
+
+    // Check if confirmation email is entered
+    if (!confirmEmail) {
+      setError(I18n.t('Please confirm your e-mail'));
+      setmodalVisible(true);
+      return;
+    }
+
+    // Check if the confirmation email match the specified email
+    if (email !== confirmEmail) {
+      setError(I18n.t('The confirmation email does not match the specified email'));
+      setmodalVisible(true);
+      return;
+    }
+
+    // Check if the password is entered
+    if (!password) {
+      setError(I18n.t('Please enter the password'));
+      setmodalVisible(true);
+      return;
+    }
+
+    // Check if the confirmation password is entered
+    if (!confirmPassword) {
+      setError(I18n.t('Please confirm the password'));
+      setmodalVisible(true);
+      return;
+    }
+
+    // Check if the confirmation password match the specified password
+    if (password !== confirmPassword) {
+      setError(I18n.t('The confirmation password does not match the specified password'));
+      setmodalVisible(true);
+      return;
+    }
+
+    // Check if accepted terms and conditions
+    if (!termsAccepted) {
+      setError(I18n.t('Please accept terms and conditions'));
+      setmodalVisible(true);
+      return;
+    }
+
+    // Show the spinner
+    setLoading(true);
+
+    // Get the PBKDF from the server, sending the user e-mail
+    const postParams = {
+      email: email,
+    };
+
+    axios
       .post(AppOptions.getServerUrl() + 'users/pbkdf', postParams)
       .then(function (response) {
+        // Get the PBKDF
         const data = response.data.pbkdfResponse;
+
+        // Hide the spinner
         setLoading(false);
+
+        // Check if the e-mail already exists into the database
         if (data.code === '20') {
-          setError(I18n.t('Email already exists'));
+          setError(I18n.t('The specified e-mail already exists. If you forgot your password, please select the link \'Forgot your password?\' in the login page'));
           setmodalVisible(true);
         } else if (data.code === '202') {
           // PBKDF generated
           setPbkdf(data.pbkdf);
+
+          // Show the step 2
           setStep2(true);
+        } else {
+          setError(I18n.t('An error has occurred, please try again'));
+          setmodalVisible(true);
         }
-        // handle success
-        // navigation && navigation.navigate('Homepage');
-        // setSuccess(I18n.t('Congratulations! Registration completed'));
-        // setmodalVisible(true);
       })
       .catch(function () {
-      // .catch(function (error) { // error) {
-        // console.log(error);
+        // Hide the spinner
         setLoading(false);
-        // alert(error.message);
+
         setError(I18n.t('An error has occurred, please try again'));
         setmodalVisible(true);
-        return;
-      });
+      return;
+    });
+  };
+
+  // Render the questions list
+  const renderQuestionItem = ({ item, index }) => (
+    <QuestionItem
+      index={index}
+      item={item}
+      onListviewButtonPress={onPressItem}/>
+  );
+
+  // Let the user enter the answer
+  const onPressItem = (index: number, item: any): void => {
+    // Check if yet answered to 3 questions
+    if (answered === 3) {
+      setError(I18n.t('You cannot select more than 3 questions'));
+      setmodalVisible(true);
+    } else {
+      // Enter the answer
+      setCurrentAnswer(index);
+      setCurrentQuestion(questions[index].question);
+      setAnswer(questions[index].answer);
+      setmodalAnswerVisible(true);
+    }
   };
 
   const onBackButtonPress = (): void => {
     setStep2(false);
   };
 
-  const onSignUpButtonPress = (): void => {
-    // navigation && navigation.goBack();
-    setLoading(true);
-    setError('');
-    setSuccess('');
-    if (!firstName) {
-      setError(I18n.t('Please fill First Name'));
-      setmodalVisible(true);
-      setLoading(false);
-      return;
-    }
-    if (!lastName) {
-      setError(I18n.t('Please fill Last Name'));
-      setmodalVisible(true);
-      setLoading(false);
-      return;
-    }
-    if (!email) {
-      setError(I18n.t('Please fill Email'));
-      setmodalVisible(true);
-      setLoading(false);
-      return;
-    }
-    if (!confirmEmail) {
-      setError(I18n.t('Please confirm Email'));
-      setmodalVisible(true);
-      setLoading(false);
-      return;
-    }
-    if (email !== confirmEmail) {
-      setError(I18n.t('Email and confirm Email do not match'));
-      setmodalVisible(true);
-      setLoading(false);
-      return;
-    }
-    if (!password) {
-      setError(I18n.t('Please fill Password'));
-      setmodalVisible(true);
-      setLoading(false);
-      return;
-    }
-    if (!confirmPassword) {
-      setError(I18n.t('Please confirm Password'));
-      setmodalVisible(true);
-      setLoading(false);
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError(I18n.t('Password and confirm Password do not match'));
-      setmodalVisible(true);
-      setLoading(false);
-      return;
-    }
-    if (!termsAccepted) {
-      setError(I18n.t('Please accept terms and conditions'));
-      setmodalVisible(true);
-      setLoading(false);
-      return;
-    }
-    /*if (!answer1) {
-      setError(I18n.t('Please fill Answer 1'));
-      setmodalVisible(true);
-      setLoading(false);
-      return;
-    }
-    if (!answer2) {
-      setError(I18n.t('Please fill Answer 2'));
-      setmodalVisible(true);
-      setLoading(false);
-      return;
-    }
-    if (!answer3) {
-      setError(I18n.t('Please fill Answer 3'));
-      setmodalVisible(true);
-      setLoading(false);
-      return;
-    }
-    if (!answer4) {
-      setError(I18n.t('Please fill Answer 4'));
-      setmodalVisible(true);
-      setLoading(false);
-      return;
-    }
-    if (!answer5) {
-      setError(I18n.t('Please fill Answer 5'));
-      setmodalVisible(true);
-      setLoading(false);
-      return;
-    }*/
-
+  
+  const onSignUpStep2ButtonPress = (): void => {
+    // Set the answers
     const answers = {
       question1: 'null',
       question2: 'null',
@@ -262,6 +211,7 @@ export default ({ navigation }): React.ReactElement => {
       answers.question5 = questions[4].answer;
     }
 
+    // Sanitize the answers
     // answers = sanitizeAnswers(answers);
 
 
@@ -291,6 +241,8 @@ export default ({ navigation }): React.ReactElement => {
       });
 
   };
+
+  
 
   const onSignInButtonPress = (): void => {
     setmodalVisible(false);
@@ -323,51 +275,21 @@ export default ({ navigation }): React.ReactElement => {
     setmodalAnswerVisible(false);
   };
 
-  const onPressItem = (index: number, item: any): void => {
-    if (answered === 3) {
-      setError(I18n.t('You cannot select more than 3 questions'));
-      setmodalVisible(true);
-    } else {
-      setCurrentAnswer(index);
-      setCurrentQuestion(questions[index].question);
-      setAnswer(questions[index].answer);
-      setmodalAnswerVisible(true);
-    }
-  };
-
-  const renderQuestionItem = ({ item, index }) => (
-    <QuestionItem
-      index={index}
-      item={item}
-      onListviewButtonPress={onPressItem}
-      />
-  );
-
-  useEffect(() => {
-    // console.log(getSafetyQuestions('en_GB'));
-    setQuestions([
-      {'question': I18n.t('Where my parents met?'), 'answer': '' },
-      {'question': I18n.t('What is the name of your first pet?'), 'answer': '' },
-      {'question': I18n.t('What is your home town?'), 'answer': '' },
-      {'question': I18n.t('What is the name of your first teacher?'), 'answer': '' },
-      {'question': I18n.t('What is the surname of your mother before wedding?'), 'answer': '' },
-    ]);
-  }, []);
-
   return (
     <SafeAreaLayout insets='top' style={styles.safeArea}>
       <KeyboardAvoidingView style={styles.container}>
-      <Spinner
+        <Spinner
           visible={loading}
           textContent={I18n.t('Loading') + '...'}
-          textStyle={styles.spinnerTextStyle}
-        />
+          textStyle={styles.spinnerTextStyle}/>
+
         <View style={styles.logoContainer}>
           <ImageBackground
             style={styles.imageAuth}
             source={require('../assets/images/red-logo.png')}>
           </ImageBackground>
         </View>
+
         <View style={styles.headerContainer}>
           <Text
             style={styles.signUpLabel}
@@ -376,155 +298,168 @@ export default ({ navigation }): React.ReactElement => {
             {I18n.t('Please register to Global Passport Project')}
           </Text>
         </View>
-        { step2 === false && (
-        <Layout
-          style={styles.formContainer}
-          level='1'>
-          <Input
-            autoCapitalize='none'
-            placeholder={I18n.t('First Name')}
-            icon={PersonIcon}
-            value={firstName}
-            onChangeText={setFirstName}
-          />
-          <Input
-            style={styles.nameInput}
-            autoCapitalize='none'
-            placeholder={I18n.t('Last Name')}
-            icon={PersonIcon}
-            value={lastName}
-            onChangeText={setLastName}
-          />
-          <Input
-            style={styles.emailInput}
-            autoCapitalize='none'
-            placeholder={I18n.t('E-mail')}
-            icon={EmailIcon}
-            keyboardType={'email-address'}
-            value={email}
-            onChangeText={setEmail}
-          />
-          <Input
-            style={styles.emailInput}
-            autoCapitalize='none'
-            placeholder={I18n.t('Confirm E-Mail')}
-            icon={EmailIcon}
-            keyboardType={'email-address'}
-            value={confirmEmail}
-            onChangeText={setConfirmEmail}
-          />
-          <Input
-            style={styles.passwordInput}
-            autoCapitalize='none'
-            secureTextEntry={!passwordVisible}
-            placeholder={I18n.t('Password')}
-            icon={passwordVisible ? EyeIcon : EyeOffIcon}
-            value={password}
-            onChangeText={setPassword}
-            onIconPress={onPasswordIconPress}
-          />
-          <Input
-            style={styles.passwordInput}
-            autoCapitalize='none'
-            secureTextEntry={!confirmPasswordVisible}
-            placeholder={I18n.t('Confirm Password')}
-            icon={confirmPasswordVisible ? EyeIcon : EyeOffIcon}
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            onIconPress={onConfirmPasswordIconPress}
-          />
-          <CheckBox
-            style={styles.termsCheckBox}
-            textStyle={styles.termsCheckBoxText}
-            text={I18n.t('I read and agree to Terms & Conditions')}
-            checked={termsAccepted}
-            onChange={(checked: boolean) => setTermsAccepted(checked)}
-          />
-        <Button
-          style={styles.signUpButton}
-          size='giant'
-          onPress={onStep2ButtonPress}>
-           {I18n.t('CONTINUE')}
-        </Button>
-        <Button
-          style={styles.signInButton}
-          appearance='ghost'
-          status='basic'
-          onPress={onSignInButtonPress}>
-          {I18n.t('Already have an account? Sign In')}
-        </Button>
-      </Layout>
-      )}
-      { step2 === true && (
-      <Layout
-          style={styles.formContainer}
-          level='1'>
-        <Button
-          style={styles.signInButton}
-          appearance='ghost'
-          status='basic'
-          onPress={onBackButtonPress}>
-          {I18n.t('Go back')}
-        </Button>
 
-        <Text style={styles.selectQuestions}>{I18n.t('Please Select 3 Questions of 5')}</Text>
+        { step2 === false && ( // Registration step 1
+          <Layout
+            style={styles.formContainer}
+            level='1'>
+            <Input
+              autoCapitalize='none'
+              placeholder={I18n.t('First Name')}
+              icon={PersonIcon}
+              value={firstName}
+              onChangeText={setFirstName}/>
 
-        <List data={questions} renderItem={renderQuestionItem} />
+            <Input
+              style={styles.nameInput}
+              autoCapitalize='none'
+              placeholder={I18n.t('Last Name')}
+              icon={PersonIcon}
+              value={lastName}
+              onChangeText={setLastName}/>
 
-        { answered === 3 && (
-        <Button
-          style={styles.signUpButton}
-          size='giant'
-          onPress={onSignUpButtonPress}>
-           {I18n.t('SIGN UP')}
-        </Button>
+            <Input
+              style={styles.emailInput}
+              autoCapitalize='none'
+              placeholder={I18n.t('E-Mail')}
+              icon={EmailIcon}
+              keyboardType={'email-address'}
+              value={email}
+              onChangeText={setEmail}/>
+
+            <Input
+              style={styles.emailInput}
+              autoCapitalize='none'
+              placeholder={I18n.t('Confirm E-Mail')}
+              icon={EmailIcon}
+              keyboardType={'email-address'}
+              value={confirmEmail}
+              onChangeText={setConfirmEmail}/>
+
+            <Input
+              style={styles.passwordInput}
+              autoCapitalize='none'
+              secureTextEntry={!passwordVisible}
+              placeholder={I18n.t('Password')}
+              icon={passwordVisible ? EyeIcon : EyeOffIcon}
+              value={password}
+              onChangeText={setPassword}
+              onIconPress={onPasswordIconPress}/>
+
+            <Input
+              style={styles.passwordInput}
+              autoCapitalize='none'
+              secureTextEntry={!confirmPasswordVisible}
+              placeholder={I18n.t('Confirm Password')}
+              icon={confirmPasswordVisible ? EyeIcon : EyeOffIcon}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              onIconPress={onConfirmPasswordIconPress}/>
+
+            <CheckBox
+              style={styles.termsCheckBox}
+              textStyle={styles.termsCheckBoxText}
+              text={I18n.t('I read and agree to Terms & Conditions')}
+              checked={termsAccepted}
+              onChange={(checked: boolean) => setTermsAccepted(checked)}/>
+
+            <Button
+              style={styles.signUpButton}
+              size='giant'
+              onPress={onSignUpStep1ButtonPress}>
+              {I18n.t('CONTINUE')}
+            </Button>
+
+            <Button
+              style={styles.signInButton}
+              appearance='ghost'
+              status='basic'
+              onPress={onSignInButtonPress}>
+              {I18n.t('Already have an account? Sign In!')}
+            </Button>
+          </Layout>
         )}
-      </Layout>
-      )}
+        { step2 === true && ( // Registration step 2
+          <Layout
+            style={styles.formContainer}
+            level='1'>
+            <Button
+              style={styles.signInButton}
+              appearance='ghost'
+              status='basic'
+              onPress={onBackButtonPress}>
+              {I18n.t('Go back')}
+            </Button>
 
+            { answered === 3 && ( // Answered 3 questions
+              <Button
+                style={styles.signUpButton}
+                size='giant'
+                onPress={onSignUpStep2ButtonPress}>
+                {I18n.t('SIGN UP')}
+              </Button>
+            )}
 
+            <Text
+              style={styles.selectQuestions}>
+              {I18n.t('Please answer 3 of these 5 questions')}
+            </Text>
+
+            <List
+              data={questions}
+              renderItem={renderQuestionItem}
+              style={styles.questionsContainer}/>
+          </Layout>
+        )}
       </KeyboardAvoidingView>
+
       <Modal
-      visible={ modalVisible }
-      backdropStyle={styles.backdrop}
-      onBackdropPress={() => setmodalVisible(false)}
-      >
-      <Layout style={ styles.modal } >
-      <Text style={ styles.modalText } status={error ? 'danger' : 'success' }>{error ? error : success}</Text>
-      <Button
-      status={error ? 'basic' : 'primary' }
-      onPress={error ? () => setmodalVisible(false) : onSignInButtonPress}>
-        { error ? I18n.t('CLOSE') : I18n.t('SIGN IN')}
-        </Button>
-      </Layout>
+        visible={ modalVisible }
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setmodalVisible(false)}>
+        <Layout style={ styles.modal }>
+          <Text 
+            style={ styles.modalText } 
+            status={error ? 'danger' : 'success' }>
+            {error ? error : success}
+          </Text>
+
+          <Button
+            status={error ? 'basic' : 'primary' }
+            onPress={error ? () => setmodalVisible(false) : onSignInButtonPress}>
+            { error ? I18n.t('CLOSE') : I18n.t('SIGN IN')}
+          </Button>
+        </Layout>
       </Modal>
+
       <Modal
-      visible={ modalAnswerVisible }
-      backdropStyle={styles.backdrop}
-      onBackdropPress={() => setmodalAnswerVisible(false)}
-      >
-      <Layout style={ styles.modalQuestions } >
-      <Text style={ styles.modalText }>{ currentQuestion }</Text>
-      <Input style={styles.nameInput}
-        placeholder={I18n.t('Your answer')}
-        value={answer}
-        onChangeText={setAnswer}
-      />
-      <View style={styles.buttonsContainer}>
-        <View style={styles.buttonLeft}>
-          <Button style={styles.button} status={'basic'}
-            onPress={() => setmodalAnswerVisible(false)}>
-            {I18n.t('Cancel')}
-          </Button>
-        </View>
-        <View style={styles.buttonRight}>
-          <Button style={styles.button} status={'primary'}
-            onPress={() => onConfirmButtonPress(currentAnswer) }>
-            {I18n.t('Confirm')}
-          </Button>
-        </View>
-      </View>
-      </Layout>
+        visible={ modalAnswerVisible }
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setmodalAnswerVisible(false)}>
+        <Layout style={ styles.modalQuestions }>
+          <Text style={ styles.modalText }>{ currentQuestion }</Text>
+
+          <Input style={styles.nameInput}
+            placeholder={I18n.t('Your answer')}
+            value={answer}
+            onChangeText={setAnswer}
+          />
+          <View style={styles.buttonsContainer}>
+            <View style={styles.buttonLeft}>
+              <Button style={styles.button} status={'basic'}
+                onPress={() => setmodalAnswerVisible(false)}>
+                {I18n.t('Cancel')}
+              </Button>
+            </View>
+
+            <View style={styles.buttonRight}>
+              <Button style={styles.button} status={'primary'}
+                onPress={() => onConfirmButtonPress(currentAnswer) }>
+                {I18n.t('Confirm')}
+              </Button>
+            </View>
+          </View>
+        </Layout>
       </Modal>
     </SafeAreaLayout>
   );
@@ -583,8 +518,13 @@ const themedStyles = StyleService.create({
   },
   signUpButton: {
     marginHorizontal: 16,
+    marginBottom: 10,
   },
   signInButton: {
+    marginVertical: 12,
+    marginHorizontal: 16,
+  },
+  questionsContainer: {
     marginVertical: 12,
     marginHorizontal: 16,
   },
@@ -621,6 +561,7 @@ const themedStyles = StyleService.create({
     textAlign: 'center',
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#FFFFFF',
   },
   buttonRight: {
     width: '50%', height: 'auto', flex: 1, marginLeft: 5, marginRight: 10, alignItems: 'center',

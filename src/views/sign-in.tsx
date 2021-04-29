@@ -4,10 +4,10 @@ import { Button, Input, Layout, StyleService, Text, useStyleSheet, Modal } from 
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { EyeIcon, EyeOffIcon, EmailIcon } from '../components/icons';
 import { KeyboardAvoidingView } from '../services/3rd-party';
-import I18n from './../i18n/i18n';
-import axios from 'axios';
 import { AppOptions } from '../services/app-env';
 import Spinner from 'react-native-loading-spinner-overlay';
+import I18n from './../i18n/i18n';
+import axios from 'axios';
 
 // Redux import
 import { useDispatch } from 'react-redux';
@@ -139,7 +139,7 @@ export default ({ navigation }): React.ReactElement => {
 
         <Layout style={styles.formContainer} level='1'>
           <Input
-            placeholder={I18n.t('E-mail')}
+            placeholder={I18n.t('E-Mail')}
             icon={EmailIcon}
             value={email}
             keyboardType={'email-address'}
