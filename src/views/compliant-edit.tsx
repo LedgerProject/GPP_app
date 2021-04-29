@@ -430,7 +430,7 @@ const themedStyles = StyleService.create({
   },
   divider: {
     backgroundColor: 'color-primary-default',
-  },  
+  },
   item: {
     borderBottomWidth: 1,
     borderBottomColor: 'background-basic-color-3',

@@ -314,10 +314,15 @@ export const WhereIAmDetailsScreen = (props): React.ReactElement => {
     </Layout>
 
     <View style={styles.elementSubcontainer}>
-          <Text style={styles.latlon}>{I18n.t('Latitude') + ':'} <Text style={styles.latlon}>{structure.latitude}</Text></Text>
+          <Text style={styles.latlon}>{I18n.t('Latitude') + ':'}
+           <Text style={styles.latlon}>{structure.latitude}</Text>
+          </Text>
     </View>
     <View style={styles.elementSubcontainer}>
-          <Text style={styles.latlon}>{I18n.t('Longitude') + ':'} <Text style={styles.latlon}>{structure.longitude}</Text></Text>
+          <Text style={styles.latlon}>
+            {I18n.t('Longitude') + ':'}
+             <Text style={styles.latlon}>{structure.longitude}</Text>
+          </Text>
     </View>
 
   </Layout>
@@ -477,7 +482,7 @@ const themedStyles = StyleService.create({
   modalButtonsContainer: {
     flexDirection: 'row',
     paddingTop: 10,
-  },  
+  },
   buttonsContainer: {
     flexDirection: 'row',
     paddingTop: 10,

@@ -155,11 +155,11 @@ const themedStyles = StyleService.create({
     backgroundColor: 'background-basic-color-4',
   },
   container: {
-    flex: 1,    
-  },  
+    flex: 1,
+  },
   buttonsContainer: {
     backgroundColor: 'background-basic-color-4',
-  },  
+  },
   topBar: {
     backgroundColor: 'color-primary-default',
   },
@@ -181,5 +181,5 @@ const themedStyles = StyleService.create({
     alignItems: 'center',
     minHeight: 30,
     backgroundColor: 'background-basic-color-4',
-  },  
+  },
 });

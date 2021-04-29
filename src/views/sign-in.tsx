@@ -127,8 +127,8 @@ export default ({ navigation }): React.ReactElement => {
             style={styles.imageAuth}
             source={require('../assets/images/red-logo.png')}>
           </ImageBackground>
-        </View>  
-        <View style={styles.headerContainer}>    
+        </View>
+        <View style={styles.headerContainer}>
           <Text
             style={styles.signInLabel}
             category='s1'
@@ -216,7 +216,7 @@ const themedStyles = StyleService.create({
     minHeight: 30,
     padding: 30,
     backgroundColor: 'color-light-100',
-  }, 
+  },
   headerContainer: {
     justifyContent: 'center',
     alignItems: 'center',

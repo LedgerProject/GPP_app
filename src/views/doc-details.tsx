@@ -102,7 +102,7 @@ const themedStyles = StyleService.create({
     flex: 1,
   },
   container: {
-    flex: 1,    
+    flex: 1,
   },
   commentList: {
     flex: 1,
@@ -194,7 +194,7 @@ const themedStyles = StyleService.create({
   },
   button: { width: '100%' },
   backdrop: { /* backgroundColor: 'rgba(0, 0, 0, 0.5)', */ },
-  documentTitle: { 
+  documentTitle: {
     textAlign: 'center',
     color: 'color-light-100',
   },

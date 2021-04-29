@@ -533,7 +533,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
           <Button status='basic' onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>
           </View>
           <View style={styles.modalButtonRight} >
-          <Button status='primary' onPress={DeleteDocument}>{I18n.t('DELETE')}</Button>            
+          <Button status='primary' onPress={DeleteDocument}>{I18n.t('DELETE')}</Button>
           </View>
           </View>
         </Layout>
@@ -549,7 +549,7 @@ const themedStyles = StyleService.create({
   },
   buttonsContainer: {
     backgroundColor: 'background-basic-color-4',
-  },  
+  },
   divider: {
     backgroundColor: 'color-primary-default',
   },
@@ -620,5 +620,5 @@ const themedStyles = StyleService.create({
   },
   modalButtonsContainer: {
     flexDirection: 'row', marginTop: 10,
-  },  
+  },
 });

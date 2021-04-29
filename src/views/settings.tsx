@@ -141,7 +141,7 @@ const themedStyles = StyleService.create({
     textAlign: 'center',
     padding: 4,
     marginHorizontal: 16,
-    color: 'color-light-100',    
+    color: 'color-light-100',
   },
   saveButton: {
     marginTop: 12,
