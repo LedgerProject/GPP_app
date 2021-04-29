@@ -40,15 +40,11 @@ export default {
   'An error has occurred, please try again': 'An error has occurred, please try again',
   'Please answer 3 of these 5 questions': 'Please answer 3 of these 5 questions and remember the answers. If during the account recovery phase you do not remember the answers given, you will no longer be able to recover your data.',
   'You cannot select more than 3 questions': 'You cannot select more than 3 questions',
-  'Pippo': 'Pippo',
-
   'Where my parents met?': 'Where my parents met?',
   'What is the name of your first pet?': 'What is the name of your first pet?',
   'What is your home town?': 'What is your home town?',
   'What is the name of your first teacher?': 'What is the name of your first teacher?',
   'What is the surname of your mother before wedding?': 'What is the surname of your mother before wedding?',
-  
-
   '***DOCUMENT WALLET***': '***DOCUMENT WALLET***',
   'Take Photo': 'Take Photo',
   'From Library': 'From Library',
@@ -76,14 +72,7 @@ export default {
   'Swipe left on document to delete it': 'Swipe left on document to delete it',
 
   '***DA CONTROLLARE***': '***DA CONTROLLARE***',
-  
-  
-  
-  
-  
-  
   'Congratulations! Registration completed': 'Congratulations! Registration confirmed. We have sent an email with a confirmation link to your email address. In order to complete the sign-up process, please click the confirmation link.',
-  
   'Are you sure to delete the selected document?': 'Are you sure to delete the selected document?',
   'Latitude': 'Latitude',
   'Longitude': 'Longitude',
@@ -187,10 +176,7 @@ export default {
   'Error': 'Error',
   'Congratulations': 'Congratulations',
   'Message sent successfully': 'Message sent successfully',
-  
   'Your answer': 'Your answer',
   'Confirm': 'Confirm',
   'Cancel': 'Cancel',
-  
-  
 };

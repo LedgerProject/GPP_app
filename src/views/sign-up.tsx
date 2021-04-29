@@ -184,7 +184,6 @@ export default ({ navigation }): React.ReactElement => {
     setStep2(false);
   };
 
-  
   const onSignUpStep2ButtonPress = (): void => {
     // Set the answers
     const answers = {
@@ -241,8 +240,6 @@ export default ({ navigation }): React.ReactElement => {
       });
 
   };
-
-  
 
   const onSignInButtonPress = (): void => {
     setmodalVisible(false);
@@ -418,8 +415,8 @@ export default ({ navigation }): React.ReactElement => {
         backdropStyle={styles.backdrop}
         onBackdropPress={() => setmodalVisible(false)}>
         <Layout style={ styles.modal }>
-          <Text 
-            style={ styles.modalText } 
+          <Text
+            style={ styles.modalText }
             status={error ? 'danger' : 'success' }>
             {error ? error : success}
           </Text>
