@@ -8,6 +8,9 @@ import tokenReducer from './tokenSlice';
 import langReducer from './langSlice';
 import introReducer from './introSlice';
 import emailReducer from './emailSlice';
+import privateKeyReducer from './privateKeySlice';
+import publicKeyReducer from './publicKeySlice';
+import lastLoginEmailReducer from './lastLoginEmailSlice';
 
 // import userTypeReducer from './userTypeSlice';
 const reducers = combineReducers({
@@ -15,6 +18,9 @@ const reducers = combineReducers({
   lang: langReducer,
   intro: introReducer,
   email: emailReducer,
+  privateKey: privateKeyReducer,
+  publicKey: publicKeyReducer,
+  lastLoginEmail: lastLoginEmailReducer,
 });
 const persistConfig = {
   key: 'root',

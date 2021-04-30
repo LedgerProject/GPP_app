@@ -6,10 +6,17 @@ import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { KeyboardAvoidingView } from '../services/3rd-party';
 import { AppOptions } from '../services/app-env';
 import { QuestionItem } from './sign-up/question-item.component';
+import { sanitizeAnswers, recoveryKeypair } from '../services/zenroom/zenroom-service';
+import clientSideContract from '../services/zenroom/zenroom-client-contract.zen';
 import axios from 'axios';
 import I18n from './../i18n/i18n';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { ScrollView } from 'react-native-gesture-handler';
+
+// Redux import
+import { useDispatch } from 'react-redux';
+import { manageLastLoginEmail } from '../app/lastLoginEmailSlice';
+import { managePrivateKey } from '../app/privateKeySlice';
+import { managePublicKey } from '../app/publicKeySlice';
 
 export default ({ navigation }): React.ReactElement => {
   const [firstName, setFirstName] = React.useState<string>();
@@ -35,6 +42,9 @@ export default ({ navigation }): React.ReactElement => {
   const [questions, setQuestions] = React.useState([]);
   const [pbkdf, setPbkdf] = React.useState<string>();
 
+  // Redux
+  const dispatch = useDispatch();
+
   // Use effect
   useEffect(() => {
     setQuestions([
@@ -45,6 +55,22 @@ export default ({ navigation }): React.ReactElement => {
       {'question': I18n.t('What is the surname of your mother before wedding?'), 'answer': '' },
     ]);
   }, []);
+
+  // Show / hide password
+  const onPasswordIconPress = async (): Promise<void> => {
+    setPasswordVisible(!passwordVisible);
+  };
+
+  // Show / hide confirm password
+  const onConfirmPasswordIconPress = (): void => {
+    setConfirmPasswordVisible(!confirmPasswordVisible);
+  };
+
+  // Open the sign-in page
+  const onSignInButtonPress = (): void => {
+    setmodalVisible(false);
+    navigation && navigation.navigate('SignIn');
+  };
 
   // Sign-up: step 1
   const onSignUpStep1ButtonPress = (): void => {
@@ -134,7 +160,7 @@ export default ({ navigation }): React.ReactElement => {
 
         // Check if the e-mail already exists into the database
         if (data.code === '20') {
-          setError(I18n.t('The specified e-mail already exists. If you forgot your password, please select the link \'Forgot your password?\' in the login page'));
+          setError(I18n.t('The specified e-mail already exists'));
           setmodalVisible(true);
         } else if (data.code === '202') {
           // PBKDF generated
@@ -180,13 +206,37 @@ export default ({ navigation }): React.ReactElement => {
     }
   };
 
+  // Confirm the answer entered
+  const onConfirmButtonPress = (index): void => {
+    const questions_array = [];
+    let count: number = 0;
+
+    questions.forEach( (question, qindex) => {
+      if (index === qindex) {
+        question.answer = answer.trim();
+      }
+
+      if (question.answer) {
+        count++;
+      }
+
+      questions_array.push(question);
+    });
+
+    setQuestions(questions_array);
+    setAnswered(count);
+    setmodalAnswerVisible(false);
+  };
+
+  // Back button from questions
   const onBackButtonPress = (): void => {
     setStep2(false);
   };
 
-  const onSignUpStep2ButtonPress = (): void => {
+  // Sign-up: step 2
+  const onSignUpStep2ButtonPress = async (): Promise<void> => {
     // Set the answers
-    const answers = {
+    let answers = {
       question1: 'null',
       question2: 'null',
       question3: 'null',
@@ -211,65 +261,72 @@ export default ({ navigation }): React.ReactElement => {
     }
 
     // Sanitize the answers
-    // answers = sanitizeAnswers(answers);
+    answers = sanitizeAnswers(answers);
 
+    // Show the spinner
+    setLoading(true);
 
-    // setLoading(true);
+    // Generate the public and private key
+    const keypairData = await recoveryKeypair(clientSideContract, answers, pbkdf);
+
+    // Get public key and private key
+    const publicKey = keypairData.user.keypair.public_key;
+    const privateKey = keypairData.user.keypair.private_key;
+
+    // Save locally the keypair and the last login email
+    dispatch(managePublicKey(publicKey));
+    dispatch(managePrivateKey(privateKey));
+    dispatch(manageLastLoginEmail(email));
+
+    // Proceed with user registration
     const postParams = {
-        userType: 'user',
-        email: email,
-        password: password,
-        firstName: firstName,
-        lastName: lastName,
-      };
-      axios
+      userType: 'user',
+      email: email,
+      password: password,
+      firstName: firstName,
+      lastName: lastName,
+      pbkdf: pbkdf,
+      publicKey: publicKey,
+    };
+
+    axios
       .post(AppOptions.getServerUrl() + 'users/signup', postParams)
       .then(function (response) {
+        // Hide the spinner
         setLoading(false);
-        // handle success
-        // navigation && navigation.navigate('Homepage');
+
+        // Show a success message
         setSuccess(I18n.t('Congratulations! Registration completed'));
         setmodalVisible(true);
+
+        // Reset the registration inputs
+        setStep2(false);
+        setFirstName('');
+        setLastName('');
+        setEmail('');
+        setConfirmEmail('');
+        setPassword('');
+        setConfirmPassword('');
+        setTermsAccepted(false);
+        const questions_array = [];
+        questions.forEach( (question) => {
+          question.answer = '';
+          questions_array.push(question);
+        });
+        setQuestions(questions_array);
+        setAnswered(0);
+
+        // Open the login page
+        navigation && navigation.navigate('SignIn');
       })
-      .catch(function () { // error) {
+      .catch(function (err) {
+        // Hide the spinner
         setLoading(false);
-        // alert(error.message);
+
+        // Show an error message
         setError(I18n.t('An error has occurred, please try again'));
         setmodalVisible(true);
-        return;
       });
-
-  };
-
-  const onSignInButtonPress = (): void => {
-    setmodalVisible(false);
-    navigation && navigation.navigate('SignIn');
-  };
-
-  const onPasswordIconPress = (): void => {
-    setPasswordVisible(!passwordVisible);
-  };
-
-  const onConfirmPasswordIconPress = (): void => {
-    setConfirmPasswordVisible(!confirmPasswordVisible);
-  };
-
-  const onConfirmButtonPress = (index): void => {
-
-    const questions_array = [];
-    let count: number = 0;
-    questions.forEach( (question, qindex) => {
-      if (index === qindex) {
-        question.answer = answer.trim();
-      }
-      if (question.answer) {
-        count++;
-      }
-      questions_array.push(question);
-    });
-    setQuestions(questions_array);
-    setAnswered(count);
-    setmodalAnswerVisible(false);
   };
 
   return (
@@ -561,14 +618,26 @@ const themedStyles = StyleService.create({
     color: '#FFFFFF',
   },
   buttonRight: {
-    width: '50%', height: 'auto', flex: 1, marginLeft: 5, marginRight: 10, alignItems: 'center',
+    width: '50%',
+    height: 'auto',
+    flex: 1,
+    marginLeft: 5,
+    marginRight: 10,
+    alignItems: 'center',
   },
   buttonLeft: {
-    width: '50%', height: 'auto', flex: 1, marginLeft: 10, marginRight: 5, alignItems: 'center',
+    width: '50%',
+    height: 'auto',
+    flex: 1,
+    marginLeft: 10,
+    marginRight: 5,
+    alignItems: 'center',
   },
   buttonsContainer: {
-    flexDirection: 'row', marginTop: 10,
+    flexDirection: 'row',
+    marginTop: 10,
   },
-  button: { width: '100%' },
+  button: {
+    width: '100%',
+  },
 });
-

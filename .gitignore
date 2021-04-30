@@ -40,3 +40,4 @@ buck-out/
 
 # env
 src/services/app-env.ts
+*.icloud

@@ -33,14 +33,16 @@ export async function recoveryKeypair(
   const jsonData = JSON.stringify(data);
 
   let response = '';
-    while (!response) {
-      response = await zenroom.execute(
-        clientSideContractText,
-        jsonKeys,
-        jsonData,
-      );
-    }
-    return response;
+
+  while (!response) {
+    response = await zenroom.execute(
+      clientSideContractText,
+      jsonKeys,
+      jsonData,
+    );
+  }
+
+  return JSON.parse(response);
 }
 
 export async function verifyAnswers(

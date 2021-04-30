@@ -10,9 +10,10 @@ import I18n from './../i18n/i18n';
 import axios from 'axios';
 
 // Redux import
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { manageToken } from '../app/tokenSlice';
 import { manageEmail } from '../app/emailSlice';
+import { selectPrivateKey } from '../app/privateKeySlice';
 
 export default ({ navigation }): React.ReactElement => {
   const [email, setEmail] = React.useState<string>();
@@ -22,6 +23,8 @@ export default ({ navigation }): React.ReactElement => {
   const [error, setError] = React.useState<string>();
   const styles = useStyleSheet(themedStyles);
   const [loading, setLoading] = React.useState(false);
+
+  const privateKey = useSelector(selectPrivateKey);
 
   // Redux
   const dispatch = useDispatch();
