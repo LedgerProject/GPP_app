@@ -6,11 +6,13 @@ import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { KeyboardAvoidingView } from '../services/3rd-party';
 import { AppOptions } from '../services/app-env';
 import { QuestionItem } from './sign-up/question-item.component';
-import { sanitizeAnswers, recoveryKeypair } from '../services/zenroom/zenroom-service';
-import clientSideContract from '../services/zenroom/zenroom-client-contract.zen';
 import axios from 'axios';
 import I18n from './../i18n/i18n';
 import Spinner from 'react-native-loading-spinner-overlay';
+
+// Zenroom import
+import { sanitizeAnswers, recoveryKeypair } from '../services/zenroom/zenroom-service';
+import clientSideContract from '../services/zenroom/zenroom-client-contract.zen';
 
 // Redux import
 import { useDispatch } from 'react-redux';

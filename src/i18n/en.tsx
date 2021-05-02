@@ -51,10 +51,15 @@ export default {
 
   '***FORGOT PASSWORD***': '***FORGOT PASSWORD***',
   'Forgot password?': 'Forgot password?',
-  'Please enter your email address': 'Please enter your email address',
+  'Please enter your e-mail address': 'Please enter your e-mail address',
   'RESET PASSWORD': 'RESET PASSWORD',
   'Back to login': 'Back to login',
   'Please answer the 3 questions during registration': 'Please answer the 3 questions during registration',
+  'The specified e-mail not exists': 'The specified e-mail not exists',
+  'The e-mail is empty': 'The e-mail is empty',
+  'Request already done in the last 24 hours': 'Request already done in the last 24 hours. Please check your e-mail, if you haven\'t received the email, check the spam.',
+  'Congratulations! Password recovery link sent successfully to your email address': 'Congratulations! Password recovery link sent successfully to your email address',
+  'The answers are incorrect': 'The answers are incorrect. Answer correctly the 3 questions selected during registration.',
 
   '***DOCUMENT WALLET***': '***DOCUMENT WALLET***',
   'Take Photo': 'Take Photo',
@@ -151,10 +156,8 @@ export default {
   'Please fill the compliant title': 'Please fill the compliant title',
   'Description missing': 'Description missing',
   'Please fill the compliant descripton': 'Please fill the compliant descripton',
-  'Congratulations! Password recovery link sent successfully to your email address': 'Congratulations! Password recovery link sent successfully to your email address',
-  'Email not exists': 'Email not exists',
-  'Email is empty': 'Email is empty',
-  'Request already done in the last 24 hours': 'Request already done in the last 24 hours',
+  
+  
   'Error sending e-mail': 'Error sending e-mail',
   'Please fill Current Password': 'Please fill Current Password',
   'Please fill New Password': 'Please fill New Password',

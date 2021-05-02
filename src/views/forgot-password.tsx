@@ -5,15 +5,24 @@ import { EmailIcon } from '../components/icons';
 import { KeyboardAvoidingView } from '../services/3rd-party';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { AppOptions } from '../services/app-env';
-import { sanitizeAnswers, recoveryKeypair, verifyAnswers } from '../services/zenroom/zenroom-service';
-import clientSideContract from '../services/zenroom/zenroom-client-contract.zen';
 import Spinner from 'react-native-loading-spinner-overlay';
 import I18n from './../i18n/i18n';
 import axios from 'axios';
 
-// Redux
+// Zenroom import
+import { sanitizeAnswers, recoveryKeypair, verifyAnswers } from '../services/zenroom/zenroom-service';
+import clientSideContract from '../services/zenroom/zenroom-client-contract.zen';
+
+// Redux import
 import { useSelector } from 'react-redux';
 import { selectEmail } from '../app/emailSlice';
+
+interface PBKBFPublicKeyResponse {
+  code: string;
+  message: string;
+  pbkdf: string;
+  publicKey: string;
+}
 
 export default ({ navigation }): React.ReactElement => {
   const [email, setEmail] = React.useState<string>(useSelector(selectEmail));
@@ -49,23 +58,23 @@ export default ({ navigation }): React.ReactElement => {
     // Check if answered 3 questions
     let countAnswered = 0;
 
-    if (answer1.trim()) {
+    if (answer1) {
       countAnswered++;
     }
 
-    if (answer2.trim()) {
+    if (answer2) {
       countAnswered++;
     }
 
-    if (answer3.trim()) {
+    if (answer3) {
       countAnswered++;
     }
 
-    if (answer4.trim()) {
+    if (answer4) {
       countAnswered++;
     }
 
-    if (!answer5.trim()) {
+    if (answer5) {
       countAnswered++;
     }
 
@@ -84,19 +93,19 @@ export default ({ navigation }): React.ReactElement => {
       question5: 'null',
     };
 
-    if (answer1.trim()) {
+    if (answer1) {
       answers.question1 = answer1.trim();
     }
-    if (answer2.trim()) {
+    if (answer2) {
       answers.question2 = answer2.trim();
     }
-    if (answer3.trim()) {
+    if (answer3) {
       answers.question3 = answer3.trim();
     }
-    if (answer4.trim()) {
+    if (answer4) {
       answers.question4 = answer4.trim();
     }
-    if (answer5.trim()) {
+    if (answer5) {
       answers.question5 = answer5.trim();
     }
 
@@ -107,66 +116,118 @@ export default ({ navigation }): React.ReactElement => {
     setLoading(true);
 
     // Get the e-mail public key and pbkdf
-    const emailPublicKey = '';
-    const emailPBKDF = '';
-    // TODO
+    let emailPublicKey = '';
+    let emailPBKDF = '';
+    const pbkdfPublicKeyResponse = await getPBKDFPublicKey();
 
-    // Generate the public and private key
-    const keypairData = await recoveryKeypair(clientSideContract, answers, emailPBKDF);
+    switch (pbkdfPublicKeyResponse.code) {
+      case '10':
+        setLoading(false);
+        setError(I18n.t('An error has occurred, please try again'));
+        setmodalVisible(true);
+        return;
+      break;
 
-    // Get public key and private key
-    const publicKey = keypairData.user.keypair.public_key;
-    const privateKey = keypairData.user.keypair.private_key;
+      case '20':
+        setLoading(false);
+        setError(I18n.t('The specified e-mail not exists'));
+        setmodalVisible(true);
+        return;
+      break;
+
+      case '202':
+        emailPublicKey = pbkdfPublicKeyResponse.publicKey;
+        emailPBKDF = pbkdfPublicKeyResponse.pbkdf;
+      break;
+    }
 
     // Verify if the generated public key match the e-mail public key
-    const publicKeyMatch = verifyAnswers(clientSideContract, answers, emailPBKDF, emailPublicKey);
+    const publicKeyMatch = await verifyAnswers(clientSideContract, answers, emailPBKDF, emailPublicKey);
 
     if (publicKeyMatch) {
+      // The public key match, send an e-mail to reset the password
       const postParams = {
         email: email,
       };
 
-      //
       axios
         .post(AppOptions.getServerUrl() + 'user/reset-password', postParams)
         .then(function (response) {
+          // Hide the spinner
           setLoading(false);
+
+          // Get the data response
           const data = response.data.resetPasswordOutcome;
-          const code = parseInt(data.code, 10);
-          switch (code) {
+
+          switch (data.code) {
             case 10:
-              setError(I18n.t('Email not exists'));
+              setError(I18n.t('The specified e-mail not exists'));
             break;
+
             case 11:
-              setError(I18n.t('Email is empty'));
+              setError(I18n.t('The e-mail is empty'));
             break;
+
             case 20:
               setError(I18n.t('Request already done in the last 24 hours'));
             break;
+
             case 30:
               setError(I18n.t('An error has occurred, please try again'));
             break;
+
             case 202:
               setSuccess(I18n.t(
                 'Congratulations! Password recovery link sent successfully to your email address',
                 ));
             break;
+
             default:
               setError(data.message);
           }
+
           setmodalVisible(true);
         })
-        .catch(function () { // error) {
+        .catch(function () {
           setLoading(false);
-          // alert(error.message);
           setError(I18n.t('An error has occurred, please try again'));
           setmodalVisible(true);
-          return;
         });
     } else {
       // Answers not correct
-      // TODO
+      setLoading(false);
+      setError(I18n.t('The answers are incorrect'));
+      setmodalVisible(true);
     }
+  };
+
+  const getPBKDFPublicKey = async (): Promise<PBKBFPublicKeyResponse> => {
+    const postParams = {
+      email: email,
+    };
+
+    let userPBKDFPublicKeyResponse : PBKBFPublicKeyResponse = {
+      code: '0',
+      message: '',
+      pbkdf: '',
+      publicKey: '',
+    }
+
+    await axios
+      .post<PBKBFPublicKeyResponse>(AppOptions.getServerUrl() + 'users/get-pbkdf-publickey', postParams)
+      .then(function (response) {
+        userPBKDFPublicKeyResponse = response.data.pbkdfPublicKeyResponse;
+      })
+      .catch(function (error) {
+        userPBKDFPublicKeyResponse = {
+          code: '10',
+          message: I18n.t('An error has occurred, please try again'),
+          pbkdf: '',
+          publicKey: '',
+        }
+      });
+
+    return userPBKDFPublicKeyResponse;
   };
 
   return (
