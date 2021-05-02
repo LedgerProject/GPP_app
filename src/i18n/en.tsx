@@ -156,8 +156,7 @@ export default {
   'Please fill the compliant title': 'Please fill the compliant title',
   'Description missing': 'Description missing',
   'Please fill the compliant descripton': 'Please fill the compliant descripton',
-  
-  
+
   'Error sending e-mail': 'Error sending e-mail',
   'Please fill Current Password': 'Please fill Current Password',
   'Please fill New Password': 'Please fill New Password',

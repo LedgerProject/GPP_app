@@ -206,25 +206,25 @@ export default ({ navigation }): React.ReactElement => {
       email: email,
     };
 
-    let userPBKDFPublicKeyResponse : PBKBFPublicKeyResponse = {
+    let userPBKDFPublicKeyResponse: PBKBFPublicKeyResponse = {
       code: '0',
       message: '',
       pbkdf: '',
       publicKey: '',
-    }
+    };
 
     await axios
       .post<PBKBFPublicKeyResponse>(AppOptions.getServerUrl() + 'users/get-pbkdf-publickey', postParams)
       .then(function (response) {
         userPBKDFPublicKeyResponse = response.data.pbkdfPublicKeyResponse;
       })
-      .catch(function (error) {
+      .catch(function () {
         userPBKDFPublicKeyResponse = {
           code: '10',
           message: I18n.t('An error has occurred, please try again'),
           pbkdf: '',
           publicKey: '',
-        }
+        };
       });
 
     return userPBKDFPublicKeyResponse;
