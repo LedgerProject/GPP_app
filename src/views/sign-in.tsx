@@ -10,31 +10,86 @@ import I18n from './../i18n/i18n';
 import axios from 'axios';
 
 // Zenroom import
+import { sanitizeAnswers, recoveryKeypair, verifyAnswers } from '../services/zenroom/zenroom-service';
+import clientSideContract from '../services/zenroom/zenroom-client-contract.zen';
 
 // Redux import
 import { useDispatch, useSelector } from 'react-redux';
 import { manageToken } from '../app/tokenSlice';
 import { manageEmail } from '../app/emailSlice';
+import { selectLastLoginEmail, manageLastLoginEmail } from '../app/lastLoginEmailSlice';
+import { managePrivateKey } from '../app/privateKeySlice';
+import { managePublicKey } from '../app/publicKeySlice';
+
 import { selectPrivateKey } from '../app/privateKeySlice';
+
+interface PBKBFPublicKeyResponse {
+  code: string;
+  message: string;
+  pbkdf: string;
+  publicKey: string;
+}
 
 export default ({ navigation }): React.ReactElement => {
   const [email, setEmail] = React.useState<string>();
+  const [showAnswers, setShowAnswers] = React.useState<boolean>(false);
   const [password, setPassword] = React.useState<string>();
   const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false);
   const [modalVisible, setmodalVisible] = React.useState(false);
   const [error, setError] = React.useState<string>();
   const styles = useStyleSheet(themedStyles);
   const [loading, setLoading] = React.useState(false);
+  const [answer1, setAnswer1] = React.useState<string>();
+  const [answer2, setAnswer2] = React.useState<string>();
+  const [answer3, setAnswer3] = React.useState<string>();
+  const [answer4, setAnswer4] = React.useState<string>();
+  const [answer5, setAnswer5] = React.useState<string>();
 
-  const privateKey = useSelector(selectPrivateKey);
+  const lastLoginEmail = useSelector(selectLastLoginEmail);
+  // const privateKey = useSelector(selectPrivateKey);
 
   // Redux
   const dispatch = useDispatch();
 
+  const getPBKDFPublicKey = async (): Promise<PBKBFPublicKeyResponse> => {
+    const postParams = {
+      email: email,
+    };
+
+    let userPBKDFPublicKeyResponse: PBKBFPublicKeyResponse = {
+      code: '0',
+      message: '',
+      pbkdf: '',
+      publicKey: '',
+    };
+
+    await axios
+      .post<PBKBFPublicKeyResponse>(AppOptions.getServerUrl() + 'users/get-pbkdf-publickey', postParams)
+      .then(function (response) {
+        userPBKDFPublicKeyResponse = response.data.pbkdfPublicKeyResponse;
+      })
+      .catch(function () {
+        userPBKDFPublicKeyResponse = {
+          code: '10',
+          message: I18n.t('An error has occurred, please try again'),
+          pbkdf: '',
+          publicKey: '',
+        };
+      });
+
+    return userPBKDFPublicKeyResponse;
+  };
+
   // Use effect
   useEffect(() => {
-    setEmail('test@globalpassportproject.me');
-    setPassword('12345678');
+    // setEmail('test@globalpassportproject.me');
+    setPassword('');
+    setShowAnswers(false);
+    setAnswer1('');
+    setAnswer2('');
+    setAnswer3('');
+    setAnswer4('');
+    setAnswer5('');
   }, []);
 
   // Open the sign-up page
@@ -54,7 +109,7 @@ export default ({ navigation }): React.ReactElement => {
   };
 
   // Try to login
-  const onSignInButtonPress = (): void => {
+  const onSignInCheckButtonPress = async (): Promise<void> => {
     // Check if the e-mail is entered
     if (!email) {
       setError(I18n.t('Please enter the e-mail'));
@@ -69,6 +124,118 @@ export default ({ navigation }): React.ReactElement => {
       return;
     }
 
+    // Check if current email = last login email
+    if (email !== lastLoginEmail) {
+      if (showAnswers === false) {
+        // show answers
+        setShowAnswers(true);
+      } else {
+
+        // Check if answered 3 questions
+        let countAnswered = 0;
+        if (answer1) {
+          countAnswered++;
+        }
+        if (answer2) {
+          countAnswered++;
+        }
+        if (answer3) {
+          countAnswered++;
+        }
+        if (answer4) {
+          countAnswered++;
+        }
+        if (answer5) {
+          countAnswered++;
+        }
+        if (countAnswered !== 3) {
+          setError(I18n.t('Please answer the 3 questions during registration'));
+          setmodalVisible(true);
+          return;
+        }
+        // Set the answers
+        let answers = {
+          question1: 'null',
+          question2: 'null',
+          question3: 'null',
+          question4: 'null',
+          question5: 'null',
+        };
+        if (answer1) {
+          answers.question1 = answer1.trim();
+        }
+        if (answer2) {
+          answers.question2 = answer2.trim();
+        }
+        if (answer3) {
+          answers.question3 = answer3.trim();
+        }
+        if (answer4) {
+          answers.question4 = answer4.trim();
+        }
+        if (answer5) {
+          answers.question5 = answer5.trim();
+        }
+        // Sanitize the answers
+        answers = sanitizeAnswers(answers);
+
+        // Show the spinner
+        setLoading(true);
+
+        // Get the e-mail public key and pbkdf
+        let emailPublicKey = '';
+        let emailPBKDF = '';
+        const pbkdfPublicKeyResponse = await getPBKDFPublicKey();
+
+        switch (pbkdfPublicKeyResponse.code) {
+          case '10':
+            setLoading(false);
+            setError(I18n.t('An error has occurred, please try again'));
+            setmodalVisible(true);
+            return;
+          break;
+
+          case '20':
+            setLoading(false);
+            setError(I18n.t('The specified e-mail not exists'));
+            setmodalVisible(true);
+            return;
+          break;
+
+          case '202':
+            emailPublicKey = pbkdfPublicKeyResponse.publicKey;
+            emailPBKDF = pbkdfPublicKeyResponse.pbkdf;
+          break;
+        }
+
+        // Verify if the generated public key match the e-mail public key
+        const publicKeyMatch = await verifyAnswers(clientSideContract, answers, emailPBKDF, emailPublicKey);
+        if (publicKeyMatch) {
+
+          // generate private key and public key
+          const keypairData = await recoveryKeypair(clientSideContract, answers, emailPBKDF);
+
+          // Get public key and private key
+          const publicKey = keypairData.user.keypair.public_key;
+          const privateKey = keypairData.user.keypair.private_key;
+          //
+          onSignInButtonPress(privateKey, publicKey);
+        } else {
+          // Answers not correct
+          setLoading(false);
+          setError(I18n.t('The answers are incorrect'));
+          setmodalVisible(true);
+        }
+        //
+      }
+      //
+    } else {
+      onSignInButtonPress();
+    }
+    //
+  };
+
+  const onSignInButtonPress = (private_Key = null, public_Key = null): void => {
     // Show the spinner
     setLoading(true);
 
@@ -85,8 +252,21 @@ export default ({ navigation }): React.ReactElement => {
         // Hide the spinner
         setLoading(false);
 
+        setPassword('');
+        setShowAnswers(false);
+        setAnswer1('');
+        setAnswer2('');
+        setAnswer3('');
+        setAnswer4('');
+        setAnswer5('');
+
         // Save locally the token
         dispatch(manageToken(response.data.token));
+
+        // Save locally private key, public key, last login mail
+        dispatch(managePublicKey(public_Key));
+        dispatch(managePrivateKey(private_Key));
+        dispatch(manageLastLoginEmail(email));
 
         // Open the homepage page
         navigation && navigation.navigate('Homepage');
@@ -161,6 +341,68 @@ export default ({ navigation }): React.ReactElement => {
             onChangeText={setPassword}
             onIconPress={onPasswordIconPress}
           />
+          { showAnswers && (
+          <View>
+          <Text
+            style={styles.selectQuestions}>
+            {I18n.t('Please answer 3 of these 5 questions')}
+          </Text>
+          <Text
+            style={styles.enterFieldLabel}>
+            {I18n.t('Where my parents met?')}
+          </Text>
+
+          <Input
+            placeholder={I18n.t('Answer')}
+            value={answer1}
+            onChangeText={setAnswer1}
+          />
+
+          <Text
+            style={styles.enterFieldLabel}>
+            {I18n.t('What is the name of your first pet?')}
+          </Text>
+
+          <Input
+            placeholder={I18n.t('Answer')}
+            value={answer2}
+            onChangeText={setAnswer2}
+          />
+
+          <Text
+            style={styles.enterFieldLabel}>
+            {I18n.t('What is your home town?')}
+          </Text>
+
+          <Input
+            placeholder={I18n.t('Answer')}
+            value={answer3}
+            onChangeText={setAnswer3}
+          />
+
+          <Text
+            style={styles.enterFieldLabel}>
+            {I18n.t('What is the name of your first teacher?')}
+          </Text>
+
+          <Input
+            placeholder={I18n.t('Answer')}
+            value={answer4}
+            onChangeText={setAnswer4}
+          />
+
+          <Text
+            style={styles.enterFieldLabel}>
+            {I18n.t('What is the surname of your mother before wedding?')}
+          </Text>
+
+          <Input
+            placeholder={I18n.t('Answer')}
+            value={answer5}
+            onChangeText={setAnswer5}
+          />
+          </View>
+          )}
 
           <View style={styles.forgotPasswordContainer}>
             <Button
@@ -176,7 +418,7 @@ export default ({ navigation }): React.ReactElement => {
         <Button
           style={styles.signInButton}
           size='giant'
-          onPress={onSignInButtonPress}>
+          onPress={onSignInCheckButtonPress}>
           {I18n.t('SIGN-IN')}
         </Button>
 
@@ -271,5 +513,18 @@ const themedStyles = StyleService.create({
   },
   spinnerTextStyle: {
     color: '#FFF',
+  },
+  enterFieldLabel: {
+    zIndex: 1,
+    alignSelf: 'center',
+    marginTop: 16,
+    marginBottom: 4,
+    color: 'color-light-100',
+  },
+  selectQuestions: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    marginVertical: 10,
+    color: '#FFFFFF',
   },
 });

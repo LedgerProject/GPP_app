@@ -6,5 +6,9 @@ export class AppOptions {
 
   static getGeocoderApiKey = (): string => {
     return '<google maps api key>';
-  }
+  };
+
+  static getTermsAndConditionsUrl = (): string => {
+    return '<terms conditions url>';
+  };
 }

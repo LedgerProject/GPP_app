@@ -272,6 +272,7 @@ export default ({ navigation }): React.ReactElement => {
             placeholder={I18n.t('E-Mail')}
             icon={EmailIcon}
             value={email}
+            keyboardType={'email-address'}
             onChangeText={setEmail}
           />
 

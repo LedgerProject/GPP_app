@@ -180,4 +180,6 @@ export default {
   'Your answer': 'Your answer',
   'Confirm': 'Confirm',
   'Cancel': 'Cancel',
+  'Please read Terms and Conditions': 'Please read Terms and Conditions',
+  'Don\'t know how to open Terms and Conditions URL': 'Don\'t know how to open Terms and Conditions URL',
 };

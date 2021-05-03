@@ -1,5 +1,5 @@
-import React, { useEffect} from 'react';
-import { View, ImageBackground } from 'react-native';
+import React, { useEffect, useCallback } from 'react';
+import { View, ImageBackground, Linking } from 'react-native';
 import { Button, CheckBox, Input, Layout, StyleService, Text, useStyleSheet, Modal, List } from '@ui-kitten/components';
 import { EmailIcon, EyeIcon, EyeOffIcon, PersonIcon } from '../components/icons';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
@@ -43,7 +43,7 @@ export default ({ navigation }): React.ReactElement => {
   const [currentQuestion, setCurrentQuestion] = React.useState<string>();
   const [questions, setQuestions] = React.useState([]);
   const [pbkdf, setPbkdf] = React.useState<string>();
-
+  const termsAndConditionsUrl = AppOptions.getTermsAndConditionsUrl();
   // Redux
   const dispatch = useDispatch();
 
@@ -331,6 +331,11 @@ export default ({ navigation }): React.ReactElement => {
       });
   };
 
+  const onReadTermsButtonPress = () =>
+    Linking.canOpenURL(termsAndConditionsUrl).then(() => {
+      Linking.openURL(termsAndConditionsUrl);
+    });
+
   return (
     <SafeAreaLayout insets='top' style={styles.safeArea}>
       <KeyboardAvoidingView style={styles.container}>
@@ -411,6 +416,13 @@ export default ({ navigation }): React.ReactElement => {
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               onIconPress={onConfirmPasswordIconPress}/>
+
+            <Text
+              style={styles.readTermsButton}
+              status='basic'
+              onPress={onReadTermsButtonPress}>
+              {I18n.t('Please read Terms and Conditions')}
+            </Text>
 
             <CheckBox
               style={styles.termsCheckBox}
@@ -641,5 +653,12 @@ const themedStyles = StyleService.create({
   },
   button: {
     width: '100%',
+  },
+  readTermsButton: {
+    paddingHorizontal: 0,
+    marginTop: 10,
+    color: '#DDD',
+    fontSize: 12,
+    textDecorationLine: 'underline',
   },
 });
