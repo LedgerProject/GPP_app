@@ -1,5 +1,10 @@
+// React import
 import React from 'react';
+
+// Navigation import
 import { createStackNavigator } from '@react-navigation/stack';
+
+// DocWallet screen import
 import { DocWalletScreen } from '../views/doc-wallet';
 import { DocDetailsScreen } from '../views/doc-details';
 

@@ -1,4 +1,7 @@
+// React import
 import React from 'react';
+
+// Navigation import
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { HomeNavigator } from './home.navigator';
 
@@ -9,7 +12,7 @@ const navigatorTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    // prevent layout blinking when performing navigation
+    // Prevent layout blinking when performing navigation
     background: 'transparent',
   },
 };

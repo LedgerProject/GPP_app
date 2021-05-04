@@ -1,4 +1,7 @@
+// React import
 import React from 'react';
+
+// React Native import
 import { ScrollViewProps } from 'react-native';
 
 /**

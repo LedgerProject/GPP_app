@@ -1,4 +1,7 @@
+// React Native import
 import { AsyncStorage, YellowBox } from 'react-native';
+
+// Theme import
 import { Mapping, Theme } from './theme.service';
 
 const MAPPING_KEY: string = 'mapping';

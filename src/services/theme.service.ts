@@ -1,46 +1,41 @@
+// React import
 import React from 'react';
+
+// React Native import
 import { Appearance, AppearancePreferences, ColorSchemeName } from 'react-native-appearance';
+
+// App Storage imports
 import { AppStorage } from './app-storage.service';
 
 export type Mapping = 'eva' | 'material';
 export type Theme = 'light' | 'dark' | 'brand';
 
 export interface MappingContextValue {
-  /**
-   * Should return the name of current mapping
-   */
+  // Should return the name of current mapping
   currentMapping: Mapping;
-  /**
-   * Should switch mapping globally
-   */
+
+  // Should switch mapping globally
   setCurrentMapping: (mapping: Mapping) => void;
-  /**
-   * Should return true if current mapping is Eva
-   */
+
+  // Should return true if current mapping is Eva
   isEva: () => boolean;
 }
 
 export interface ThemeContextValue {
-  /**
-   * Should return the name of current theme
-   */
+  // Should return the name of current theme
   currentTheme: Theme;
-  /**
-   * Should switch theme globally
-   */
+
+  // Should switch theme globally
   setCurrentTheme: (theme: Theme) => void;
-  /**
-   * Should return true if current theme is dark or dark mode enabled
-   */
+
+  // Should return true if current theme is dark or dark mode enabled
   isDarkMode: () => boolean;
-  /**
-   * Should create a theme based on current
-   */
+
+  // Should create a theme based on current
   createTheme: (upstreamTheme: Theme) => any;
 }
 
 export class Theming {
-
   static MappingContext = React.createContext<MappingContextValue>(null);
   static ThemeContext = React.createContext<ThemeContextValue>(null);
 

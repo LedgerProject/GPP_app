@@ -1,6 +1,13 @@
+// React import
 import React from 'react';
+
+// React Native import
 import { Dimensions, ListRenderItemInfo, StyleSheet } from 'react-native';
+
+// UIKitten import
 import { Card, List, ListElement, ListItemElement, ListProps, Text } from '@ui-kitten/components';
+
+// Model import
 import { MenuItem } from '../model/menu-item.model';
 
 export interface MenuGridListProps extends Omit<ListProps, 'renderItem'> {
@@ -9,7 +16,6 @@ export interface MenuGridListProps extends Omit<ListProps, 'renderItem'> {
 }
 
 export const MenuGridList = (props: MenuGridListProps): ListElement => {
-
   const { contentContainerStyle, onItemPress, ...listProps } = props;
 
   const renderItem = (info: ListRenderItemInfo<MenuItem>): ListItemElement => (
@@ -24,7 +30,6 @@ export const MenuGridList = (props: MenuGridListProps): ListElement => {
       </Text>
     </Card>
   );
-
 
   return (
     <List
@@ -55,5 +60,6 @@ const styles = StyleSheet.create({
   itemTitle: {
     alignSelf: 'center',
     marginTop: 8,
+    fontWeight: 'bold',
   },
 });

@@ -1,4 +1,7 @@
+// React import
 import React from 'react';
+
+// React Native import
 import { Animated, Easing, ImageProps, StyleSheet } from 'react-native';
 
 export interface LoadingAnimationProps extends ImageProps {
@@ -8,7 +11,6 @@ export interface LoadingAnimationProps extends ImageProps {
 const animationValue: Animated.Value = new Animated.Value(0);
 
 export const SplashImage = (props: LoadingAnimationProps): React.ReactElement | undefined => {
-
   const [animationCompleted, setAnimationCompleted] = React.useState<boolean>(false);
 
   React.useEffect((): void => {
@@ -66,4 +68,3 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 });
-

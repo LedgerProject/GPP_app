@@ -1,5 +1,10 @@
+// React import
 import React from 'react';
+
+// React Native import
 import { StyleSheet, View, ViewProps } from 'react-native';
+
+// UIKitten import
 import { Avatar, AvatarProps, ButtonElement, ButtonProps } from '@ui-kitten/components';
 
 export interface ProfileAvatarProps extends AvatarProps {
@@ -7,7 +12,6 @@ export interface ProfileAvatarProps extends AvatarProps {
 }
 
 export const ProfileAvatar = (props: ProfileAvatarProps): React.ReactElement<ViewProps> => {
-
   const renderEditButtonElement = (): ButtonElement => {
     const buttonElement: React.ReactElement<ButtonProps> = props.editButton();
 

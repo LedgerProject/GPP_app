@@ -20,7 +20,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   manageToken,
   selectToken,
-} from '../app/tokenSlice';
+} from '../redux/tokenSlice';
 
 export const DocDetailsScreen = (props): React.ReactElement => {
 

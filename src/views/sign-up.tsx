@@ -1,14 +1,22 @@
+// React import
 import React, { useEffect, useCallback } from 'react';
+
+// React Native import
 import { View, ImageBackground, Linking } from 'react-native';
+
+// Environment import
+import { AppOptions } from '../services/app-env';
+
+// Locale import
+import I18n from './../i18n/i18n';
+
+// UIKitten import
 import { Button, CheckBox, Input, Layout, StyleService, Text, useStyleSheet, Modal, List } from '@ui-kitten/components';
+
+// Components import
 import { EmailIcon, EyeIcon, EyeOffIcon, PersonIcon } from '../components/icons';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
-import { KeyboardAvoidingView } from '../services/3rd-party';
-import { AppOptions } from '../services/app-env';
-import { QuestionItem } from './sign-up/question-item.component';
-import axios from 'axios';
-import I18n from './../i18n/i18n';
-import Spinner from 'react-native-loading-spinner-overlay';
+import { QuestionItem } from '../components/question-item.component';
 
 // Zenroom import
 import { sanitizeAnswers, recoveryKeypair } from '../services/zenroom/zenroom-service';
@@ -16,9 +24,16 @@ import clientSideContract from '../services/zenroom/zenroom-client-contract.zen'
 
 // Redux import
 import { useDispatch } from 'react-redux';
-import { manageLastLoginEmail } from '../app/lastLoginEmailSlice';
-import { managePrivateKey } from '../app/privateKeySlice';
-import { managePublicKey } from '../app/publicKeySlice';
+import { manageLastLoginEmail } from '../redux/lastLoginEmailSlice';
+import { managePrivateKey } from '../redux/privateKeySlice';
+import { managePublicKey } from '../redux/publicKeySlice';
+
+// Axios import
+import axios from 'axios';
+
+// Other imports
+import Spinner from 'react-native-loading-spinner-overlay';
+import { KeyboardAvoidingView } from '../services/3rd-party';
 
 export default ({ navigation }): React.ReactElement => {
   const [firstName, setFirstName] = React.useState<string>();
@@ -44,6 +59,7 @@ export default ({ navigation }): React.ReactElement => {
   const [questions, setQuestions] = React.useState([]);
   const [pbkdf, setPbkdf] = React.useState<string>();
   const termsAndConditionsUrl = AppOptions.getTermsAndConditionsUrl();
+
   // Redux
   const dispatch = useDispatch();
 
@@ -146,7 +162,7 @@ export default ({ navigation }): React.ReactElement => {
     // Show the spinner
     setLoading(true);
 
-    // Get the PBKDF from the server, sending the user e-mail
+    // Get the PBKDF from the server, posting the user e-mail
     const postParams = {
       email: email,
     };
@@ -298,6 +314,7 @@ export default ({ navigation }): React.ReactElement => {
         setLoading(false);
 
         // Show a success message
+        setError('');
         setSuccess(I18n.t('Congratulations! Registration completed'));
         setmodalVisible(true);
 
@@ -347,7 +364,7 @@ export default ({ navigation }): React.ReactElement => {
         <View style={styles.logoContainer}>
           <ImageBackground
             style={styles.imageAuth}
-            source={require('../assets/images/red-logo.png')}>
+            source={require('../assets/images/logo-red.png')}>
           </ImageBackground>
         </View>
 

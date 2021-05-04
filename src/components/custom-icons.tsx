@@ -1,4 +1,7 @@
+// React import
 import React from 'react';
+
+// React Native import
 import { Image } from 'react-native';
 
 const IconProvider = (source) => ({
@@ -10,12 +13,11 @@ const IconProvider = (source) => ({
 export const CustomIconsPack = {
   name: 'assets',
   icons: {
-    'custom-doc-wallet': IconProvider(require('../assets/images/icons8-documenti-del-prodotto-96.png')),
-    'custom-where-i-am': IconProvider(require('../assets/images/icons8-geo-recinto-96.png')),
-    'custom-take-photo': IconProvider(require('../assets/images/icons8-aggiungere-la-macchina-fotografica-96.png')),
-    'custom-from-library': IconProvider(require('../assets/images/icons8-galleria-di-immagini-96.png')),
-    'custom-new-compliant': IconProvider(require('../assets/images/icons8-aggiungi-proprietà-96.png')),
-    'custom-compliants': IconProvider(require('../assets/images/icons8-documenti-del-prodotto-96.png')),
-    // ...
+    'custom-doc-wallet': IconProvider(require('../assets/images/icon-doc-wallet-96.png')),
+    'custom-around-me': IconProvider(require('../assets/images/icon-around-me-96.png')),
+    'custom-abuse-alarm': IconProvider(require('../assets/images/icon-abuse-alarm-96.png')),
+    'custom-news-stories': IconProvider(require('../assets/images/icon-news-stories-96.png')),
+    'custom-take-photo': IconProvider(require('../assets/images/icon-take-photo-96.png')),
+    'custom-from-library': IconProvider(require('../assets/images/icon-from-library-96.png')),
   },
 };

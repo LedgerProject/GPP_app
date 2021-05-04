@@ -1,4 +1,7 @@
+// React import
 import React from 'react';
+
+// React Native import
 import { ImageProps, NativeModules } from 'react-native';
 
 export interface LoadingAnimationProps extends ImageProps {
@@ -6,7 +9,6 @@ export interface LoadingAnimationProps extends ImageProps {
 }
 
 export const SplashImage = (props: LoadingAnimationProps): React.ReactElement | undefined => {
-
   if (!props.loading) {
     NativeModules.SplashScreen.close({
       animationType: 2,

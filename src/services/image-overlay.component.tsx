@@ -1,12 +1,8 @@
+// React import
 import React from 'react';
-import {
-  ImageBackground,
-  ImageBackgroundProps,
-  StyleProp,
-  StyleSheet,
-  View,
-  ViewStyle,
-} from 'react-native';
+
+// React Native import
+import { ImageBackground, ImageBackgroundProps, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 interface OverlayImageStyle extends ViewStyle {
   overlayColor?: string;
@@ -20,7 +16,6 @@ export interface ImageOverlayProps extends ImageBackgroundProps {
 const DEFAULT_OVERLAY_COLOR = 'rgba(0, 0, 0, 0.45)';
 
 export const ImageOverlay = (props?: ImageOverlayProps): React.ReactElement<ImageBackgroundProps> => {
-
   const { style, children, ...imageBackgroundProps } = props;
   const { overlayColor, ...imageBackgroundStyle } = StyleSheet.flatten(style);
 

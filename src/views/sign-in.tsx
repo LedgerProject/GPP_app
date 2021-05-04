@@ -1,13 +1,21 @@
+// React import
 import React, { useEffect} from 'react';
+
+// React Native import
 import { View, ImageBackground } from 'react-native';
+
+// Environment import
+import { AppOptions } from '../services/app-env';
+
+// Locale import
+import I18n from './../i18n/i18n';
+
+// UIKitten import
 import { Button, Input, Layout, StyleService, Text, useStyleSheet, Modal } from '@ui-kitten/components';
+
+// Components import
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { EyeIcon, EyeOffIcon, EmailIcon } from '../components/icons';
-import { KeyboardAvoidingView } from '../services/3rd-party';
-import { AppOptions } from '../services/app-env';
-import Spinner from 'react-native-loading-spinner-overlay';
-import I18n from './../i18n/i18n';
-import axios from 'axios';
 
 // Zenroom import
 import { sanitizeAnswers, recoveryKeypair, verifyAnswers } from '../services/zenroom/zenroom-service';
@@ -15,20 +23,19 @@ import clientSideContract from '../services/zenroom/zenroom-client-contract.zen'
 
 // Redux import
 import { useDispatch, useSelector } from 'react-redux';
-import { manageToken } from '../app/tokenSlice';
-import { manageEmail } from '../app/emailSlice';
-import { selectLastLoginEmail, manageLastLoginEmail } from '../app/lastLoginEmailSlice';
-import { managePrivateKey } from '../app/privateKeySlice';
-import { managePublicKey } from '../app/publicKeySlice';
+import { manageToken } from '../redux/tokenSlice';
+import { manageEmail } from '../redux/emailSlice';
+import { selectLastLoginEmail, manageLastLoginEmail } from '../redux/lastLoginEmailSlice';
+import { managePrivateKey } from '../redux/privateKeySlice';
+import { managePublicKey } from '../redux/publicKeySlice';
 
-import { selectPrivateKey } from '../app/privateKeySlice';
+// Axios import
+import axios from 'axios';
 
-interface PBKBFPublicKeyResponse {
-  code: string;
-  message: string;
-  pbkdf: string;
-  publicKey: string;
-}
+// Other imports
+import Spinner from 'react-native-loading-spinner-overlay';
+import { KeyboardAvoidingView } from '../services/3rd-party';
+import { getPBKDFPublicKey } from '../services/user.service';
 
 export default ({ navigation }): React.ReactElement => {
   const [email, setEmail] = React.useState<string>();
@@ -46,43 +53,12 @@ export default ({ navigation }): React.ReactElement => {
   const [answer5, setAnswer5] = React.useState<string>();
 
   const lastLoginEmail = useSelector(selectLastLoginEmail);
-  // const privateKey = useSelector(selectPrivateKey);
 
   // Redux
   const dispatch = useDispatch();
 
-  const getPBKDFPublicKey = async (): Promise<PBKBFPublicKeyResponse> => {
-    const postParams = {
-      email: email,
-    };
-
-    let userPBKDFPublicKeyResponse: PBKBFPublicKeyResponse = {
-      code: '0',
-      message: '',
-      pbkdf: '',
-      publicKey: '',
-    };
-
-    await axios
-      .post<PBKBFPublicKeyResponse>(AppOptions.getServerUrl() + 'users/get-pbkdf-publickey', postParams)
-      .then(function (response) {
-        userPBKDFPublicKeyResponse = response.data.pbkdfPublicKeyResponse;
-      })
-      .catch(function () {
-        userPBKDFPublicKeyResponse = {
-          code: '10',
-          message: I18n.t('An error has occurred, please try again'),
-          pbkdf: '',
-          publicKey: '',
-        };
-      });
-
-    return userPBKDFPublicKeyResponse;
-  };
-
   // Use effect
   useEffect(() => {
-    // setEmail('test@globalpassportproject.me');
     setPassword('');
     setShowAnswers(false);
     setAnswer1('');
@@ -94,12 +70,27 @@ export default ({ navigation }): React.ReactElement => {
 
   // Open the sign-up page
   const onSignUpButtonPress = (): void => {
+    setShowAnswers(false);
+    setAnswer1('');
+    setAnswer2('');
+    setAnswer3('');
+    setAnswer4('');
+    setAnswer5('');
+
     navigation && navigation.navigate('SignUp');
   };
 
   // Open the forgot password page
   const onForgotPasswordButtonPress = (): void => {
     dispatch(manageEmail(email));
+
+    setShowAnswers(false);
+    setAnswer1('');
+    setAnswer2('');
+    setAnswer3('');
+    setAnswer4('');
+    setAnswer5('');
+
     navigation && navigation.navigate('ForgotPassword');
   };
 
@@ -124,35 +115,41 @@ export default ({ navigation }): React.ReactElement => {
       return;
     }
 
-    // Check if current email = last login email
+    // Check if current email match the last login email
     if (email !== lastLoginEmail) {
       if (showAnswers === false) {
-        // show answers
+        // Show answers
         setShowAnswers(true);
       } else {
-
         // Check if answered 3 questions
         let countAnswered = 0;
+
         if (answer1) {
           countAnswered++;
         }
+
         if (answer2) {
           countAnswered++;
         }
+
         if (answer3) {
           countAnswered++;
         }
+
         if (answer4) {
           countAnswered++;
         }
+
         if (answer5) {
           countAnswered++;
         }
+
         if (countAnswered !== 3) {
           setError(I18n.t('Please answer the 3 questions during registration'));
           setmodalVisible(true);
           return;
         }
+
         // Set the answers
         let answers = {
           question1: 'null',
@@ -161,21 +158,27 @@ export default ({ navigation }): React.ReactElement => {
           question4: 'null',
           question5: 'null',
         };
+
         if (answer1) {
           answers.question1 = answer1.trim();
         }
+
         if (answer2) {
           answers.question2 = answer2.trim();
         }
+
         if (answer3) {
           answers.question3 = answer3.trim();
         }
+
         if (answer4) {
           answers.question4 = answer4.trim();
         }
+
         if (answer5) {
           answers.question5 = answer5.trim();
         }
+
         // Sanitize the answers
         answers = sanitizeAnswers(answers);
 
@@ -185,7 +188,7 @@ export default ({ navigation }): React.ReactElement => {
         // Get the e-mail public key and pbkdf
         let emailPublicKey = '';
         let emailPBKDF = '';
-        const pbkdfPublicKeyResponse = await getPBKDFPublicKey();
+        const pbkdfPublicKeyResponse = await getPBKDFPublicKey(email);
 
         switch (pbkdfPublicKeyResponse.code) {
           case '10':
@@ -210,15 +213,16 @@ export default ({ navigation }): React.ReactElement => {
 
         // Verify if the generated public key match the e-mail public key
         const publicKeyMatch = await verifyAnswers(clientSideContract, answers, emailPBKDF, emailPublicKey);
-        if (publicKeyMatch) {
 
-          // generate private key and public key
+        if (publicKeyMatch) {
+          // Generate private key and public key
           const keypairData = await recoveryKeypair(clientSideContract, answers, emailPBKDF);
 
           // Get public key and private key
           const publicKey = keypairData.user.keypair.public_key;
           const privateKey = keypairData.user.keypair.private_key;
-          //
+
+          // Proceed with sign-in (saving the private key and public key locally)
           onSignInButtonPress(privateKey, publicKey);
         } else {
           // Answers not correct
@@ -226,15 +230,14 @@ export default ({ navigation }): React.ReactElement => {
           setError(I18n.t('The answers are incorrect'));
           setmodalVisible(true);
         }
-        //
       }
-      //
     } else {
+      // Proceed with sign-in
       onSignInButtonPress();
     }
-    //
   };
 
+  // Sign-in procedure
   const onSignInButtonPress = (private_Key = null, public_Key = null): void => {
     // Show the spinner
     setLoading(true);
@@ -264,8 +267,14 @@ export default ({ navigation }): React.ReactElement => {
         dispatch(manageToken(response.data.token));
 
         // Save locally private key, public key, last login mail
-        dispatch(managePublicKey(public_Key));
-        dispatch(managePrivateKey(private_Key));
+        if (private_Key) {
+          dispatch(managePrivateKey(private_Key));
+        }
+
+        if (public_Key) {
+          dispatch(managePublicKey(public_Key));
+        }
+
         dispatch(manageLastLoginEmail(email));
 
         // Open the homepage page
@@ -293,7 +302,7 @@ export default ({ navigation }): React.ReactElement => {
         setLoading(false);
 
         // Show the error
-        setError(errDescription);
+        setError(I18n.t(errDescription));
         setmodalVisible(true);
       });
   };
@@ -310,7 +319,7 @@ export default ({ navigation }): React.ReactElement => {
         <View style={styles.logoContainer}>
           <ImageBackground
             style={styles.imageAuth}
-            source={require('../assets/images/red-logo.png')}>
+            source={require('../assets/images/logo-red.png')}>
           </ImageBackground>
         </View>
         <View style={styles.headerContainer}>
@@ -341,67 +350,69 @@ export default ({ navigation }): React.ReactElement => {
             onChangeText={setPassword}
             onIconPress={onPasswordIconPress}
           />
+
           { showAnswers && (
-          <View>
-          <Text
-            style={styles.selectQuestions}>
-            {I18n.t('Please answer 3 of these 5 questions')}
-          </Text>
-          <Text
-            style={styles.enterFieldLabel}>
-            {I18n.t('Where my parents met?')}
-          </Text>
+            <View>
+              <Text
+                style={styles.selectQuestions}>
+                {I18n.t('Please answer 3 of these 5 questions')}
+              </Text>
 
-          <Input
-            placeholder={I18n.t('Answer')}
-            value={answer1}
-            onChangeText={setAnswer1}
-          />
+              <Text
+                style={styles.enterFieldLabel}>
+                {I18n.t('Where my parents met?')}
+              </Text>
 
-          <Text
-            style={styles.enterFieldLabel}>
-            {I18n.t('What is the name of your first pet?')}
-          </Text>
+              <Input
+                placeholder={I18n.t('Answer')}
+                value={answer1}
+                onChangeText={setAnswer1}
+              />
 
-          <Input
-            placeholder={I18n.t('Answer')}
-            value={answer2}
-            onChangeText={setAnswer2}
-          />
+              <Text
+                style={styles.enterFieldLabel}>
+                {I18n.t('What is the name of your first pet?')}
+              </Text>
 
-          <Text
-            style={styles.enterFieldLabel}>
-            {I18n.t('What is your home town?')}
-          </Text>
+              <Input
+                placeholder={I18n.t('Answer')}
+                value={answer2}
+                onChangeText={setAnswer2}
+              />
 
-          <Input
-            placeholder={I18n.t('Answer')}
-            value={answer3}
-            onChangeText={setAnswer3}
-          />
+              <Text
+                style={styles.enterFieldLabel}>
+                {I18n.t('What is your home town?')}
+              </Text>
 
-          <Text
-            style={styles.enterFieldLabel}>
-            {I18n.t('What is the name of your first teacher?')}
-          </Text>
+              <Input
+                placeholder={I18n.t('Answer')}
+                value={answer3}
+                onChangeText={setAnswer3}
+              />
 
-          <Input
-            placeholder={I18n.t('Answer')}
-            value={answer4}
-            onChangeText={setAnswer4}
-          />
+              <Text
+                style={styles.enterFieldLabel}>
+                {I18n.t('What is the name of your first teacher?')}
+              </Text>
 
-          <Text
-            style={styles.enterFieldLabel}>
-            {I18n.t('What is the surname of your mother before wedding?')}
-          </Text>
+              <Input
+                placeholder={I18n.t('Answer')}
+                value={answer4}
+                onChangeText={setAnswer4}
+              />
 
-          <Input
-            placeholder={I18n.t('Answer')}
-            value={answer5}
-            onChangeText={setAnswer5}
-          />
-          </View>
+              <Text
+                style={styles.enterFieldLabel}>
+                {I18n.t('What is the surname of your mother before wedding?')}
+              </Text>
+
+              <Input
+                placeholder={I18n.t('Answer')}
+                value={answer5}
+                onChangeText={setAnswer5}
+              />
+            </View>
           )}
 
           <View style={styles.forgotPasswordContainer}>

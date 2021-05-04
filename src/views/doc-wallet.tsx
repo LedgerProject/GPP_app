@@ -1,33 +1,39 @@
+// React import
 import React, { useEffect } from 'react';
 import { Image, View, ListRenderItemInfo } from 'react-native';
+import { ImagePickerResponse, MediaType, launchCamera, launchImageLibrary } from 'react-native-image-picker';
+
+// UIKitten import
 import { Button, Divider, List, Layout, StyleService, Text, TopNavigation,
   TopNavigationAction, useStyleSheet, Modal as ModalUiKitten, Input, Icon } from '@ui-kitten/components';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { MenuGridList } from '../components/menu-grid-list.component';
-import { DocumentItem } from './doc-wallet/document-item.component';
-import { requestCameraPermission, requestExternalWritePermission } from '../services/image-picker';
 import { MenuIcon } from '../components/icons';
-import { Document } from './doc-wallet/data';
-import {
-  ImagePickerResponse,
-  MediaType,
-  launchCamera,
-  launchImageLibrary,
-} from 'react-native-image-picker';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppOptions } from '../services/app-env';
-import I18n from './../i18n/i18n';
-import FormData from 'form-data';
-import slugify from '@sindresorhus/slugify';
-import Spinner from 'react-native-loading-spinner-overlay';
 
-// REDUX
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  manageToken,
-  selectToken,
-} from '../app/tokenSlice';
+// Environment import
+import { AppOptions } from '../services/app-env';
+
+// Language import
+import I18n from './../i18n/i18n';
+
+// Redux import
+import { useSelector } from 'react-redux';
+import { selectToken } from '../redux/tokenSlice';
+
+// Other imports
+import { Document, DocumentItem } from './doc-wallet/document-item.component';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { requestCameraPermission, requestExternalWritePermission } from '../services/image-picker';
+import slugify from '@sindresorhus/slugify';
+import axios from 'axios';
+
+
+
+import FormData from 'form-data';
+
+
+
+
 
 import { ImageStyle, ImageSourcePropType } from 'react-native';
 import { ThemedIcon } from '../components/themed-icon.component';
