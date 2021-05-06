@@ -1,47 +1,43 @@
+// React import
 import React, { useEffect } from 'react';
-import { View , ScrollView, Image, Platform, Modal, Text as TextNative } from 'react-native';
-import {
-  Input, Button, Divider, List, StyleService, Text, TopNavigation,
-  TopNavigationAction, useStyleSheet, Layout, Icon, ListItem, Modal as ModalUiKitten,
-} from '@ui-kitten/components';
-import { ArrowBackIcon, MenuIcon } from '../components/icons';
+
+// React Native import
+import { View , ScrollView, Image, Modal } from 'react-native';
 import {FlatListSlider} from 'react-native-flatlist-slider';
 import ImageViewer from 'react-native-image-zoom-viewer';
+
+// UIKitten import
+import { Input, Button, StyleService, Text, TopNavigation, TopNavigationAction,
+  useStyleSheet, Layout, Modal as ModalUiKitten } from '@ui-kitten/components';
+
+// Environment import
+import { AppOptions } from '../services/app-env';
+
+// Locale import
+import I18n from './../i18n/i18n';
+
+// Map
 import MapView, {PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import openMap from 'react-native-open-maps';
+
+// Component import
+import { ArrowBackIcon } from '../components/icons';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 
+// Axios import
 import axios from 'axios';
+
+// AsyncStorage import
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppOptions } from '../services/app-env';
-import I18n from './../i18n/i18n';
-import openMap from 'react-native-open-maps';
+
+// Redux import
+import { useSelector } from 'react-redux';
+import { selectToken } from '../redux/tokenSlice';
+
+// Other imports
 import Spinner from 'react-native-loading-spinner-overlay';
 
-// REDUX
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  manageToken,
-  selectToken,
-} from '../redux/tokenSlice';
-
-/* export class Structure {
-  constructor(
-    readonly idStructure: string,
-    readonly address: string,
-    readonly name: string,
-    readonly city: string,
-    readonly email: string,
-    readonly latitude: number,
-    readonly longitude: number,
-    readonly phoneNumber: string,
-    readonly phoneNumberPrefix: string,
-    readonly website: string,
-    ) {  }
-} */
-
 export const AroundMeDetailsScreen = (props): React.ReactElement => {
-
-  const { idStructure, distance } = props.route.params;
   const [modalVisible, setmodalVisible] = React.useState(false);
   const [modalContactVisible, setmodalContactVisible] = React.useState(false);
   const styles = useStyleSheet(themedStyles);
@@ -54,17 +50,22 @@ export const AroundMeDetailsScreen = (props): React.ReactElement => {
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
-  // Get Token from REDUX
+  const { idStructure, distance } = props.route.params;
+
+  // Get Token from Redux
   const token = useSelector(selectToken);
 
+  // Use effect
+  useEffect(() => {
+    getStructureInformation();
+  }, []);
+
+  // Back to the previous view
   const navigateBack = () => {
     props.navigation.goBack();
   };
 
-  const renderDrawerAction = (): React.ReactElement => (
-    <TopNavigationAction icon={ArrowBackIcon} onPress={navigateBack} />
-  );
-
+  // Start the device navigator, passing the structure coordinates
   const onNavigatorButtonPress = (): void => {
     openMap({
       latitude: structure.latitude,
@@ -73,30 +74,31 @@ export const AroundMeDetailsScreen = (props): React.ReactElement => {
     });
   };
 
+  // Show the modal to send the message
   const onContactButtonPress = (): void => {
     setmodalContactVisible(true);
   };
 
-  /* ALERT MESSAGE */
-  const showAlertMessage = (title: string, message: string) => {
-    setAlertTitle(title);
-    setAlertMessage(message);
-    setModalAlertVisible(true);
-  };
-
-  const handleSend = async () => {
+  // Send the message to the structure
+  const onSendMessage = async () => {
+    // Check if entered the message
     if (!contactMessage) {
       showAlertMessage(
         I18n.t('Message missing'),
-        I18n.t('Please fill the Message'),
+        I18n.t('Please enter the message'),
       );
-    } else {
-      setLoading(true);
-      // const token = await AsyncStorage.getItem('token');
-      const postParams = {
-        structureMessage: contactMessage,
-      };
-      axios
+      return;
+    }
+
+    // Show spinner
+    setLoading(true);
+
+    // Send the message to the structure
+    const postParams = {
+      structureMessage: contactMessage,
+    };
+
+    axios
       .post(AppOptions.getServerUrl() + 'structures/' + idStructure + '/send-message', postParams, {
         headers: {
           'Authorization': 'Bearer ' + token,
@@ -104,292 +106,295 @@ export const AroundMeDetailsScreen = (props): React.ReactElement => {
         },
       })
       .then(function (response) {
+        // Hide spinner
         setLoading(false);
-        setmodalContactVisible(false);
-        showAlertMessage(
-          I18n.t('Congratulations'),
-          I18n.t('Message sent successfully'),
-        );
 
+        // Hide the message modal
+        setmodalContactVisible(false);
+
+        // Show the success message
+        showAlertMessage(
+          I18n.t('Message sent successfully'),
+          I18n.t('Message sent successfully to the stucture'),
+        );
       })
       .catch(function (error) {
-        // console.log(error);
+        // Hide spinner
         setLoading(false);
+
+        // Show the error message
         showAlertMessage(
-          I18n.t('Error'),
+          I18n.t('Error sending message'),
           I18n.t('An error has occurred, please try again'),
         );
-        // alert(JSON.stringify(error));
-        throw error;
       });
-
-    }
   };
 
-
-  const ZoomImage = (): void => {
+  // Zoom on the selected image
+  const onZoomImage = (): void => {
     setmodalVisible(true);
   };
 
-   async function getStructure() {
+  // Get the structure information
+  async function getStructureInformation() {
+    // Show spinner
     setLoading(true);
-    // const token = await AsyncStorage.getItem('token');
+
+    // Get current language
     let lang = await AsyncStorage.getItem('lang');
     lang = lang.substring(0, 2);
+
+    // Set the filters and relations
+    const filters = `?filter={"include":[`
+        + `{"relation": "icon"},`
+        + `{"relation": "structureCategory", "scope":`
+          + `{"include": [{"relation": "category", "scope":`
+          + `{"include": [{"relation": "categoryLanguage", "scope": {"where": {"language": "` + lang + `"}}}]}`
+        + `}]}`
+      + `},`
+      + `{"relation": "structureImage"},`
+      + `{"relation": "structureLanguage", "scope": {"where": {"language": "` + lang + `"}}}`
+    + `]}`;
+
     axios
-    .get(AppOptions.getServerUrl() + `structures/` + idStructure + `?filter={"include":[`
-    + `{"relation": "icon"},`
-    + `{"relation": "structureCategory", "scope":`
-    + `{"include": [{"relation": "category", "scope":`
-    + `{"include": [{"relation": "categoryLanguage", "scope": {"where": {"language": "` + lang + `"}}}]}`
-    + `}]}`
-    + `},`
-    + `{"relation": "structureImage"},`
-    + `{"relation": "structureLanguage", "scope": {"where": {"language": "` + lang + `"}}}`
-    + `]}`
-    , {
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(function (response) {
-      setLoading(false);
-      setStructure(response.data);
-
-      const image_data: any = response.data.structureImage;
-      const ImagesArray = [];
-      if (image_data) {
-      image_data.map( (element) => {
-        const imgObj = {
-          url: AppOptions.getServerUrl() +
-          'galleries/structures/' + element.folder + '/' +
-          element.filename, desc: '', props: {} };
-        ImagesArray.push( imgObj );
-      });
-      }
-      setImages(ImagesArray);
-
-      const lang_data: any = response.data.structureLanguage;
-      if (lang_data) {
-      lang_data.map( (element) => {
-        if (element.language === 'en') {
-          setStructureDescription(element.description);
-        }
-      });
-      }
-
-      // get images
-      /*axios
-      .get(AppOptions.getServerUrl() + 'structures/' + idStructure + '/structures-images', {
+      .get(AppOptions.getServerUrl() + `structures/` + idStructure + filters, {
         headers: {
           'Authorization': 'Bearer ' + token,
           'Content-Type': 'application/json',
         },
       })
-      .then(function (images_response) {
-        const image_data: any = images_response.data;
+      .then(function (response) {
+        // Hide spinner
+        setLoading(false);
+
+        // Set the structure information
+        setStructure(response.data);
+
+        // Set the structure images
+        const imagesData: any = response.data.structureImage;
         const ImagesArray = [];
-        image_data.map( (element) => {
-          const imgObj = {
-            url: AppOptions.getServerUrl() +
-            'galleries/structures/' + element.folder + '/' +
-            element.filename, desc: '', props: {} };
-          ImagesArray.push( imgObj );
-        });
+
+        if (imagesData) {
+          imagesData.map( (element) => {
+            const imgObj = {
+              url: AppOptions.getServerUrl() +
+                'galleries/structures/' + element.folder + '/' +
+                element.filename,
+              desc: '',
+              props: {},
+            };
+
+            ImagesArray.push(imgObj);
+          });
+        }
+
         setImages(ImagesArray);
+
+        // Set the stucture description
+        const langData: any = response.data.structureLanguage;
+
+        if (langData) {
+          langData.map((element) => {
+            if (element.language === 'en') {
+              setStructureDescription(element.description);
+            }
+          });
+        }
       })
       .catch(function (error) {
-        // throw error;
+        // Hide spinner
+        setLoading(false);
+
+        // Show the error message
+        showAlertMessage(
+          I18n.t('Error getting structure information'),
+          I18n.t('An error has occurred, please try again'),
+        );
       });
-      // get description
-      axios
-      .get(AppOptions.getServerUrl() + 'structures/' + idStructure + '/structures-languages', {
-        headers: {
-          'Authorization': 'Bearer ' + token,
-          'Content-Type': 'application/json',
-        },
-      })
-      .then(function (lang_response) {
-        const data: any = lang_response.data;
-        data.map( (element) => {
-          if (element.language === 'en') {
-            setStrucureDescription(element.description);
-          }
-        });
-      })
-      .catch(function (error) {
-        // throw error;
-      });
-      //*/
-    })
-    .catch(function (error) {
-       setLoading(false);
-       // alert(JSON.stringify(error));
-       throw error;
-    });
   }
 
-   useEffect(() => {
-    getStructure();
-  }, []);
+  // Show the alert message
+  const showAlertMessage = (title: string, message: string) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setModalAlertVisible(true);
+  };
+
+  const renderDrawerAction = (): React.ReactElement => (
+    <TopNavigationAction
+      icon={ArrowBackIcon}
+      onPress={navigateBack}
+    />
+  );
 
   return (
     <SafeAreaLayout
       style={styles.safeArea}
       insets='top'>
       <TopNavigation
-        title={I18n.t('Details')}
+        title={I18n.t('AroundMe - Details')}
         titleStyle={styles.topBarTitle}
         leftControl={renderDrawerAction() }
         style={styles.topBar}
       />
       <Spinner
-          visible={loading}
-          textContent={I18n.t('Loading') + '...'}
-          textStyle={styles.spinnerTextStyle}
-        />
+        visible={loading}
+        textContent={I18n.t('Please wait') + '...'}
+        textStyle={styles.spinnerTextStyle}
+      />
       <ScrollView>
-
-  <Layout style={styles.header}>
-  {(images && images.length > 0 && (
-  <FlatListSlider
-    data={images}
-    onPress={ ZoomImage }
-    autoscroll={false}
-    loop={false}
-    imageKey={'url'}
-  />
-  ))}
-  <Layout
-    style={styles.detailsContainer}
-    level='1'>
-    <Text
-      style={styles.structureName}
-      category='h6'>
-      {structure.name}
-    </Text>
-    <Text
-      style={styles.subtitle}
-      appearance='hint'
-      category='p2'>
-      {structure.address} {structure.city}
-    </Text>
-    { distance && (
-    <Text
-      style={styles.price}
-      category='h6'>
-      { parseFloat(distance).toFixed(1) } km
-    </Text>
-    )}
-    <Text
-      style={styles.description}
-    >{structureDescription}</Text>
-
-    <Layout style={styles.mapContainer}>
-    { structure.latitude && structure.longitude && (
-    <MapView
-            provider={PROVIDER_GOOGLE}
-            style={styles.Map}
-              region={{
-                latitude: structure.latitude,
-                longitude: structure.longitude,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-              }}
-            >
-      { structure.latitude && structure.longitude && (
-      <Marker coordinate={{ latitude : structure.latitude , longitude : structure.longitude }}>
-      <View>{ structure.icon && structure.icon.marker && (
-              <Image
-                  source={ { uri: 'data:image/png;base64,' + structure.icon.marker } }
-                  style={{ height: 37, width: 32 }}
-                  />
-      ) }
-      </View>
-      </Marker>
-      )}
-    </MapView>
-    )}
-    </Layout>
-
-    <View style={styles.elementSubcontainer}>
-          <Text style={styles.latlon}>{I18n.t('Latitude') + ':'}
-           <Text style={styles.latlon}>{structure.latitude}</Text>
+        <Layout style={styles.header}>
+          {(images && images.length > 0 && (
+            <FlatListSlider
+              data={images}
+              onPress={ onZoomImage }
+              autoscroll={false}
+              loop={false}
+              imageKey={'url'}
+            />
+          ))}
+          <Layout
+            style={styles.detailsContainer}
+            level='1'>
+            <Text
+              style={styles.structureName}
+              category='h6'>
+              {structure.name}
+            </Text>
+            <Text
+              style={styles.subtitle}
+              appearance='hint'
+              category='p2'>
+              {structure.address} {structure.city}
+            </Text>
+            { distance && (
+              <Text
+                style={styles.price}
+                category='h6'>
+                { parseFloat(distance).toFixed(1) } km
+              </Text>
+            )}
+            <Text
+              style={styles.description}>
+              {structureDescription}
+            </Text>
+            <Layout style={styles.mapContainer}>
+              { structure.latitude && structure.longitude && (
+                <MapView
+                  provider={PROVIDER_GOOGLE}
+                  style={styles.Map}
+                  region={{
+                    latitude: structure.latitude,
+                    longitude: structure.longitude,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                  }}>
+                  { structure.latitude && structure.longitude && (
+                    <Marker
+                      coordinate={{
+                        latitude : structure.latitude,
+                        longitude : structure.longitude,
+                      }}>
+                      <View>
+                        { structure.icon && structure.icon.marker && (
+                          <Image
+                            source={ { uri: 'data:image/png;base64,' + structure.icon.marker } }
+                            style={{ height: 37, width: 32 }}
+                          />
+                        )}
+                      </View>
+                    </Marker>
+                  )}
+                </MapView>
+              )}
+            </Layout>
+            <View style={styles.elementSubcontainer}>
+              <Text style={styles.latlon}>
+                {I18n.t('Latitude') + ':'}
+                <Text style={styles.latlon}>{structure.latitude}</Text>
+              </Text>
+            </View>
+            <View style={styles.elementSubcontainer}>
+              <Text style={styles.latlon}>
+                {I18n.t('Longitude') + ':'}
+                <Text style={styles.latlon}>{structure.longitude}</Text>
+              </Text>
+            </View>
+          </Layout>
+          <Layout style={styles.buttonsContainer}>
+            <Layout style={styles.buttonLeft}>
+              <Button
+                style={styles.button}
+                status='primary'
+                size='small'
+                onPress={onNavigatorButtonPress}>
+                {I18n.t('Start the navigator')}
+              </Button>
+            </Layout>
+            <Layout style={styles.buttonRight} >
+              <Button
+                style={styles.button}
+                status='primary'
+                size='small'
+                onPress={onContactButtonPress}>
+                {I18n.t('Contact us')}
+              </Button>
+            </Layout>
+          </Layout>
+        </Layout>
+      </ScrollView>
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        onRequestClose={ () => setmodalVisible(false) }>
+        <ImageViewer
+          imageUrls={images}
+          enableSwipeDown={true}
+          onSwipeDown={ () => setmodalVisible(false) }
+        />
+      </Modal>
+      <ModalUiKitten
+        visible={modalContactVisible}
+        backdropStyle={styles.backdrop}
+        onBackdropPress={ () => setmodalContactVisible(false) }>
+        <Layout style={ [styles.modal, styles.modalContact] }>
+          <Text
+            style={styles.modalTitle}
+            category='s1'>
+            {I18n.t('Write your request')}
           </Text>
-    </View>
-    <View style={styles.elementSubcontainer}>
-          <Text style={styles.latlon}>
-            {I18n.t('Longitude') + ':'}
-             <Text style={styles.latlon}>{structure.longitude}</Text>
-          </Text>
-    </View>
-
-  </Layout>
-  <Layout style={styles.buttonsContainer}>
-         <Layout style={styles.buttonLeft} >
-          <Button style={styles.button} status='primary' size='small'
-          onPress={onNavigatorButtonPress}>{I18n.t('Start the navigator')}</Button>
-         </Layout>
-         <Layout style={styles.buttonRight} >
-          <Button style={styles.button} status='primary'
-            size='small' onPress={onContactButtonPress}>{I18n.t('Contact us')}</Button>
-         </Layout>
-  </Layout>
-
-</Layout>
-
-</ScrollView>
-
-<Modal
-visible={modalVisible}
-transparent={true} // backdropStyle={styles.backdrop}
-onRequestClose={ () => setmodalVisible(false) } // onBackdropPress={ () => setmodalVisible(false) }
->
-  <ImageViewer
-  imageUrls={images}
-  enableSwipeDown={true}
-  onSwipeDown={ () => setmodalVisible(false) }
-  />
-</Modal>
-
-<ModalUiKitten
-visible={modalContactVisible}
-backdropStyle={styles.backdrop}
-onBackdropPress={ () => setmodalContactVisible(false) }
->
-<Layout style={ [styles.modal, styles.modalContact] } >
-          <Text style={styles.modalTitle} category='s1'>{I18n.t('Write your request')}</Text>
           <Input
-            placeholder={I18n.t('Enter Message')}
+            placeholder={I18n.t('Enter the message')}
             value={contactMessage}
             onChangeText={setContactMessage}
             multiline={true}
             textStyle={{ minHeight: 90, textAlignVertical: 'top' }}
           />
-  <Layout style={styles.modalButtonsContainer}>
-         <Layout style={styles.buttonLeftModal} >
-          <Button onPress={handleSend}>{I18n.t('SEND')}</Button>
-         </Layout>
-         <Layout style={styles.buttonRightModal} >
-          <Button status='basic' onPress={() => setmodalContactVisible(false)}>{I18n.t('CLOSE')}</Button>
-         </Layout>
-  </Layout>
-</Layout>
-</ModalUiKitten>
-
-<ModalUiKitten
+          <Layout style={styles.modalButtonsContainer}>
+            <Layout style={styles.buttonLeftModal}>
+              <Button onPress={onSendMessage}>{I18n.t('SEND')}</Button>
+            </Layout>
+            <Layout style={styles.buttonRightModal}>
+              <Button
+                status='basic'
+                onPress={() => setmodalContactVisible(false)}>
+                {I18n.t('CLOSE')}
+              </Button>
+            </Layout>
+          </Layout>
+        </Layout>
+      </ModalUiKitten>
+      <ModalUiKitten
         visible={ modalAlertVisible }
         backdropStyle={styles.backdrop}
-        onBackdropPress={() => setModalAlertVisible(false)}
-        >
+        onBackdropPress={() => setModalAlertVisible(false)}>
         <Layout style={ styles.modal } >
           <Text style={ styles.modalText } category='h6' >{alertTitle}</Text>
           <Text style={ styles.modalText } >{alertMessage}</Text>
           <Button status='basic' onPress={() => setModalAlertVisible(false)}>{I18n.t('CLOSE')}</Button>
         </Layout>
       </ModalUiKitten>
-</SafeAreaLayout>
+    </SafeAreaLayout>
   );
 };
 
@@ -519,7 +524,9 @@ const themedStyles = StyleService.create({
     marginRight: 5,
   },
   button: { width: '100%' },
-  backdrop: { /* backgroundColor: 'rgba(0, 0, 0, 0.5)', */ },
+  backdrop: {
+    /* backgroundColor: 'rgba(0, 0, 0, 0.5)', */
+  },
   modal: {
     textAlign: 'center',
     margin: 12,

@@ -7,6 +7,38 @@ import { ImageStyle } from 'react-native';
 // UIKitten import
 import { Icon, IconElement } from '@ui-kitten/components';
 
+/*** CUSTOM ICONS ***/
+
+// DocWallet icon
+export const CustomDocWalletIcon = (props) => (
+  <Icon {...props} name='custom-doc-wallet' pack='assets' />
+);
+
+// AroundMe icon
+export const CustomAroundMeIcon = (props) => (
+  <Icon {...props} name='custom-around-me' pack='assets' />
+);
+
+// AbuseAlarm icon
+export const CustomAbuseAlarmIcon = (props) => (
+  <Icon {...props} name='custom-abuse-alarm' pack='assets' />
+);
+
+// News&Stories icon
+export const CustomNewsStoriesIcon = (props) => (
+  <Icon {...props} name='custom-news-stories' pack='assets' />
+);
+
+// Take Photo icon
+export const CustomTakePhotoIcon = (props) => (
+  <Icon {...props} name='custom-take-photo' pack='assets' />
+);
+
+// From Library icon
+export const CustomFromLibraryIcon = (props) => (
+  <Icon {...props} name='custom-from-library' pack='assets' />
+);
+
 /*** ASSETS ICONS ***/
 
 export const AssetDocWalletIcon = (style: ImageStyle): IconElement => (

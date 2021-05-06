@@ -48,12 +48,7 @@ export const CustomFromLibraryIcon = (props) => (
   <Icon {...props} name='custom-from-library' pack='assets' />
 );
 
-export const NewsStoriesDetailsScreen = (props): React.ReactElement => {
-
-  // const { item = null } = props.route.params;
-  const item = null;
-
-  const styles = useStyleSheet(themedStyles);
+export const ContentsDetailsScreen = (props): React.ReactElement => {
   const [documents, setDocuments] = React.useState([]);
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
   const [modalFileVisible, setmodalFileVisible] = React.useState(false);
@@ -69,6 +64,11 @@ export const NewsStoriesDetailsScreen = (props): React.ReactElement => {
   const [fileResponse, setFileResponse] = React.useState<ImagePickerResponse>(initialFileResponse);
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState([]);
+
+  const item = null;
+  const styles = useStyleSheet(themedStyles);
+
+  const { abuseAlarm } = props.route.params;
 
   const ZoomImage = (): void => {
     setmodalFileVisible(true);
@@ -310,7 +310,7 @@ export const NewsStoriesDetailsScreen = (props): React.ReactElement => {
       level='2'>
       <Spinner
           visible={loading}
-          textContent={I18n.t('Loading') + '...'}
+          textContent={I18n.t('Please wait') + '...'}
           textStyle={styles.spinnerTextStyle}
         />
 

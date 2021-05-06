@@ -1,5 +1,10 @@
+// React import
 import React from 'react';
-import { Image, StyleSheet, View, Alert, Text as TextNative } from 'react-native';
+
+// React Native import
+import { Image, StyleSheet, View, Text as TextNative } from 'react-native';
+
+// UIKitten import
 import { ListItem, ListItemProps, Text } from '@ui-kitten/components';
 
 export type StructureItemProps = ListItemProps & {
@@ -9,7 +14,6 @@ export type StructureItemProps = ListItemProps & {
 };
 
 export const StructureItem = (props: StructureItemProps): React.ReactElement => {
-
   const { index, item, onListviewButtonPress, ...listItemProps } = props;
 
   const onButtonPress = (): void => {
@@ -31,16 +35,18 @@ export const StructureItem = (props: StructureItemProps): React.ReactElement => 
       />
       <View style={styles.detailsContainer}>
         <TextNative numberOfLines={1} ellipsizeMode={'tail'}
-          style={styles.structureName} >
+          style={styles.structureName}>
           {item.structurename}
         </TextNative>
         <TextNative numberOfLines={1} ellipsizeMode={'tail'}
-          style={styles.structureCity} >
-          { /*item.structureAddress*/ item.city}
+          style={styles.structureCity}>
+          { item.city}
         </TextNative>
       </View>
       { item.distance && (
-      <Text style={[styles.alignRight]}>{parseFloat(item.distance).toFixed(1)} km</Text>
+        <Text style={[styles.alignRight]}>
+          {parseFloat(item.distance).toFixed(1)} km
+        </Text>
       )}
     </ListItem>
   );
@@ -60,12 +66,14 @@ const styles = StyleSheet.create({
   detailsContainer: {
     flex: 1,
     height: '100%',
-    padding: 16, backgroundColor: '#EEE',
+    padding: 16,
+    backgroundColor: '#EEE',
     paddingTop: 10,
     paddingRight: 90,
   },
   alignRight: {
-    position: 'absolute', top: 20,
+    position: 'absolute',
+    top: 20,
     right: 16,
     width: 75,
     textAlign: 'right',

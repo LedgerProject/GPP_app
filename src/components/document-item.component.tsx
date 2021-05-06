@@ -4,7 +4,7 @@ import { Image, StyleSheet, View, ImageSourcePropType } from 'react-native';
 
 // UIKitten import
 import { Button, ListItem, ListItemProps, Text, CheckBox } from '@ui-kitten/components';
-import { CloseIcon } from '../../components/icons';
+import { CloseIcon } from '../components/icons';
 
 export type DocumentItemProps = ListItemProps & {
   index: number;
@@ -65,9 +65,9 @@ export const DocumentItem = (props: DocumentItemProps): React.ReactElement => {
     let icon: ImageSourcePropType;
 
     if (mimeType === 'image/jpeg' || mimeType === 'image/png') {
-      icon = require('../../assets/images/file-icon-image.png');
+      icon = require('../assets/images/file-icon-image.png');
     } else {
-      icon = require('../../assets/images/file-icon-pdf.png');
+      icon = require('../assets/images/file-icon-pdf.png');
     }
 
     return icon;

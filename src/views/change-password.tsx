@@ -1,25 +1,34 @@
+// React import
 import React from 'react';
+
+// React Native import
 import { View } from 'react-native';
-import {
-  Button,
-  Input,
-  Layout,
-  StyleService,
-  Text,
-  useStyleSheet,
-  TopNavigation,
-  TopNavigationAction,
-  Divider, Modal,
-} from '@ui-kitten/components';
-import { EyeIcon, EyeOffIcon, MenuIcon } from '../components/icons';
-import { KeyboardAvoidingView } from '../services/3rd-party';
 import { ScrollView } from 'react-native-gesture-handler';
-import { SafeAreaLayout } from '../components/safe-area-layout.component';
-import Spinner from 'react-native-loading-spinner-overlay';
-import I18n from './../i18n/i18n';
-import axios from 'axios';
+
+// UIKitten import
+import { Button, Input, Layout, StyleService, Text, useStyleSheet, TopNavigation,
+  TopNavigationAction, Divider, Modal } from '@ui-kitten/components';
+
+// Environment import
 import { AppOptions } from '../services/app-env';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// Locale import
+import I18n from './../i18n/i18n';
+
+// Components import
+import { EyeIcon, EyeOffIcon, MenuIcon } from '../components/icons';
+import { SafeAreaLayout } from '../components/safe-area-layout.component';
+
+// Axios import
+import axios from 'axios';
+
+// Other imports
+import Spinner from 'react-native-loading-spinner-overlay';
+import { KeyboardAvoidingView } from '../services/3rd-party';
+
+// Redux import
+import { useSelector } from 'react-redux';
+import { selectToken } from '../redux/tokenSlice';
 
 export const ChangePasswordScreen = (props): React.ReactElement => {
   const [currentPassword, setCurrentPassword] = React.useState<string>();
@@ -28,7 +37,6 @@ export const ChangePasswordScreen = (props): React.ReactElement => {
   const [currentPasswordVisible, setCurrentPasswordVisible] = React.useState<boolean>(false);
   const [newPasswordVisible, setNewPasswordVisible] = React.useState<boolean>(false);
   const [confirmNewPasswordVisible, setConfirmNewPasswordVisible] = React.useState<boolean>(false);
-
   const [loading, setLoading] = React.useState(false);
   const [success, setSuccess] = React.useState<string>();
   const [error, setError] = React.useState<string>();
@@ -36,49 +44,75 @@ export const ChangePasswordScreen = (props): React.ReactElement => {
 
   const styles = useStyleSheet(themedStyles);
 
+  // Get token from Redux
+  const token = useSelector(selectToken);
+
+  // Change visibility of current password
   const onCurrentPasswordIconPress = (): void => {
     setCurrentPasswordVisible(!currentPasswordVisible);
   };
 
+  // Change visibility of new password
   const onNewPasswordIconPress = (): void => {
     setNewPasswordVisible(!newPasswordVisible);
   };
 
+  // Change visibility of confirm new password
   const onConfirmNewPasswordIconPress = (): void => {
     setConfirmNewPasswordVisible(!confirmNewPasswordVisible);
   };
 
+  // Proceed changing the password
   async function onSaveButtonPress() {
-    // TODO
+    // Reset the error and success messages
     setError('');
     setSuccess('');
+
+    // Check if entered the current password
     if (!currentPassword) {
-      setError(I18n.t('Please fill Current Password'));
+      setError(I18n.t('Please enter the current password'));
       setmodalVisible(true);
       return;
     }
+
+    // Check if entered the new password
     if (!newPassword) {
-      setError(I18n.t('Please fill New Password'));
+      setError(I18n.t('Please enter the new password'));
       setmodalVisible(true);
       return;
     }
+
+    // Check if new password is at least 8 characters
+    if (newPassword.length < 8) {
+      setError(I18n.t('Specify a new password of at least 8 characters'));
+      setmodalVisible(true);
+      return;
+    }
+
+    // Check if entered the confirm new password
     if (!confirmNewPassword) {
-      setError(I18n.t('Please confirm New Password'));
+      setError(I18n.t('Please confirm the new password'));
       setmodalVisible(true);
       return;
     }
+
+    // Check if the new password and the confirm new password match
     if (newPassword !== confirmNewPassword) {
-      setError(I18n.t('Passwords not match'));
+      setError(I18n.t('Confirm new password does not match the new password'));
       setmodalVisible(true);
       return;
     }
-    const token = await AsyncStorage.getItem('token');
+
+    // Show spinner
     setLoading(true);
+
+    // Try to change the password
     const postParams = {
-        currentPassword: currentPassword,
-        newPassword: newPassword,
-      };
-      axios
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    };
+
+    axios
       .post(AppOptions.getServerUrl() + 'user/change-password', postParams, {
         headers: {
         'Authorization': 'Bearer ' + token,
@@ -86,46 +120,63 @@ export const ChangePasswordScreen = (props): React.ReactElement => {
         },
       })
       .then(function (response) {
+        // Hide spinner
         setLoading(false);
+
+        // Check if the password is changed
         const data = response.data.changePasswordOutcome;
-        const code =  parseInt(data.code, 10);
-        switch (code) {
-          case 10:
+
+        switch (data.code) {
+          case '10':
             setError(I18n.t('Current password is wrong'));
           break;
-          case 20:
-            setError(I18n.t('New password at least 8 characters'));
+
+          case '20':
+            setError(I18n.t('Specify a new password of at least 8 characters'));
           break;
-          case 30:
+
+          case '30':
             setError(I18n.t('An error has occurred, please try again'));
           break;
-          case 201: case 202:
-            setSuccess(I18n.t(
-              'Password updated successfully',
-              ));
+
+          case '201':
+          case '202':
+            setSuccess(I18n.t('Password updated successfully'));
+
             setNewPassword('');
             setConfirmNewPassword('');
             setCurrentPassword('');
           break;
+
           default:
             setError(data.message);
         }
+
         setmodalVisible(true);
       })
-      .catch(errors => {
-        setLoading(false);
-        /*let code = error.status;
-        if (code == 401) {
-          setError(I18n.t('Current password is wrong'));
-        } else {
-          setError(I18n.t('An error has occurred, please try again'));
-        } */
-        setError(I18n.t('Current password is wrong'));
-        setmodalVisible(true);
-        throw error;
-        return;
-      });
+      .catch(err => {
+        // Set the error message
+        let errDescription = '';
 
+        if (err.response) {
+          switch (err.response.data.error.statusCode) {
+            case 401:
+              errDescription = 'Current password is wrong';
+            break;
+
+            default:
+              errDescription = err.response.data.error.message;
+            break;
+          }
+        } else {
+          errDescription = 'Unable to reach the server, please try again.';
+        }
+
+        setLoading(false);
+
+        setError(I18n.t(errDescription));
+        setmodalVisible(true);
+      });
   }
 
   const renderDrawerAction = (): React.ReactElement => (
@@ -147,11 +198,11 @@ export const ChangePasswordScreen = (props): React.ReactElement => {
         />
         <ScrollView style={styles.container}>
           <KeyboardAvoidingView style={styles.container}>
-          <Spinner
-          visible={loading}
-          textContent={I18n.t('Loading') + '...'}
-          textStyle={styles.spinnerTextStyle}
-        />
+            <Spinner
+              visible={loading}
+              textContent={I18n.t('Please wait') + '...'}
+              textStyle={styles.spinnerTextStyle}
+            />
             <Layout
               style={styles.formContainer}
               level='1'>
@@ -200,18 +251,17 @@ export const ChangePasswordScreen = (props): React.ReactElement => {
         </ScrollView>
       </View>
       <Modal
-      visible={ modalVisible }
-      backdropStyle={styles.backdrop}
-      onBackdropPress={ () => setmodalVisible(false)}
-      >
-      <Layout style={ styles.modal } >
-      <Text style={ styles.modalText } status={error ? 'danger' : 'success' }>{error ? error : success}</Text>
-      <Button
-      status={error ? 'basic' : 'primary' }
-      onPress={ () => setmodalVisible(false) }>
-        { I18n.t('CLOSE') }
-        </Button>
-      </Layout>
+        visible={ modalVisible }
+        backdropStyle={styles.backdrop}
+        onBackdropPress={ () => setmodalVisible(false)}>
+        <Layout style={ styles.modal }>
+          <Text style={ styles.modalText } status={error ? 'danger' : 'success' }>{error ? error : success}</Text>
+          <Button
+            status={error ? 'basic' : 'primary' }
+            onPress={ () => setmodalVisible(false) }>
+            { I18n.t('CLOSE') }
+          </Button>
+        </Layout>
       </Modal>
     </SafeAreaLayout>
   );
@@ -254,7 +304,9 @@ const themedStyles = StyleService.create({
     color: '#FFFFFF',
     tintColor: '#FFFFFF',
   },
-  backdrop: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+  backdrop: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
   modal: {
     textAlign: 'center',
     margin: 12,

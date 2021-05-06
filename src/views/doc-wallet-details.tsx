@@ -1,61 +1,55 @@
-import React, { useEffect } from 'react';
-import { View , ScrollView, Modal, Image, Dimensions } from 'react-native';
-import {
-  Input, Button, Divider, List, StyleService, Text, TopNavigation,
-  TopNavigationAction, useStyleSheet, Layout, Icon,
-} from '@ui-kitten/components';
-import { ArrowBackIcon, MenuIcon } from '../components/icons';
-import {FlatListSlider} from 'react-native-flatlist-slider';
+// React import
+import React from 'react';
+
+// React Native import
+import { ScrollView, Modal, Dimensions } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
-import { SafeAreaLayout } from '../components/safe-area-layout.component';
-// import axios from 'axios';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { AppOptions } from '../services/app-options';
-import I18n from './../i18n/i18n';
-// import {Buffer} from 'buffer';
 import AutoHeightImage from 'react-native-auto-height-image';
 
-// REDUX
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  manageToken,
-  selectToken,
-} from '../redux/tokenSlice';
+// UIKitten import
+import { Button, StyleService, Text, TopNavigation, TopNavigationAction,
+  useStyleSheet, Layout } from '@ui-kitten/components';
 
-export const DocDetailsScreen = (props): React.ReactElement => {
+// Component import
+import { ArrowBackIcon, MenuIcon } from '../components/icons';
+import { SafeAreaLayout } from '../components/safe-area-layout.component';
+
+// Locale import
+import I18n from './../i18n/i18n';
+
+// Redux import
+import { useSelector } from 'react-redux';
+import { selectToken } from '../redux/tokenSlice';
+
+export const DocWalletDetailsScreen = (props): React.ReactElement => {
+  const [modalVisible, setmodalVisible] = React.useState(false);
 
   const { item, image } = props.route.params;
-  const [modalVisible, setmodalVisible] = React.useState(false);
   const styles = useStyleSheet(themedStyles);
-  const { height, width } = Dimensions.get( 'window' );
+  const { width } = Dimensions.get( 'window' );
 
-  // Get Token from REDUX
+  const zoomImages = [{
+     url: image,
+     props: {},
+    },
+  ];
+
+  // Get Token from Redux
   const token = useSelector(selectToken);
 
+  // Navigate back event
   const navigateBack = () => {
     props.navigation.goBack();
+  };
+
+  // Zoom image
+  const zoomImage = (): void => {
+    setmodalVisible(true);
   };
 
   const renderDrawerAction = (): React.ReactElement => (
     <TopNavigationAction icon={ArrowBackIcon} onPress={navigateBack} />
   );
-
-  const ZoomImage = (): void => {
-    // alert(JSON.stringify(item));
-    // props.navigation && props.navigation.navigate('Homepage');
-    setmodalVisible(true);
-  };
-
-/*  useEffect(() => {
-    console.log(image);
-  }, []);*/
-
-   const zoom_images = [
-    {
-     url: image,
-     props: {},
-    },
-   ];
 
   return (
     <SafeAreaLayout
@@ -68,32 +62,34 @@ export const DocDetailsScreen = (props): React.ReactElement => {
         style={styles.topBar}
       />
       <ScrollView>
-  <Layout
-    style={styles.detailsContainer}
-    level='1'>
-    <Text
-      category='h6' style={styles.documentTitle}>
-      {item.title}
-    </Text>
-      { image && (
-      <AutoHeightImage width={width - 30} source={{ uri: image }} />
-      ) }
-    <Button style={styles.zoomButton} onPress={ZoomImage}>{I18n.t('Zoom')}</Button>
-  </Layout>
-</ScrollView>
+        <Layout
+          style={styles.detailsContainer}
+          level='1'>
+          <Text
+            category='h6' style={styles.documentTitle}>
+            {item.title}
+          </Text>
+          { image && (
+            <AutoHeightImage width={width - 30} source={{ uri: image }} />
+          ) }
+          <Button
+            style={styles.zoomButton}
+            onPress={zoomImage}>
+              {I18n.t('Zoom')}
+            </Button>
+        </Layout>
+      </ScrollView>
 
-<Modal
-visible={modalVisible}
-transparent={true}
-onRequestClose={ () => setmodalVisible(false) }
->
-  <ImageViewer
-  imageUrls={zoom_images}
-  enableSwipeDown={true}
-  onSwipeDown={ () => setmodalVisible(false) }
-  />
-</Modal>
-</SafeAreaLayout>
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        onRequestClose={ () => setmodalVisible(false) }>
+        <ImageViewer
+          imageUrls={zoomImages}
+          enableSwipeDown={true}
+          onSwipeDown={ () => setmodalVisible(false) }/>
+      </Modal>
+    </SafeAreaLayout>
   );
 };
 
@@ -192,8 +188,12 @@ const themedStyles = StyleService.create({
     marginRight: 5,
     alignItems: 'center',
   },
-  button: { width: '100%' },
-  backdrop: { /* backgroundColor: 'rgba(0, 0, 0, 0.5)', */ },
+  button: {
+    width: '100%',
+  },
+  backdrop: {
+    /* backgroundColor: 'rgba(0, 0, 0, 0.5)', */
+  },
   documentTitle: {
     textAlign: 'center',
     color: 'color-light-100',

@@ -5,8 +5,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { DocWalletNavigator } from './doc-wallet.navigator';
 import { AroundMeNavigator } from './around-me.navigator';
-import { AbuseAlarmNavigator } from './abuse-alarm.navigator';
-import { NewsStoriesNavigator } from './news-stories.navigator';
+import { ContentsNavigator } from './contents.navigator';
 
 // Screen import
 import { HomepageScreen } from '../views/homepage';
@@ -21,8 +20,8 @@ export const HomepageNavigator = (): React.ReactElement => (
     <Stack.Screen name='Home' component={HomepageScreen}/>
     <Stack.Screen name='DocWallet' component={DocWalletNavigator}/>
     <Stack.Screen name='AroundMe' component={AroundMeNavigator}/>
-    <Stack.Screen name='AbuseAlarm' component={AbuseAlarmNavigator}/>
-    <Stack.Screen name='NewsStories' component={NewsStoriesNavigator}/>
+    <Stack.Screen name='AbuseAlarm' component={ContentsNavigator}/>
+    <Stack.Screen name='NewsStories' component={ContentsNavigator}/>
     <Stack.Screen name='MyProfile' component={MyProfileScreen}/>
     <Stack.Screen name='Settings' component={SettingsScreen}/>
     <Stack.Screen name='ChangePassword' component={ChangePasswordScreen}/>

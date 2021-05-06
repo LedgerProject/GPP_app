@@ -358,7 +358,7 @@ export default ({ navigation }): React.ReactElement => {
       <KeyboardAvoidingView style={styles.container}>
         <Spinner
           visible={loading}
-          textContent={I18n.t('Loading') + '...'}
+          textContent={I18n.t('Please wait') + '...'}
           textStyle={styles.spinnerTextStyle}/>
 
         <View style={styles.logoContainer}>

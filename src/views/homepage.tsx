@@ -9,28 +9,8 @@ import I18n from './../i18n/i18n';
 import { TopNavigation, TopNavigationAction, Icon, StyleService, useStyleSheet, Layout } from '@ui-kitten/components';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { MenuGridList } from '../components/menu-grid-list.component';
-import { MenuIcon } from '../components/icons';
+import { MenuIcon, CustomDocWalletIcon, CustomAroundMeIcon, CustomAbuseAlarmIcon, CustomNewsStoriesIcon } from '../components/icons';
 import { ThemedIcon } from '../components/themed-icon.component';
-
-// DocWallet icon
-export const CustomDocWalletIcon = (props) => (
-  <Icon {...props} name='custom-doc-wallet' pack='assets' />
-);
-
-// AroundMe icon
-export const CustomAroundMeIcon = (props) => (
-  <Icon {...props} name='custom-around-me' pack='assets' />
-);
-
-// AbuseAlarm icon
-export const CustomAbuseAlarmIcon = (props) => (
-  <Icon {...props} name='custom-abuse-alarm' pack='assets' />
-);
-
-// News&Stories icon
-export const CustomNewsStoriesIcon = (props) => (
-  <Icon {...props} name='custom-news-stories' pack='assets' />
-);
 
 export const HomepageScreen = (props): React.ReactElement => {
   const [data, setData] = React.useState([]);

@@ -1,24 +1,44 @@
+// React import
 import React, { useEffect } from 'react';
-import { Image, View, ListRenderItemInfo } from 'react-native';
-import { Button, Divider, List, Layout, StyleService, Text, TopNavigation,
-  TopNavigationAction, useStyleSheet, Modal as ModalUiKitten, Input, Icon } from '@ui-kitten/components';
+
+// React Native import
+import { ListRenderItemInfo } from 'react-native';
+
+// UIKitten import
+import { Button, List, Layout, StyleService, Text, TopNavigation,
+  TopNavigationAction, useStyleSheet, Modal as ModalUiKitten } from '@ui-kitten/components';
+
+// Locale import
+import I18n from './../i18n/i18n';
+
+// Component import
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { CompliantItem } from './compliants/compliant-item.component';
-import { ArrowBackIcon, MenuIcon } from '../components/icons';
-import { Compliant } from './compliants/data';
-import data_compliants from './compliants/data';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MenuIcon } from '../components/icons';
+
+// Environment import
 import { AppOptions } from '../services/app-env';
-import I18n from './../i18n/i18n';
-import Spinner from 'react-native-loading-spinner-overlay';
+
+// Model import
 import { MenuItem } from '../model/menu-item.model';
+
+// Axios import
+import axios from 'axios';
+
+// AsyncStorage import
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// Other imports
+import Spinner from 'react-native-loading-spinner-overlay';
+
+// REMOVE IMPORTS
+import data_compliants, { Compliant } from './compliants/data';
 
 export interface LayoutData extends MenuItem {
   route: string;
 }
 
-export const NewsStoriesListScreen = (props): React.ReactElement => {
+export const ContentsListScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
   const [compliants, setCompliants] = React.useState([]);
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
@@ -29,6 +49,8 @@ export const NewsStoriesListScreen = (props): React.ReactElement => {
   const [alertTitle, setAlertTitle] = React.useState('');
   const [alertMessage, setAlertMessage] = React.useState('');
   const [loading, setLoading] = React.useState(false);
+
+  // const { abuseAlarm } = props.route.params;
 
   const onItemRemove = (compliant: Compliant, index: number): void => {
     // DeleteDocument(document,index);
@@ -63,7 +85,7 @@ export const NewsStoriesListScreen = (props): React.ReactElement => {
   }
 
   const onItemPress = (compliant: Compliant, index: number): void => {
-    props.navigation && props.navigation.navigate('CompliantEdit', { item: compliant });
+    props.navigation && props.navigation.navigate('ContentsDetails', { item: compliant });
   };
 
   const renderCompliantItem = (info: ListRenderItemInfo<Compliant>): React.ReactElement => (
@@ -140,7 +162,7 @@ export const NewsStoriesListScreen = (props): React.ReactElement => {
       level='2'>
       <Spinner
           visible={loading}
-          textContent={I18n.t('Loading') + '...'}
+          textContent={I18n.t('Please wait') + '...'}
           textStyle={styles.spinnerTextStyle}
         />
         <Text

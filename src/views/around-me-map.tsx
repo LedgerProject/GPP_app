@@ -1,31 +1,40 @@
+// React import
 import React, { useEffect } from 'react';
+
+// React Native import
 import { View, ScrollView, Image, StyleSheet, Dimensions } from 'react-native';
-import {
-  Button, Divider, StyleService, Text, TopNavigation,
-  TopNavigationAction, useStyleSheet, Layout, Select, Modal as ModalUiKitten,
-} from '@ui-kitten/components';
-import { MenuIcon } from '../components/icons';
-// import { categoryOptions } from './where-i-am/data-category';
-import { getBoundByRegion } from '../services/maps';
-import {PROVIDER_GOOGLE, Marker, Callout, CalloutSubview } from 'react-native-maps';
+
+// Maps
+import {PROVIDER_GOOGLE, Marker, Callout, Region } from 'react-native-maps';
 import MapView from 'react-native-map-clustering';
-import { Region } from 'react-native-maps';
-import { SafeAreaLayout } from '../components/safe-area-layout.component';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppOptions } from '../services/app-env';
 import Geocoder from 'react-native-geocoding';
-import I18n from './../i18n/i18n';
 import GetLocation from 'react-native-get-location';
+import { getBoundByRegion } from '../services/maps';
+
+// UIKitten import
+import { Button, StyleService, Text, TopNavigation, TopNavigationAction, useStyleSheet,
+  Layout, Select, Modal as ModalUiKitten } from '@ui-kitten/components';
+
+// Environment import
+import { AppOptions } from '../services/app-env';
+
+// Locale import
+import I18n from './../i18n/i18n';
+
+// Component import
+import { SafeAreaLayout } from '../components/safe-area-layout.component';
+import { MenuIcon } from '../components/icons';
+
+// Axios
+import axios from 'axios';
+
+// Redux import
+import { useSelector } from 'react-redux';
+import { selectToken } from '../redux/tokenSlice';
+
+// Other imports
 import Spinner from 'react-native-loading-spinner-overlay';
-
-// REDUX
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  manageToken,
-  selectToken,
-} from '../redux/tokenSlice';
-
+import { Category, getCategories } from '../services/structures.service';
 
 // Initialize the module (needs to be done only once)
 Geocoder.init( AppOptions.getGeocoderApiKey() , {language : 'en'});
@@ -55,7 +64,6 @@ const initialBoudaries: RegionBoudaries = {
   southEastLongitude: 0,
 };
 
-
 const INITIAL_REGION = {
   latitude: 52.5,
   longitude: 19.2,
@@ -64,13 +72,11 @@ const INITIAL_REGION = {
 };
 
 export const AroundMeMapScreen = (props): React.ReactElement => {
-  const styles = useStyleSheet(themedStyles);
-
   const [mapRegion, setMapRegion] = React.useState<Region>();
   const [regionBoundaries, setRegionBoundaries] = React.useState<RegionBoudaries>(initialBoudaries);
   const [isMapReady, setMapReady] = React.useState(false);
   const [filterCategory, setFilterCategory] = React.useState(null);
-  const [categoryOptions, setCategoryOptions] = React.useState([]);
+  const [categoryOptions, setCategoryOptions] = React.useState<Category[]>([]);
   const [markers, setMarkers] = React.useState([]);
   const [currentCountry, setCurrentCountry] = React.useState('');
   const [avoidNextRegionComplete, setAvoidNextRegionComplete] = React.useState(true);
@@ -83,20 +89,24 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
   const [alertMessage, setAlertMessage] = React.useState('');
   const [currentPosition, setCurrentPosition] = React.useState((): any => {});
 
-  // Get Token from REDUX
+  const styles = useStyleSheet(themedStyles);
+
+  // Get Token from Redux
   const token = useSelector(selectToken);
 
-  // Init functions
+  // Use Effect
   useEffect(() => {
-    getCategories();
+    setCategoriesList();
     getCurrentPosition();
   }, []);
 
-  // When map is ready set state to true (useful to show zoom controls)
-  const handleMapReady = () => {
-    setMapReady(true);
+  // Get the filter categories
+  const setCategoriesList = async () => {
+    const categoriesArray = await getCategories(token);
+    setCategoryOptions(categoriesArray);
   };
 
+  // Get the user current position
   function getCurrentPosition() {
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
@@ -108,12 +118,15 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
 
       setLatitudeDelta(latDelta);
       setLongitudeDelta(lonDelta);
-      setCurrentPosition({ latitude: location.latitude, longitude: location.longitude });
+
+      setCurrentPosition({
+        latitude: location.latitude,
+        longitude: location.longitude,
+      });
+
       const initialRegion: Region = {
         latitude: location.latitude,
         longitude: location.longitude,
-        // latitude: 41.9027835,
-        // longitude: 12.4963655,
         latitudeDelta: latDelta,
         longitudeDelta: lonDelta,
       };
@@ -124,63 +137,29 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
     })
     .catch(error => {
       setMapRegion(initialMapRegion);
-      // const { code, message } = error;
-      // console.log(code, message);
     });
   }
 
-  // Get the filter categories
-  async function getCategories() {
-    let x = 0;
-    // const token = await AsyncStorage.getItem('token');
-
-    axios
-      .get(AppOptions.getServerUrl() + 'categories', {
-        headers: {
-          'Authorization': 'Bearer ' + token,
-          'Content-Type': 'application/json',
-        },
-      })
-      .then(function (response) {
-        const data: any = response.data;
-        const categoryArray = [];
-        categoryArray.push( { index: x, text: I18n.t('Show All'), idCategory: '' } );
-        data.map( (category) => {
-          x++;
-          const catObj = { index: x, text: category.identifier, idCategory: category.idCategory };
-          categoryArray.push( catObj );
-        });
-        setCategoryOptions(categoryArray);
-      })
-      .catch(function (error) {
-        // alert(JSON.stringify(error));
-        throw error;
-      });
-  }
+  // When map is ready set state to true (useful to show zoom controls)
+  const handleMapReady = () => {
+    setMapReady(true);
+  };
 
   // Get the markers from the endpoint, based on the region coordinates
-  async function getMarkers(
-    northWestLatitude,
-    northWestLongitude,
-    southEastLatitude,
-    southEastLongitude,
-    filterCat = null,
-    delta = 0,
-  ) {
-
+  async function getMarkers(northWestLatitude, northWestLongitude, southEastLatitude, southEastLongitude,
+    filterCat = null, delta = 0) {
     // Remove the current markers on the map
     setMarkers([]);
 
     if (delta < 1.5) {
+      // Show spinner
       setLoading(true);
+
       // Define the category filter
       let addCategory = '';
       if (filterCat) {
         addCategory = ' ,"idCategory": "' + filterCat.idCategory + '" ';
       }
-
-      // Get current token
-      // const token = await AsyncStorage.getItem('token');
 
       // Define filters
       const where = `"where": {`
@@ -225,9 +204,13 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
           setMarkers(response.data);
         })
         .catch(function (error) {
+          // Hide spinner
           setLoading(false);
-          // alert(JSON.stringify(error));
-          throw error;
+
+          // Show the error message
+          setAlertTitle(I18n('Error getting structures'));
+          setAlertMessage(I18n.t('An error has occurred, please try again'));
+          setModalAlertVisible(true);
         });
     }
   }
@@ -245,39 +228,45 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
     );
   };
 
-  // Event to show the list
+  // Open the structures list
   const onListButtonPress = (): void => {
-   if (markers.length) {
-    props.navigation && props.navigation.navigate('WhereIAmList', {
-      regionBoundaries: regionBoundaries,
-      option: filterCategory,
-      Country: currentCountry,
-      currentPosition: currentPosition,
-    });
-   } else {
+    if (markers.length) {
+      // Open the structures list, passing the filters, the region boundaries, the country and the current position
+      props.navigation && props.navigation.navigate('AroundMeList', {
+        regionBoundaries: regionBoundaries,
+        selectedCategory: filterCategory,
+        currentCountry: currentCountry,
+        currentPosition: currentPosition,
+      });
+    } else {
+      // Show the alert message (no structures available on the map)
     showAlertMessage(
-      I18n.t('Structures Error'),
-      I18n.t('No Structure Found'),
+      I18n.t('No structures available'),
+      I18n.t('Search before the structures on the map, then click the list button'),
     );
-   }
+    }
   };
 
   // Event to show the country information
   const onCountryButtonPress = (): void => {
     if (currentCountry) {
-      props.navigation && props.navigation.navigate('WhereIAmCountry', { Country: currentCountry});
+      props.navigation && props.navigation.navigate('AroundMeCountry', {
+        Country: currentCountry,
+      });
     } else {
       showAlertMessage(
-        I18n.t('Country Error'),
-        I18n.t('No Country Selected'),
+        I18n.t('No country available'),
+        I18n.t('Show before the country on the map, then click the country information button'),
       );
     }
   };
 
+  // Event on marker press
   const onMarkerPress = (): void => {
     setAvoidNextRegionComplete(true);
   };
 
+  // Event on pan drag map
   const onPanDragMap = (): void => {
     setAvoidNextRegionComplete(false);
   };
@@ -286,12 +275,15 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
   const onRegionChange = (curMapRegion) => {
     // Get the map boundaries
     const boundaries = getBoundByRegion(curMapRegion);
+
     // Set the map boundaries
     setRegionBoundaries(boundaries);
     setZoom(curMapRegion.longitudeDelta);
-    if (avoidNextRegionComplete === false && latitudeDelta < 1.5) {
 
+    // Load the structures from the server if the latitudeDelta (zoom is < 1.5)
+    if (avoidNextRegionComplete === false && latitudeDelta < 1.5) {
       setAvoidNextRegionComplete(true);
+
       // Get the markers from the endpoint
       getMarkers(
         boundaries.northWestLatitude,
@@ -301,6 +293,7 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
         filterCategory,
         curMapRegion.longitudeDelta,
       );
+
       // Get the country based on current map region coordinates
       Geocoder.from(curMapRegion.latitude, curMapRegion.longitude)
         .then(json => {
@@ -317,12 +310,11 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
 
           setCurrentCountry(countryLong);
         })
-        .catch(error => {
-          // console.log(error)
-        });
+        .catch(error => {});
     }
   };
 
+  // Show the alert message
   const showAlertMessage = (title: string, message: string) => {
     setAlertTitle(title);
     setAlertMessage(message);
@@ -341,123 +333,142 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
       style={styles.safeArea}
       insets='top'>
       <TopNavigation
-        title={I18n.t('Structures Map')}
+        title={I18n.t('AroundMe')}
         titleStyle={styles.topBarTitle}
         leftControl={renderDrawerAction() }
         style={styles.topBar}
       />
       <Spinner
           visible={loading}
-          textContent={I18n.t('Loading') + '...'}
+          textContent={I18n.t('Please wait') + '...'}
           textStyle={styles.spinnerTextStyle}
         />
       <ScrollView>
         <Layout style={styles.filtersContainer}>
           <Text style={styles.labelWhat}>{I18n.t('What are you searching for') + '?'}</Text>
           <Select
-                {...props}
-                style={styles.select}
-                selectedOption={filterCategory}
-                data={categoryOptions}
-                placeholder={I18n.t('Show All')}
-                onSelect={onSelectCategory}
-              />
+            {...props}
+            style={styles.select}
+            selectedOption={filterCategory}
+            data={categoryOptions}
+            placeholder={I18n.t('Show All')}
+            onSelect={onSelectCategory}
+          />
         </Layout>
         <Layout style={styles.mapContainer}>
           { zoom >= 1.5 && (
-          <Text style={styles.info}>{I18n.t('Zoom in to view the structures')}</Text>
+            <Text style={styles.info}>
+              {I18n.t('Zoom in to view the structures')}
+            </Text>
           )}
           {mapRegion && (
-          <MapView
-            provider={PROVIDER_GOOGLE}
-            style={isMapReady ? styles.Map : {}}
-            initialRegion={mapRegion}
-            onRegionChangeComplete={onRegionChange}
-            zoomControlEnabled={true}
-            onMapReady={handleMapReady}
-            onPanDrag={onPanDragMap}
-            >
-            {
-              markers.map( (structure, index) => {
-                return (
+            <MapView
+              provider={PROVIDER_GOOGLE}
+              style={isMapReady ? styles.Map : {}}
+              initialRegion={mapRegion}
+              onRegionChangeComplete={onRegionChange}
+              zoomControlEnabled={true}
+              onMapReady={handleMapReady}
+              onPanDrag={onPanDragMap}
+              >
+              {
+                markers.map( (structure, index) => {
+                  return (
+                    <Marker
+                      key={index}
+                      coordinate={{ latitude: structure.latitude, longitude: structure.longitude }}
+                      onPress={onMarkerPress}>
+                      <View>
+                        <Image
+                          source={ { uri: 'data:image/png;base64,' + structure.iconmarker } }
+                          style={ { height: 37, width: 32 }}
+                        />
+                      </View>
+                      <Callout style={styles.callout} onPress={(e) => {
+                          props.navigation && props.navigation.navigate('AroundMeDetails',
+                          { idStructure: structure.idStructure });
+                        }}>
+                        <View>
+                          <Text
+                            category='s1'
+                            style={styles.bold}>{structure.structurename}
+                          </Text>
+                          <Text>{structure.address}</Text>
+                          <Text>{structure.city }</Text>
+                          <Button
+                            size='small'
+                            appearance='outline'
+                            status='primary'>
+                              {I18n.t('Structure Details')}
+                          </Button>
+                        </View>
+                      </Callout>
+                    </Marker>
+                  );
+                })
+              }
+              { currentPosition && (
                 <Marker
-                  key={index}
-                  coordinate={{ latitude: structure.latitude, longitude: structure.longitude }}
-                  // image={{ uri: 'data:image/png;base64,' + structure.iconmarker }}
-                  onPress={onMarkerPress}
-                >
-            <View>
-              <Image
-                  source={ { uri: 'data:image/png;base64,' + structure.iconmarker } }
-                  style={{ height: 37, width: 32 }}
-                  />
-            </View>
-          <Callout style={styles.callout} onPress={(e) => {
-              props.navigation && props.navigation.navigate('WhereIAmDetails',
-              { idStructure: structure.idStructure });
-            }}
-            >
-            <View>
-              <Text category='s1' style={styles.bold}>{structure.structurename}</Text>
-              <Text>{structure.address}</Text>
-              <Text>{structure.city }</Text>
-              <Button size='small' appearance='outline' status='primary'>{I18n.t('Structure Details')}</Button>
-
-            </View>
-          </Callout>
-
-                </Marker>
-                );
-              })
-            }
-            { currentPosition && (
-            <Marker
                   key={-999}
-                  coordinate={{ latitude: currentPosition.latitude, longitude: currentPosition.longitude }}
-                  // image={{ uri: 'data:image/png;base64,' + structure.iconmarker }}
-                >
+                  coordinate={{ latitude: currentPosition.latitude, longitude: currentPosition.longitude }}>
                 </Marker>
-            ) }
-            </MapView>)}
+              ) }
+            </MapView>
+          )}
         </Layout>
         <Layout style={styles.buttonsContainer}>
-         <Layout style={styles.buttonLeft} >
-          <Button style={styles2.button} status='primary' size='small'
-            onPress={onListButtonPress}>{I18n.t('Show List')}
-          </Button>
-         </Layout>
-         <Layout style={styles.buttonRight} >
-          <Button style={styles2.button} status='primary'
-            size='small' onPress={onCountryButtonPress}>{I18n.t('Country Informations')}</Button>
-         </Layout>
+          <Layout style={styles.buttonLeft} >
+            <Button
+              style={styles2.button}
+              status='primary'
+              size='small'
+              onPress={onListButtonPress}>
+                {I18n.t('Show List')}
+            </Button>
+          </Layout>
+          <Layout style={styles.buttonRight} >
+            <Button
+              style={styles2.button}
+              status='primary'
+              size='small'
+              onPress={onCountryButtonPress}>
+                {I18n.t('Country Informations')}
+            </Button>
+          </Layout>
         </Layout>
         <Layout style={styles.downContainer}>
           <Text style={styles.downText}>{I18n.t('Now you are on') + ':'}</Text>
           <Text style={styles.downTextBold}>{currentCountry}</Text>
         </Layout>
-
         <ModalUiKitten
-        visible={ modalAlertVisible }
-        backdropStyle={styles.backdrop}
-        onBackdropPress={() => setModalAlertVisible(false)}>
-        <Layout style={ styles.modal } >
-          <Text style={ styles.modalText } category='h6' >{alertTitle}</Text>
-          <Text style={ styles.modalText } >{alertMessage}</Text>
-          <Button status='basic' onPress={() => setModalAlertVisible(false)}>{I18n.t('CLOSE')}</Button>
-        </Layout>
-      </ModalUiKitten>
+          visible={ modalAlertVisible }
+          backdropStyle={styles.backdrop}
+          onBackdropPress={() => setModalAlertVisible(false)}>
+          <Layout style={ styles.modal } >
+            <Text style={ styles.modalText } category='h6' >{alertTitle}</Text>
+            <Text style={ styles.modalText } >{alertMessage}</Text>
+            <Button
+              status='basic'
+              onPress={() => setModalAlertVisible(false)}>
+                {I18n.t('CLOSE')}
+            </Button>
+          </Layout>
+        </ModalUiKitten>
       </ScrollView>
     </SafeAreaLayout>
   );
 };
 
 const styles2 = StyleSheet.create({
-  button: { width: '100%' },
+  button: {
+    width: '100%',
+  },
 });
 
 const themedStyles = StyleService.create({
   safeArea: {
     flex: 1,
+    backgroundColor: 'background-basic-color-4',
   },
   labelWhat: {
     textAlign: 'left',
@@ -538,7 +549,9 @@ const themedStyles = StyleService.create({
   spinnerTextStyle: {
     color: '#FFF',
   },
-  backdrop: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+  backdrop: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
   modal: {
     textAlign: 'center',
     margin: 12,

@@ -1,32 +1,36 @@
+// React import
 import React, { useEffect } from 'react';
-import { View, ScrollView, ListRenderItemInfo, Alert } from 'react-native';
-import {
-  Input, Button, Divider, List, ListItem, StyleService, Text,
-  TopNavigation, TopNavigationAction, useStyleSheet, Layout, Select, Modal as ModalUiKitten,
-} from '@ui-kitten/components';
-import { ArrowBackIcon, MenuIcon } from '../components/icons';
-import { SafeAreaLayout } from '../components/safe-area-layout.component';
-// import { categoryOptions } from './where-i-am/data-category';
 
-import { StructureItem } from './where-i-am/structure-item.component';
+// React Native import
+import { View } from 'react-native';
 
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// UIKitten import
+import { Input, Button, List, StyleService, Text, TopNavigation, TopNavigationAction,
+  useStyleSheet, Layout, Select, Modal as ModalUiKitten } from '@ui-kitten/components';
+
+// Environment import
 import { AppOptions } from '../services/app-env';
-import I18n from './../i18n/i18n';
-import Spinner from 'react-native-loading-spinner-overlay';
 
-// REDUX
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  manageToken,
-  selectToken,
-} from '../redux/tokenSlice';
+// Locale import
+import I18n from './../i18n/i18n';
+
+// Component import
+import { ArrowBackIcon } from '../components/icons';
+import { SafeAreaLayout } from '../components/safe-area-layout.component';
+import { StructureItem } from '../components/structure-item.component';
+
+// Axios import
+import axios from 'axios';
+
+// Redux import
+import { useSelector } from 'react-redux';
+import { selectToken } from '../redux/tokenSlice';
+
+// Other imports
+import Spinner from 'react-native-loading-spinner-overlay';
+import { Category, getCategories } from '../services/structures.service';
 
 export const AroundMeListScreen = (props): React.ReactElement => {
-  const styles = useStyleSheet(themedStyles);
-  const { regionBoundaries, option, Country, currentPosition } = props.route.params;
-
   const [filter, setFilter] = React.useState(props.selectedOption);
   const [searchterm, setSearchterm] = React.useState('');
   const [categories, setCategories] = React.useState([]);
@@ -38,45 +42,82 @@ export const AroundMeListScreen = (props): React.ReactElement => {
   const [alertTitle, setAlertTitle] = React.useState('');
   const [alertMessage, setAlertMessage] = React.useState('');
 
-  // Get Token from REDUX
+  const styles = useStyleSheet(themedStyles);
+  const { regionBoundaries, selectedCategory, currentCountry, currentPosition } = props.route.params;
+
+  // Get Token from Redux
   const token = useSelector(selectToken);
 
-  const onSelectFilter = (selected_option) => {
-    setFilter(selected_option);
-    getMyRegion(
+  // Use effect
+  useEffect(() => {
+    // Set the filter categories list
+    setCategoriesList();
+
+    // Set the selected category from maps
+    let currentCategory = {
+      index: 0,
+      idCategory: '',
+      alias: '',
+      text: I18n.t('Show All'),
+    };
+
+    if (selectedCategory) {
+      currentCategory = selectedCategory;
+    }
+
+    onSelectFilter(currentCategory);
+  }, []);
+
+  // Get the filter categories
+  const setCategoriesList = async () => {
+    const categoriesArray = await getCategories(token);
+    setCategoryOptions(categoriesArray);
+  };
+
+  // Event on select filter category
+  const onSelectFilter = (selectedOption) => {
+    setFilter(selectedOption);
+
+    getStructures(
       regionBoundaries.northWestLatitude,
       regionBoundaries.northWestLongitude,
       regionBoundaries.southEastLatitude,
       regionBoundaries.southEastLongitude,
-      selected_option.idCategory,
+      selectedOption.idCategory,
       currentPosition.latitude,
       currentPosition.longitude,
     );
   };
 
-  async function getMyRegion(Lat1, Lon1, Lat2, Lon2, idCategory = null, currentLat = null, currentLon = null) {
+  // Get the structures from the server
+  async function getStructures(latitudeNorthWest, longitudeNorthWest, latitudeSouthEast, longitudeSouthEast,
+    idCategory = null, currentLat = null, currentLon = null) {
+    // Show spinner
     setLoading(true);
-    setMarkers([]);
-    let add_on = '';
-    if (idCategory) {
-      add_on = ' ,"idCategory": "' + idCategory + '" ';
-    }
-    if (currentLat && currentLon) {
-      add_on = add_on + ' ,"userLatitude": "' + currentLat + '" ,"userLongitude": "' + currentLon + '" ';
-    }
-    // get position
 
-    // ask structures
-    // const token = await AsyncStorage.getItem('token');
-    // console.log(token);
+    // Reset the markers
+    setMarkers([]);
+
+    // Set the filters
+    let filters = '';
+
+    if (idCategory) {
+      filters = ' ,"idCategory": "' + idCategory + '" ';
+    }
+
+    if (currentLat && currentLon) {
+      filters = filters + ' ,"userLatitude": "' + currentLat + '" ,"userLongitude": "' + currentLon + '" ';
+    }
+
     const where = `"where": {`
-        + `"latitudeNorthWest": ` + Lat1
-        + `,"longitudeNorthWest": ` + Lon1
-        + `,"latitudeSouthEast": ` + Lat2
-        + `,"longitudeSouthEast": ` + Lon2
-        + add_on
+        + `"latitudeNorthWest": ` + latitudeNorthWest
+        + `,"longitudeNorthWest": ` + longitudeNorthWest
+        + `,"latitudeSouthEast": ` + latitudeSouthEast
+        + `,"longitudeSouthEast": ` + longitudeSouthEast
+        + filters
       + `},`;
 
+    // Set the fields
     const fields = `"fields": {`
         + `"idStructure": true`
         + `,"idOrganization": false`
@@ -96,147 +137,125 @@ export const AroundMeListScreen = (props): React.ReactElement => {
         + `,"iconimage": true`
         + `,"iconmarker": false`
       + `}`;
+
     axios
       .get(AppOptions.getServerUrl() + 'structures/?filter={' + where + fields + '}', {
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(function (response) {
-      setLoading(false);
-       // console.log(response);
-       setMarkers(response.data);
-       setSearchMarkers(response.data);
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(function (response) {
+        // Hide spinner
+        setLoading(false);
+
+        // Set the markers on the map
+        setMarkers(response.data);
+
+        // Set the markers for textual search
+        setSearchMarkers(response.data);
     })
     .catch(function (error) {
+      // Hide spinner
       setLoading(false);
-      // alert(JSON.stringify(error));
-      throw error;
+
+      // Show the error message
+      showAlertMessage(
+        I18n.t('Error loading structures'),
+        I18n.t('An error has occurred, please try again'),
+      );
     });
   }
 
-  useEffect(() => {
-    getCategories();
-    let option_category = { index: 0, text: I18n.t('Show All'), idCategory: '' };
-    if (option) {
-      option_category = option;
-    }
-    onSelectFilter(option_category);
-  }, []);
-
-  async function getCategories() {
-    let x = 0;
-    // const token = await AsyncStorage.getItem('token');
-    axios
-    .get(AppOptions.getServerUrl() + 'categories', {
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(function (response) {
-       setCategories(response.data);
-       const data: any = response.data;
-       const categoryArray = [];
-       categoryArray.push( { index: x, text: I18n.t('Show All'), idCategory: '' } );
-       data.map( (category) => {
-         x++;
-         const catObj = { index: x, text: category.identifier, idCategory: category.idCategory };
-         categoryArray.push( catObj );
-       });
-       setCategoryOptions(categoryArray);
-    })
-    .catch(function (error) {
-      // alert(JSON.stringify(error));
-      throw error;
-    });
-  }
-
-  const handleTextChange = (text): void => {
+  // Textual filter change
+  const onTextChange = (text): void => {
     setSearchterm(text);
-    let show_structures = [];
+
+    let structuresFiltered = [];
     if (!text) {
-      show_structures = markers;
+      structuresFiltered = markers;
     } else {
       markers.forEach(element => {
         const search = text.toLowerCase();
         const name = element.structurename.toLowerCase();
         const address = element.address.toLowerCase();
         const city = element.city.toLowerCase();
+
         if (name.includes(search) || address.includes(search) || city.includes(search)) {
-          show_structures.push(element);
+          structuresFiltered.push(element);
         }
       });
     }
-    setSearchMarkers(show_structures);
+
+    setSearchMarkers(structuresFiltered);
   };
 
+  // Open the map view
   const onMapButtonPress = (): void => {
-    props.navigation && props.navigation.navigate('WhereIAmMap');
+    props.navigation && props.navigation.navigate('AroundMeMap');
   };
 
+  // Open the country information view
   const onCountryButtonPress = (): void => {
-
-  if (Country) {
-    props.navigation && props.navigation.navigate('WhereIAmCountry', {
-      Country: Country,
-    });
-  } else {
-    showAlertMessage(
-      I18n.t('Country Error'),
-      I18n.t('No Country Selected'),
-    );
-  }
+    if (currentCountry) {
+      props.navigation && props.navigation.navigate('AroundMeCountry', {
+        Country: currentCountry,
+      });
+    } else {
+      showAlertMessage(
+        I18n.t('No country available'),
+        I18n.t('Show before the country on the map'),
+      );
+    }
   };
 
-  const onDetailsButtonPress = (): void => {
-    props.navigation && props.navigation.navigate('WhereIAmDetails');
-  };
-
+  // Back to the previous view
   const navigateBack = () => {
     props.navigation.goBack();
   };
 
-  const renderDrawerAction = (): React.ReactElement => (
-    <TopNavigationAction icon={ArrowBackIcon} onPress={navigateBack} />
-  );
-
-  const onPressItem = (idStructure: string, index: number, distance: number): void => {
-    // console.log(distance);
-    props.navigation && props.navigation.navigate('WhereIAmDetails', { idStructure: idStructure, distance: distance });
+  // Open the structure details view
+  const onDetailsButtonPress = (idStructure: string, index: number, distance: number): void => {
+    props.navigation && props.navigation.navigate('AroundMeDetails', { idStructure: idStructure, distance: distance });
   };
 
+  // Show the alert messahe
   const showAlertMessage = (title: string, message: string) => {
     setAlertTitle(title);
     setAlertMessage(message);
     setModalAlertVisible(true);
   };
 
-    const renderStructureItem = ({ item, index }) => (
+  const renderStructureItem = ({ item, index }) => (
     <StructureItem
       index={index}
       item={item}
-      onListviewButtonPress={onPressItem}
-      />
+      onListviewButtonPress={onDetailsButtonPress}
+    />
+  );
+
+  const renderDrawerAction = (): React.ReactElement => (
+    <TopNavigationAction
+      icon={ArrowBackIcon}
+      onPress={navigateBack}
+    />
   );
 
   return (
-
     <SafeAreaLayout
       style={styles.safeArea}
       insets='top'>
       <TopNavigation
-        title={I18n.t('Structures List')}
+        title={I18n.t('AroundMe - List')}
         titleStyle={styles.topBarTitle}
         leftControl={renderDrawerAction() }
         style={styles.topBar}
       />
       <Spinner
-          visible={loading}
-          textContent={I18n.t('Loading') + '...'}
-          textStyle={styles.spinnerTextStyle}
-        />
+        visible={loading}
+        textContent={I18n.t('Please wait') + '...'}
+        textStyle={styles.spinnerTextStyle}
+      />
       <Layout style={styles.safeArea}>
         <View style={styles.filtersContainer}>
           <Text style={styles.labelWhat}>{I18n.t('What are you searching for') + '?'}</Text>
@@ -248,10 +267,17 @@ export const AroundMeListScreen = (props): React.ReactElement => {
             placeholder={I18n.t('Show All')}
             onSelect={onSelectFilter}
             />
-          <Input autoCapitalize='none' placeholder={I18n.t('Enter the term to filter the search')}
-            value={searchterm} onChangeText={text => handleTextChange(text)} />
+          <Input
+            autoCapitalize='none'
+            placeholder={I18n.t('Enter the term to filter the search')}
+            value={searchterm}
+            onChangeText={text => onTextChange(text)}
+          />
         </View>
-        <List data={searchMarkers} renderItem={renderStructureItem} />
+        <List
+          data={searchMarkers}
+          renderItem={renderStructureItem}
+        />
         <View style={styles.buttonsContainer}>
           <View style={styles.buttonLeft} >
             <Button style={styles.button} status='primary' size='small'
@@ -265,7 +291,7 @@ export const AroundMeListScreen = (props): React.ReactElement => {
         </View>
         <Layout style={styles.downContainer}>
           <Text style={styles.downText}>{I18n.t('Now you are on') + ':'}</Text>
-          <Text style={styles.downTextBold}>{Country}</Text>
+          <Text style={styles.downTextBold}>{currentCountry}</Text>
         </Layout>
       </Layout>
       <ModalUiKitten
@@ -317,22 +343,36 @@ const themedStyles = StyleService.create({
     color: 'color-light-100',
   },
   buttonRight: {
-    width: '50%', height: 'auto', flex: 1, marginLeft: 5, marginRight: 10, alignItems: 'center',
+    width: '50%',
+    height: 'auto',
+    flex: 1,
+    marginLeft: 5,
+    marginRight: 10,
+    alignItems: 'center',
     backgroundColor: 'background-basic-color-4',
   },
   buttonLeft: {
-    width: '50%', height: 'auto', flex: 1, marginLeft: 10, marginRight: 5, alignItems: 'center',
+    width: '50%',
+    height: 'auto',
+    flex: 1,
+    marginLeft: 10,
+    marginRight: 5,
+    alignItems: 'center',
     backgroundColor: 'background-basic-color-4',
   },
   buttonsContainer: {
-    flexDirection: 'row', paddingTop: 10,
+    flexDirection: 'row',
+    paddingTop: 10,
     backgroundColor: 'background-basic-color-4',
   },
   filtersContainer: {
-    paddingHorizontal: 10, paddingBottom: 4,
+    paddingHorizontal: 10,
+    paddingBottom: 4,
     backgroundColor: 'background-basic-color-4',
   },
-  button: { width: '100%' },
+  button: {
+    width: '100%',
+  },
   item: {
     borderBottomWidth: 1,
     borderBottomColor: 'background-basic-color-3',
@@ -340,7 +380,9 @@ const themedStyles = StyleService.create({
   spinnerTextStyle: {
     color: '#FFF',
   },
-  backdrop: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+  backdrop: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
   modal: {
     textAlign: 'center',
     margin: 12,
