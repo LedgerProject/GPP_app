@@ -1,32 +1,28 @@
-import React from 'react';
-import { View } from 'react-native';
-import {
-  Button,
-  Layout,
-  StyleService,
-  useStyleSheet,
-  Select,
-  TopNavigation,
-  TopNavigationAction,
-  Divider,
-  Text,
-  Modal as ModalUiKitten,
-} from '@ui-kitten/components';
-import languageOptions from './settings/data';
-import { MenuIcon, GlobeIcon } from '../components/icons';
-import { KeyboardAvoidingView } from '../services/3rd-party';
-import { ScrollView } from 'react-native-gesture-handler';
-import { SafeAreaLayout } from '../components/safe-area-layout.component';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import I18n from './../i18n/i18n';
-import RNRestart from 'react-native-restart';
+// React import
+import React, { useEffect } from 'react';
 
-// REDUX
-/*import { useSelector, useDispatch } from 'react-redux';
-import {
-  manageLang,
-  selectLang,
-} from '../app/langSlice';*/
+// React Native import
+import { View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
+import RNRestart from 'react-native-restart';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// UIKitten import
+import { Button, Layout, StyleService, useStyleSheet, Select, TopNavigation, TopNavigationAction,
+  Divider, Text, Modal as ModalUiKitten } from '@ui-kitten/components';
+
+// Locale import
+import I18n from './../i18n/i18n';
+
+// Components import
+import { MenuIcon, GlobeIcon } from '../components/icons';
+import { SafeAreaLayout } from '../components/safe-area-layout.component';
+
+// Model import
+import languageOptions from '../model/language.model';
+
+// Other imports
+import { KeyboardAvoidingView } from '../services/3rd-party';
 
 export const SettingsScreen = (props): React.ReactElement => {
   const [language, setLanguage] = React.useState(props.selectedOption);
@@ -34,25 +30,47 @@ export const SettingsScreen = (props): React.ReactElement => {
   const [alertTitle, setAlertTitle] = React.useState('');
   const [alertMessage, setAlertMessage] = React.useState('');
 
-  // const dispatch = useDispatch();
   const styles = useStyleSheet(themedStyles);
 
+  // Use Effect
+  useEffect(() => {
+    showLanguage();
+  }, []);
+
+  // Show the current language
+  const showLanguage = async () => {
+    const lang = await AsyncStorage.getItem('lang');
+    languageOptions.forEach( element => {
+      if (element.lang === lang) {
+        setLanguage({ text: element.text, lang: element.lang});
+      }
+    });
+  };
+
+  // On selecting language event
   const onSelectLanguage = (option) => {
     setLanguage(option);
   };
 
+  // On changing language event
   const onSaveButtonPress = (): void => {
-    // TODO
     if (language) {
       AsyncStorage.setItem('lang', language.lang);
-      showAlertMessage(
-        ('Language Options'),
-        ('Language updated successfully'),
-      );
-      // dispatch(manageLang(language.lang));
+
       I18n.locale = language.lang;
-      RNRestart.Restart();
+
+      showAlertMessage(
+        (I18n.t('Language Settings')),
+        (I18n.t('Language updated successfully.')),
+      );
     }
+  };
+
+  // Restart the application
+  const restartApp = (): void => {
+    setModalAlertVisible(false);
+
+    RNRestart.Restart();
   };
 
   const showAlertMessage = (title: string, message: string) => {
@@ -110,7 +128,7 @@ export const SettingsScreen = (props): React.ReactElement => {
         <Layout style={ styles.modal } >
           <Text style={ styles.modalText } category='h6' >{I18n.t(alertTitle)}</Text>
           <Text style={ styles.modalText } >{I18n.t(alertMessage)}</Text>
-          <Button status='basic' onPress={() => setModalAlertVisible(false)}>{I18n.t('CLOSE')}</Button>
+          <Button status='basic' onPress={() => restartApp() }>{I18n.t('CLOSE')}</Button>
         </Layout>
       </ModalUiKitten>
     </SafeAreaLayout>

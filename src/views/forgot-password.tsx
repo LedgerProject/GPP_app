@@ -1,13 +1,18 @@
+// React import
 import React from 'react';
 import { View, ImageBackground } from 'react-native';
+
+// Environment import
+import { AppOptions } from '../services/app-env';
+
+// Language import
+import I18n from './../i18n/i18n';
+
+// UIKitten import
 import { Button, Input, Layout, Text, StyleService, useStyleSheet, Modal } from '@ui-kitten/components';
 import { EmailIcon } from '../components/icons';
 import { KeyboardAvoidingView } from '../services/3rd-party';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
-import { AppOptions } from '../services/app-env';
-import Spinner from 'react-native-loading-spinner-overlay';
-import I18n from './../i18n/i18n';
-import axios from 'axios';
 
 // Zenroom import
 import { sanitizeAnswers, recoveryKeypair, verifyAnswers } from '../services/zenroom/zenroom-service';
@@ -15,14 +20,12 @@ import clientSideContract from '../services/zenroom/zenroom-client-contract.zen'
 
 // Redux import
 import { useSelector } from 'react-redux';
-import { selectEmail } from '../app/emailSlice';
+import { selectEmail } from '../redux/emailSlice';
 
-interface PBKBFPublicKeyResponse {
-  code: string;
-  message: string;
-  pbkdf: string;
-  publicKey: string;
-}
+// Other imports
+import Spinner from 'react-native-loading-spinner-overlay';
+import axios from 'axios';
+import { getPBKDFPublicKey } from '../services/user.service';
 
 export default ({ navigation }): React.ReactElement => {
   const [email, setEmail] = React.useState<string>(useSelector(selectEmail));
@@ -118,7 +121,7 @@ export default ({ navigation }): React.ReactElement => {
     // Get the e-mail public key and pbkdf
     let emailPublicKey = '';
     let emailPBKDF = '';
-    const pbkdfPublicKeyResponse = await getPBKDFPublicKey();
+    const pbkdfPublicKeyResponse = await getPBKDFPublicKey(email);
 
     switch (pbkdfPublicKeyResponse.code) {
       case '10':
@@ -201,48 +204,19 @@ export default ({ navigation }): React.ReactElement => {
     }
   };
 
-  const getPBKDFPublicKey = async (): Promise<PBKBFPublicKeyResponse> => {
-    const postParams = {
-      email: email,
-    };
-
-    let userPBKDFPublicKeyResponse: PBKBFPublicKeyResponse = {
-      code: '0',
-      message: '',
-      pbkdf: '',
-      publicKey: '',
-    };
-
-    await axios
-      .post<PBKBFPublicKeyResponse>(AppOptions.getServerUrl() + 'users/get-pbkdf-publickey', postParams)
-      .then(function (response) {
-        userPBKDFPublicKeyResponse = response.data.pbkdfPublicKeyResponse;
-      })
-      .catch(function () {
-        userPBKDFPublicKeyResponse = {
-          code: '10',
-          message: I18n.t('An error has occurred, please try again'),
-          pbkdf: '',
-          publicKey: '',
-        };
-      });
-
-    return userPBKDFPublicKeyResponse;
-  };
-
   return (
     <SafeAreaLayout insets='top' style={styles.safeArea}>
       <KeyboardAvoidingView>
         <Spinner
           visible={loading}
-          textContent={I18n.t('Loading') + '...'}
+          textContent={I18n.t('Please wait') + '...'}
           textStyle={styles.spinnerTextStyle}
         />
 
         <View style={styles.logoContainer}>
           <ImageBackground
             style={styles.imageAuth}
-            source={require('../assets/images/red-logo.png')}>
+            source={require('../assets/images/logo-red.png')}>
           </ImageBackground>
         </View>
 

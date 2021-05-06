@@ -1,10 +1,15 @@
+// Zenroom import
+import zenroom from './zenroom-client';
+
 const REGULAR_EXPRESSION = /\W/gi;
 const EMPTY_STRING = '';
 const DEFAULT_USER = 'user';
-import zenroom from './zenroom-client';
+
 /*
   This function is using zenroom to encrypt a given string with the password
 */
+
+// Sanitize answers
 export function sanitizeAnswers(answers: any) {
   for (const key in answers) {
     if (answers[key]) {
@@ -16,11 +21,8 @@ export function sanitizeAnswers(answers: any) {
   return answers;
 }
 
-export async function recoveryKeypair(
-  clientSideContractText: string,
-  answers: any,
-  PBKDF: string,
-) {
+// Return Private Key and Public Key
+export async function recoveryKeypair(clientSideContractText: string,  answers: any, PBKDF: string) {
   const keys = {
     userChallenges: answers,
     username: DEFAULT_USER,
@@ -45,16 +47,13 @@ export async function recoveryKeypair(
   return JSON.parse(response);
 }
 
-export async function verifyAnswers(
-  clientSideContractText: string,
-  answers: any,
-  PBKDF: string,
-  userPublicKey: string,
-) {
+// Verify that the answers are correct
+export async function verifyAnswers(clientSideContractText: string, answers: any, PBKDF: string, userPublicKey: string) {
   const execution = await recoveryKeypair(
     clientSideContractText,
     answers,
     PBKDF,
   );
+
   return userPublicKey === execution[DEFAULT_USER].keypair.public_key;
 }

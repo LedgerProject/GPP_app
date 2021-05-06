@@ -1,3 +1,4 @@
+// React Native import
 import { PermissionsAndroid, Platform } from 'react-native';
 
 export const requestCameraPermission = async () => {

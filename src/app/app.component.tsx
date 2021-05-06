@@ -1,24 +1,37 @@
+// React import
 import React from 'react';
+
+// React Native import
 import { AppearanceProvider } from 'react-native-appearance';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+// UIKitten import
 import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
-import { AppLoading, LoadFontsTask, Task } from './app-loading.component';
+
+// Theme import
 import { appMappings, appThemes } from './app-theming';
-// import { AppIconsPack } from './app-icons-pack';
+import { Mapping, Theme, Theming } from '../services/theme.service';
+
+// Components import
+import { AppLoading, Task } from './app-loading.component';
 import { CustomIconsPack } from './../components/custom-icons';
 import { StatusBar } from '../components/status-bar.component';
 import { SplashImage } from '../components/splash-image.component';
-import { AppNavigator } from '../navigation/app.navigator';
-import { AppStorage } from '../services/app-storage.service';
-import { Mapping, Theme, Theming } from '../services/theme.service';
 
-import store from '../app/store';
+// Navigator import
+import { AppNavigator } from '../navigation/app.navigator';
+
+// AppStorage import
+import { AppStorage } from '../services/app-storage.service';
+
+// Redux import
+import store from '../redux/store';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
-const persistor = persistStore(store);
 
+const persistor = persistStore(store);
 
 const loadingTasks: Task[] = [
   // Should be used it when running Expo.
@@ -37,29 +50,27 @@ const defaultConfig: { mapping: Mapping, theme: Theme } = {
 };
 
 const App = ({ mapping, theme }): React.ReactElement => {
-
   const [mappingContext, currentMapping] = Theming.useMapping(appMappings, mapping);
   const [themeContext, currentTheme] = Theming.useTheming(appThemes, mapping, theme);
 
   return (
     <React.Fragment>
       <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-      {/*<IconRegistry icons={[EvaIconsPack, AppIconsPack, CustomIconsPack]}/>*/}
-      <IconRegistry icons={[EvaIconsPack, CustomIconsPack]}/>
-      <AppearanceProvider>
-        <ApplicationProvider {...currentMapping} theme={currentTheme}>
-          <Theming.MappingContext.Provider value={mappingContext}>
-            <Theming.ThemeContext.Provider value={themeContext}>
-              <SafeAreaProvider>
-                <StatusBar/>
-                <AppNavigator/>
-              </SafeAreaProvider>
-            </Theming.ThemeContext.Provider>
-          </Theming.MappingContext.Provider>
-        </ApplicationProvider>
-      </AppearanceProvider>
-      </PersistGate>
+        <PersistGate loading={null} persistor={persistor}>
+          <IconRegistry icons={[EvaIconsPack, CustomIconsPack]}/>
+          <AppearanceProvider>
+            <ApplicationProvider {...currentMapping} theme={currentTheme}>
+              <Theming.MappingContext.Provider value={mappingContext}>
+                <Theming.ThemeContext.Provider value={themeContext}>
+                  <SafeAreaProvider>
+                    <StatusBar/>
+                    <AppNavigator/>
+                  </SafeAreaProvider>
+                </Theming.ThemeContext.Provider>
+              </Theming.MappingContext.Provider>
+            </ApplicationProvider>
+          </AppearanceProvider>
+        </PersistGate>
       </Provider>
     </React.Fragment>
   );
@@ -68,7 +79,7 @@ const App = ({ mapping, theme }): React.ReactElement => {
 const Splash = ({ loading }): React.ReactElement => (
   <SplashImage
     loading={loading}
-    source={require('../assets/images/image-splash.png')}
+    source={require('../assets/images/splash-image.png')}
   />
 );
 

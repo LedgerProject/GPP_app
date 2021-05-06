@@ -1,3 +1,4 @@
+// React Native import
 import { ImageSourcePropType } from 'react-native';
 
 export interface LayoutItem {

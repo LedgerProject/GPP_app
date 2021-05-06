@@ -1,59 +1,58 @@
-import React, { useEffect} from 'react';
+// React import
+import React from 'react';
 import { View, ImageBackground } from 'react-native';
-import { Button, Input, Layout, StyleService, Text, useStyleSheet, Modal } from '@ui-kitten/components';
-import { SafeAreaLayout } from '../components/safe-area-layout.component';
-import { EyeIcon, EyeOffIcon, EmailIcon } from '../components/icons';
-import { KeyboardAvoidingView } from '../services/3rd-party';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// UIKitten import
+import { StyleService, Text, useStyleSheet } from '@ui-kitten/components';
+
+// Redux import
+import { useDispatch } from 'react-redux';
+import { manageIntro } from '../redux/introSlice';
+
+// Other imports
 import AppIntroSlider from 'react-native-app-intro-slider';
-// REDUX
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  manageIntro,
-  selectIntro,
-} from '../app/introSlice';
 
 const slides = [
   {
     key: 'one',
     title: '',
-    text: 'TAKE PHOTOS OF YOUR DOCUMENTS AND UPLOAD THEM TO BLOCKCHAIN ​​AND IPFS',
-    image: require('../assets/images/img_01.png'),
+    text: 'TAKE PHOTOS OF YOUR DOCUMENTS AND UPLOAD THEM SAFELY ON YOUR DOC-WALLET',
+    image: require('../assets/images/slide-01.png'),
     backgroundColor: '#59b2ab',
   },
   {
     key: 'two',
     title: '',
     text: 'GENERATE A TOKEN AND COMMUNICATE IT TO AN OPERATOR TO LET HIM SEE YOUR DOCUMENTS',
-    image: require('../assets/images/img_02.png'),
+    image: require('../assets/images/slide-02.png'),
     backgroundColor: '#febe29',
   },
   {
     key: 'three',
     title: '',
-    text: 'IF YOU LOSE YOUR SMARTPHONE OR IT GETS CONFISCATED YOU DO NOT LOSE DATA',
-    image: require('../assets/images/img_03.png'),
+    text: 'IF YOU LOSE OR BREAK YOUR SMARTPHONE YOU DON\'T LOSE YOUR DATA.\n\nYOU CAN ALWAYS ACCESS YOUR RESERVED AREA FROM OUR WEBSITE',
+    image: require('../assets/images/slide-03.png'),
     backgroundColor: '#22bcb5',
   },
   {
     key: 'four',
     title: '',
-    text: 'VIEW SUPPORT STRUCTURES CLOSER THAN YOUR POSITION',
-    image: require('../assets/images/img_04.png'),
+    text: 'VIEW FRIENDLY ORGANIZATIONS CLOSE YOUR POSITION (ONLY WITH GPS ON)',
+    image: require('../assets/images/slide-04.png'),
     backgroundColor: '#59b2ab',
   },
   {
     key: 'five',
     title: '',
-    text: 'LOOK FOR SUPPORT STRUCTURES ACCORDING TO YOUR NEEDS',
-    image: require('../assets/images/img_05.png'),
+    text: 'SEARCH FOR ORGANIZATIONS AND SERVICES ACCORDING TO YOUR NEEDS',
+    image: require('../assets/images/slide-05.png'),
     backgroundColor: '#febe29',
   },
   {
     key: 'six',
     title: '',
-    text: 'KNOW THE STATUS OF A NATION OF YOUR TRIP',
-    image: require('../assets/images/img_06.png'),
+    text: 'GET INFORMATIONS ABOUT LEGAL FRAMEWORK OF THE COUNTRY WHERE YOU LIVE OR THAT YOU ARE CROSSING',
+    image: require('../assets/images/slide-06.png'),
     backgroundColor: '#22bcb5',
   },
 ];
@@ -63,26 +62,34 @@ export default ({ navigation }): React.ReactElement => {
   const dispatch = useDispatch();
 
   const renderItem = ({ item }) => {
-  return (
-    <View style={[styles.slide, { backgroundColor: item.backgroundColor }]}>
-      {/*<View style={styles.slideView}>
-        <Text style={styles.title}>{item.title}</Text>
-      </View>*/}
-      <View style={[styles.slideView, styles.slideImage]}>
-        <ImageBackground source={item.image} style={styles.image}></ImageBackground>
+    return (
+      <View style={[styles.slide, { backgroundColor: item.backgroundColor }]}>
+        <View style={[styles.slideView, styles.slideImage]}>
+          <ImageBackground source={item.image} style={styles.image}></ImageBackground>
+        </View>
+        <View style={styles.slideView}>
+          <Text
+            category='h6'
+            style={styles.text}>
+              {item.text}
+          </Text>
+        </View>
       </View>
-      <View style={styles.slideView}><Text category='h6' style={styles.text}>{item.text}</Text></View>
-    </View>
-  );
+    );
   };
+
+  // On pressing done button last slide button
   const onDone = () => {
     dispatch(manageIntro('1'));
-    // AsyncStorage.setItem('intro', '1');
     navigation && navigation.navigate('SignIn');
   };
 
   return (
-    <AppIntroSlider renderItem={renderItem} data={slides} onDone={onDone} bottomButton/>
+    <AppIntroSlider
+      renderItem={renderItem}
+      data={slides}
+      onDone={onDone}
+      bottomButton/>
   );
 };
 
@@ -97,7 +104,6 @@ const themedStyles = StyleService.create({
     flexDirection: 'row',
     textAlign: 'center',
     alignContent: 'center',
-    // alignItems: 'center',
   },
   slideImage: {
     paddingTop: 30,

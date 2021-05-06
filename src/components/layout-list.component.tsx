@@ -1,6 +1,13 @@
+// React import
 import React from 'react';
+
+// React Native import
 import { ListRenderItemInfo, StyleSheet } from 'react-native';
+
+// UIKitten import
 import { Card, CardElement, List, ListElement, ListProps, Text } from '@ui-kitten/components';
+
+// Model import
 import { LayoutItem } from '../model/layout-item.model';
 
 export interface LayoutListProps extends Omit<ListProps, 'renderItem'> {
@@ -11,7 +18,6 @@ export interface LayoutListProps extends Omit<ListProps, 'renderItem'> {
 export type LayoutListElement = React.ReactElement<LayoutListProps>;
 
 export const LayoutList = (props: LayoutListProps): ListElement => {
-
   const { contentContainerStyle, onItemPress, ...listProps } = props;
 
   const renderItem = (info: ListRenderItemInfo<LayoutItem>): CardElement => (

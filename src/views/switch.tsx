@@ -1,38 +1,39 @@
+// React import
 import React, { useEffect} from 'react';
+
+// React Native import
 import { View, ImageBackground } from 'react-native';
-import { Button, Input, Layout, StyleService, Text, useStyleSheet, Modal } from '@ui-kitten/components';
-import { SafeAreaLayout } from '../components/safe-area-layout.component';
-import { EyeIcon, EyeOffIcon, EmailIcon } from '../components/icons';
-import { KeyboardAvoidingView } from '../services/3rd-party';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-// REDUX
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  manageIntro,
-  selectIntro,
-} from '../app/introSlice';
+
+// UIKitten import
+import { StyleService, useStyleSheet } from '@ui-kitten/components';
+
+// Redux import
+import { useSelector } from 'react-redux';
+import { selectIntro } from '../redux/introSlice';
 
 export default ({ navigation }): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
   const intro = useSelector(selectIntro);
+
+  // Use effect
   useEffect(() => {
-    async function getIntroStatus() {
-      // const intro = await AsyncStorage.getItem('intro');
-       if (intro === '1') {
-        navigation && navigation.navigate('SignIn');
-       } else {
-        navigation && navigation.navigate('Intro');
-       }
-    }
     getIntroStatus();
   }, []);
 
+  async function getIntroStatus() {
+    if (intro === '1') {
+     navigation && navigation.navigate('SignIn');
+    } else {
+     navigation && navigation.navigate('Intro');
+    }
+  }
+
   return (
     <View style={styles.safeArea}>
-  <ImageBackground
-    style={styles.image}
-    source={require('../assets/images/image-splash.png')}
-  />
+      <ImageBackground
+        style={styles.image}
+        source={require('../assets/images/splash-image.png')}
+      />
     </View>
   );
 };
@@ -43,6 +44,7 @@ const themedStyles = StyleService.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignContent: 'center',
+    backgroundColor: '#FFF',
   },
   image: {
     height: 160,

@@ -1,52 +1,44 @@
+// React import
 import React, { useEffect } from 'react';
-import { Image, View, ListRenderItemInfo } from 'react-native';
+
+// React Native import
+import { Image, ImageStyle, View, ListRenderItemInfo } from 'react-native';
+import { ImagePickerResponse, MediaType, launchCamera, launchImageLibrary } from 'react-native-image-picker';
+
+// UIKitten import
 import { Button, Divider, List, Layout, StyleService, Text, TopNavigation,
-  TopNavigationAction, useStyleSheet, Modal as ModalUiKitten, Input, Icon } from '@ui-kitten/components';
+  TopNavigationAction, useStyleSheet, Modal as ModalUiKitten, Input } from '@ui-kitten/components';
+
+// Component import
+import { Document, DocumentItem } from '../components/document-item.component';
+import { ThemedIcon } from '../components/themed-icon.component';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { MenuGridList } from '../components/menu-grid-list.component';
-import { DocumentItem } from './doc-wallet/document-item.component';
-import { requestCameraPermission, requestExternalWritePermission } from '../services/image-picker';
-import { MenuIcon } from '../components/icons';
-import { Document } from './doc-wallet/data';
-import {
-  ImagePickerResponse,
-  MediaType,
-  launchCamera,
-  launchImageLibrary,
-} from 'react-native-image-picker';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MenuIcon, CustomTakePhotoIcon, CustomFromLibraryIcon } from '../components/icons';
+
+// Environment import
 import { AppOptions } from '../services/app-env';
+
+// Locale import
 import I18n from './../i18n/i18n';
-import FormData from 'form-data';
-import slugify from '@sindresorhus/slugify';
-import Spinner from 'react-native-loading-spinner-overlay';
 
-// REDUX
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  manageToken,
-  selectToken,
-} from '../app/tokenSlice';
+// Axios import
+import axios from 'axios';
 
-import { ImageStyle, ImageSourcePropType } from 'react-native';
-import { ThemedIcon } from '../components/themed-icon.component';
-/*import {
- AssetTakePhotoDarkIcon,
- AssetTakePhotoIcon,
- AssetPhotoLibraryDarkIcon,
- AssetPhotoLibraryIcon,
-} from '../components/icons';*/
+// Model import
 import { MenuItem } from '../model/menu-item.model';
-/*const initialDocuments: Document[] = [
-  Document.passportDocument(),
-  Document.idDocument(),
-  Document.vaccinationPage1(),
-  Document.vaccinationPage2(),
-  Document.testDoc1(),
-  Document.testDoc2(),
-];*/
 
+// Redux import
+import { useSelector } from 'react-redux';
+import { selectToken } from '../redux/tokenSlice';
+
+// Other imports
+import Spinner from 'react-native-loading-spinner-overlay';
+import FormData from 'form-data';
+import { requestCameraPermission, requestExternalWritePermission } from '../services/image-picker';
+import slugify from '@sindresorhus/slugify';
+
+// LayoutData interface
 export interface LayoutData extends MenuItem {
   route: string;
 }
@@ -61,20 +53,12 @@ const initialFileResponse: ImagePickerResponse = {
   fileName: '',
 };
 
-export const CustomTakePhotoIcon = (props) => (
-  <Icon {...props} name='custom-take-photo' pack='assets' />
-);
-export const CustomFromLibraryIcon = (props) => (
-  <Icon {...props} name='custom-from-library' pack='assets' />
-);
-
 export const DocWalletScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
   const [documents, setDocuments] = React.useState([]);
   const [selectedDocuments, setSelectedDocuments] = React.useState([]);
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
   const [modalVisible, setmodalVisible] = React.useState(false);
-  const [modalFileVisible, setmodalFileVisible] = React.useState(false);
   const [modalDeleteVisible, setModalDeleteVisible] = React.useState(false);
   const [documentDelete, setDocumentDelete] = React.useState((): any => {});
   const [documentDeleteIndex, setDocumentDeleteIndex] = React.useState(0);
@@ -87,180 +71,19 @@ export const DocWalletScreen = (props): React.ReactElement => {
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState([]);
 
-  // Get Token from REDUX
+  // Get Token from Redux
   const token = useSelector(selectToken);
 
-  const ZoomImage = (): void => {
-    setmodalFileVisible(true);
-  };
-
-  const onItemUploadPhotoPress = (index: number): void => {
-    if (index === 0) {
-      getPhoto('camera');
-    } else if (index === 1) {
-      getPhoto('library');
-    }
-  };
-
-  const onItemRemove = (document: Document, index: number): void => {
-    // DeleteDocument(document,index);
-    setDocumentDelete(document);
-    setDocumentDeleteIndex(index);
-    setModalDeleteVisible(true);
-
-  };
-
-  async function DeleteDocument() {
-    setLoading(true);
-    // const token = await AsyncStorage.getItem('token');
-    axios
-    .delete(AppOptions.getServerUrl() + 'documents/' + documentDelete.idDocument, {
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(function (response) {
-      setLoading(false);
-      documents.splice(documentDeleteIndex, 1);
-      setDocuments([...documents]);
-      setModalDeleteVisible(false);
-      // alert('removed');
-    })
-    .catch(function (error) {
-      setLoading(false);
-      // alert(JSON.stringify(error));
-      throw error;
-    });
-  }
-
-  async function LoadFile(document) {
-
-    setLoading(true);
-    // const token = await AsyncStorage.getItem('token');
-    axios
-    .get(AppOptions.getServerUrl() + 'documents-base64/' + document.idDocument, {
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(function (response) {
-      setLoading(false);
-      const image = 'data:' + document.mimeType + ';base64,' + response.data;
-      props.navigation && props.navigation.navigate('DocDetails', { item: document, image: image });
-    })
-    .catch(function (error) {
-      // console.log(error);
-      setLoading(false);
-      // alert(JSON.stringify(error));
-      throw error;
-    });
-
-  }
-
-  const onItemPress = (document: Document, index: number): void => {
-    LoadFile(document);
-  };
-
-  const onCheckboxChange = (value: boolean, document: Document, index: number): void => {
-
-    const all_documents = documents;
-    const all_selectedDocuments = [];
-    all_documents[index].isChecked = value;
-    all_documents.forEach( (element) => {
-      if (element.isChecked === true) {
-        all_selectedDocuments.push(element.idDocument);
-      }
-    });
-    setSelectedDocuments(selectedDocuments);
-  };
-
-  const renderDrawerAction = (): React.ReactElement => (
-    <TopNavigationAction
-      icon={MenuIcon}
-      onPress={props.navigation.toggleDrawer}
-    />
-  );
-
-  const renderDocumentItem = (info: ListRenderItemInfo<Document>): React.ReactElement => (
-    <DocumentItem
-      style={styles.item}
-      index={info.index}
-      document={info.item}
-      onRemove={onItemRemove}
-      onItemPress={onItemPress}
-      onCheckboxPress={onCheckboxChange}
-    />
-  );
-
-  const onGenerateTokenButtonPress = async (): Promise<void> => {
-    setLoading(true);
-    // const token = await AsyncStorage.getItem('token');
-    if (selectedDocuments.length === 0) {
-      setLoading(false);
-      showAlertMessage(
-        I18n.t('No Document Selected'),
-        I18n.t('Please select at least one Document'),
-      );
-    } else {
-
-    // alert(JSON.stringify(selectedDocuments));
-    axios.post(AppOptions.getServerUrl() + 'users-token', null, {
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(function(response) {
-      setLoading(false);
-      setGeneratedToken(response.data.token);
-      setmodalVisible(true);
-    })
-    .catch(function (error) {
-      setLoading(false);
-      showAlertMessage(
-        I18n.t('Error generating token'),
-        error.message,
-      );
-    });
-
-    }
-  };
-
-  async function getMyDocuments() {
-    setLoading(true);
-    // const token = await AsyncStorage.getItem('token');
-    axios
-    .get(AppOptions.getServerUrl() + 'documents', {
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(function (response) {
-      setLoading(false);
-      const all_documents = response.data;
-      all_documents.forEach( (element, index) => {
-        all_documents[index].isChecked = false;
-      });
-      setDocuments(all_documents);
-      // alert(JSON.stringify(response));
-    })
-    .catch(function (error) {
-      setLoading(false);
-      // alert(JSON.stringify(error));
-      throw error;
-    });
-  }
-
+  // Use Effect
   useEffect(() => {
-    getButtons();
+    setButtons();
     getMyDocuments();
   }, []);
 
-  async function getButtons() {
+  // Set the "Take Photo" and "From Library" buttons
+  async function setButtons() {
     const buttonsArray = [];
+
     buttonsArray.push(
       {
         title: I18n.t('Take Photo'),
@@ -285,33 +108,58 @@ export const DocWalletScreen = (props): React.ReactElement => {
         },
       },
     );
+
     setData(buttonsArray);
   }
-  /*export const data: LayoutData[] = [
-  {
-    title: I18n.t('Take Photo'), // 'Take Photo',
-    route: 'TakePhoto',
-    icon: (style: ImageStyle) => {
-      return React.createElement(
-        ThemedIcon,
-        { ...style, light: AssetTakePhotoIcon, dark: AssetTakePhotoDarkIcon },
-      );
-    },
-  },
-  {
-    title: I18n.t('From Library'), // 'From Library',
-    route: 'LibraryPhoto',
-    icon: (style: ImageStyle) => {
-      return React.createElement(
-        ThemedIcon,
-        { ...style, light: AssetPhotoLibraryIcon, dark: AssetPhotoLibraryDarkIcon },
-      );
-    },
-  },
-  ];*/
 
-  // * IMAGE PICKER *
-  const getPhoto = async (type: string) => {
+  // Get the user documents from the server
+  async function getMyDocuments() {
+    // Show spinner
+    setLoading(true);
+
+    axios
+      .get(AppOptions.getServerUrl() + 'documents', {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(function (response) {
+        // Hide spinner
+        setLoading(false);
+
+        // Set the checked value for each document
+        const allDocuments = response.data;
+
+        allDocuments.forEach( (element, index) => {
+          allDocuments[index].isChecked = false;
+        });
+
+        setDocuments(allDocuments);
+      })
+      .catch(function (error) {
+        // Hide spinner
+        setLoading(false);
+
+        // Show the error message
+        showAlertMessage(
+          I18n.t('Error loading documents'),
+          I18n.t('An error has occurred, please try again'),
+        );
+      });
+  }
+
+  // Take Photo or From Library click event
+  const onItemUploadPhotoPress = (index: number): void => {
+    if (index === 0) {
+      takePhoto('camera');
+    } else if (index === 1) {
+      takePhoto('library');
+    }
+  };
+
+  // Take Photo (Image Picker)
+  const takePhoto = async (type: string) => {
     const mediaTypePhoto: MediaType = 'photo';
 
     if (type === 'camera') {
@@ -321,10 +169,15 @@ export const DocWalletScreen = (props): React.ReactElement => {
         saveToPhotos: true,
       };
 
+      // Check if use of camera is permitted (or request the use)
       const isCameraPermitted = await requestCameraPermission();
+
+      // Check if the storage is permitted (or request the use)
       const isStoragePermitted = await requestExternalWritePermission();
 
+      // If camera and storage are permitted, manage the photo
       if (isCameraPermitted && isStoragePermitted) {
+        // Launch the camera to take the photo
         launchCamera(options, (response) => {
           managePhoto(response);
         });
@@ -335,13 +188,16 @@ export const DocWalletScreen = (props): React.ReactElement => {
         PhotoQuality: 1,
       };
 
+      // Launch the image library to select a photo
       launchImageLibrary(options, (response) => {
         managePhoto(response);
       });
     }
   };
 
+  // Manage the taken or selected photo
   const managePhoto = async (response: ImagePickerResponse) => {
+    // Check if the response is an error
     if (response.didCancel) {
       showAlertMessage(
         I18n.t('Photo canceled'),
@@ -368,62 +224,242 @@ export const DocWalletScreen = (props): React.ReactElement => {
       return;
     }
 
+    // Set the file response
     setFileResponse(response);
+
+    // Show the modal to specify the document title
     setModalUploadImageVisible(true);
   };
 
-  /* IMAGE UPLOAD */
-  const handleUpload = async () => {
+  // Photo upload
+  const photoUpload = async () => {
+    // Check if specified the document title
     if (!documentTitle) {
       showAlertMessage(
         I18n.t('Title missing'),
-        I18n.t('Please fill the document name'),
+        I18n.t('Please enter the document name'),
       );
-    } else {
-      setLoading(true);
-      // const token = await AsyncStorage.getItem('token');
-      const extension =  fileResponse.fileName.split('.').pop();
-      const fileName = slugify(documentTitle) + '.' + extension;
 
-      const dataupload = new FormData();
-      dataupload.append('file', {
-        uri: fileResponse.uri,
-        type: fileResponse.type,
-        name: fileName,
-      });
+      return;
+    }
 
-      axios.post(AppOptions.getServerUrl() + 'documents/' + documentTitle, dataupload, {
+    // Show spinner
+    setLoading(true);
+
+    // Get the file extension
+    const extension =  fileResponse.fileName.split('.').pop();
+
+    // Set the file name + extension
+    const fileName = slugify(documentTitle) + '.' + extension;
+
+    // Set the post parameters
+    const dataupload = new FormData();
+
+    dataupload.append('file', {
+      uri: fileResponse.uri,
+      type: fileResponse.type,
+      name: fileName,
+    });
+
+    // Send the document to the server, blockchain and ipfs
+    axios
+      .post(AppOptions.getServerUrl() + 'documents/' + documentTitle, dataupload, {
         headers: {
           'Authorization': 'Bearer ' + token,
           'Content-Type': 'multipart/form-data',
         },
       })
       .then(function(response) {
+        // Hide spinner
         setLoading(false);
+
+        // Hide the modal to enter the document title
         setModalUploadImageVisible(false);
+
+        // Show success message
         showAlertMessage(
           I18n.t('Document uploaded successfully'),
-          I18n.t('Document uploaded successfully to IPFS!'),
+          I18n.t('Document uploaded successfully to Blockchain and IPFS!'),
         );
+
+        // Load the user documents
         getMyDocuments();
       })
       .catch(function (error) {
+        // Hide spinner
         setLoading(false);
+
+        // Show the error message
         showAlertMessage(
           I18n.t('Error uploading file'),
           error.message,
-          // JSON.stringify(error)
         );
       });
+  };
+
+  // On document press event (from the list)
+  const onDocumentPress = (document: Document, index: number): void => {
+    loadDocument(document);
+  };
+
+  // Load the selected document from Blockchain and IPFS
+  async function loadDocument(document) {
+    // Show spinner
+    setLoading(true);
+
+    axios
+      .get(AppOptions.getServerUrl() + 'documents-base64/' + document.idDocument, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(function (response) {
+        // Hide spinner
+        setLoading(false);
+
+        // Set the base64 image
+        const image = 'data:' + document.mimeType + ';base64,' + response.data;
+
+        // Open the document details view
+        props.navigation && props.navigation.navigate('DocWalletDetails', { item: document, image: image });
+      })
+      .catch(function (error) {
+        // Hide spinner
+        setLoading(false);
+
+        // Show the error message
+        showAlertMessage(
+          I18n.t('Error loading document'),
+          I18n.t('An error has occurred, please try again'),
+        );
+      });
+  }
+
+  // On document remove event
+  const onDocumentRemove = (document: Document, index: number): void => {
+    // Set the document and the index to delete
+    setDocumentDelete(document);
+    setDocumentDeleteIndex(index);
+
+    // Show the modal asking the delete confirmation
+    setModalDeleteVisible(true);
+  };
+
+  // Try to remove the selected document
+  async function deleteDocument() {
+    // Show spinner
+    setLoading(true);
+
+    axios
+      .delete(AppOptions.getServerUrl() + 'documents/' + documentDelete.idDocument, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(function (response) {
+        // Hide spinner
+        setLoading(false);
+
+        // Remove the document also from the list
+        documents.splice(documentDeleteIndex, 1);
+        setDocuments([...documents]);
+
+        // Hide the modal asking the delete confirmation
+        setModalDeleteVisible(false);
+      })
+      .catch(function (error) {
+        // Hide spinner
+        setLoading(false);
+
+        // Show the error message
+        showAlertMessage(
+          I18n.t('Error removing document'),
+          I18n.t('An error has occurred, please try again'),
+        );
+      });
+  }
+
+  // Document checkbox change event
+  const onCheckboxChange = (value: boolean, document: Document, index: number): void => {
+    const allDocuments = documents;
+    const allSelectedDocuments = [];
+
+    allDocuments[index].isChecked = value;
+    allDocuments.forEach( (element) => {
+      if (element.isChecked === true) {
+        allSelectedDocuments.push(element.idDocument);
+      }
+    });
+
+    setSelectedDocuments(selectedDocuments);
+  };
+
+  // Generate token event
+  const onGenerateTokenButtonPress = async (): Promise<void> => {
+    // Check if selected at least one document
+    if (selectedDocuments.length === 0) {
+      showAlertMessage(
+        I18n.t('No document selected'),
+        I18n.t('Please select at least one document'),
+      );
+    } else {
+      // Show spinner
+      setLoading(true);
+
+      axios
+        .post(AppOptions.getServerUrl() + 'users-token', null, {
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json',
+          },
+        })
+        .then(function(response) {
+          // Hide spinner
+          setLoading(false);
+
+          // Set the generated token
+          setGeneratedToken(response.data.token);
+
+          // Show the modal with the token
+          setmodalVisible(true);
+        })
+        .catch(function (error) {
+          setLoading(false);
+          showAlertMessage(
+            I18n.t('Error generating token'),
+            error.message,
+          );
+        });
     }
   };
 
-  /* ALERT MESSAGE */
+  // Alert message
   const showAlertMessage = (title: string, message: string) => {
     setAlertTitle(title);
     setAlertMessage(message);
+
     setModalAlertVisible(true);
   };
+
+  const renderDrawerAction = (): React.ReactElement => (
+    <TopNavigationAction
+      icon={MenuIcon}
+      onPress={props.navigation.toggleDrawer}
+    />
+  );
+
+  const renderDocumentItem = (info: ListRenderItemInfo<Document>): React.ReactElement => (
+    <DocumentItem
+      style={styles.item}
+      index={info.index}
+      document={info.item}
+      onRemove={onDocumentRemove}
+      onItemPress={onDocumentPress}
+      onCheckboxPress={onCheckboxChange}
+    />
+  );
 
   return (
     <SafeAreaLayout
@@ -436,11 +472,11 @@ export const DocWalletScreen = (props): React.ReactElement => {
         style={styles.topBar}
       />
       <Layout
-      style={styles.container}
-      level='2'>
-      <Spinner
+        style={styles.container}
+        level='2'>
+        <Spinner
           visible={loading}
-          textContent={I18n.t('Loading') + '...'}
+          textContent={I18n.t('Please wait') + '...'}
           textStyle={styles.spinnerTextStyle}
         />
         <View>
@@ -449,11 +485,10 @@ export const DocWalletScreen = (props): React.ReactElement => {
             onItemPress={onItemUploadPhotoPress}
           />
         </View>
-        { /*<Divider style={styles.divider} />*/ }
         <Text
           style={styles.infoSection}>
-          {I18n.t('Tap on document for the preview') + '. '
-          + I18n.t('Swipe left on document to delete it') + '.' }
+          { I18n.t('Tap on document for the preview') + '\n'
+          + I18n.t('Swipe left on document to delete it') }
         </Text>
         <List
           data={documents}
@@ -462,7 +497,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
         <Divider/>
         <Text
           style={styles.infoSection}>
-          {I18n.t('Generate a 30-minute token to be communicated to')}
+          {I18n.t('Generate a 30-minute token')}
         </Text>
         <Button
           style={styles.generateTokenButton}
@@ -473,27 +508,33 @@ export const DocWalletScreen = (props): React.ReactElement => {
         </Button>
       </Layout>
 
-
       <ModalUiKitten
         visible={ modalUploadImageVisible }
         backdropStyle={styles.backdrop}
         onBackdropPress={() => setModalUploadImageVisible(false)}
         >
-        <Layout style={ styles.modal } >
+        <Layout style={ styles.modal }>
           <Text style={styles.modalTitle} category='s1'>{I18n.t('Please specify a title for your document')}</Text>
           <Input
-            placeholder={I18n.t('Enter Document Name')}
+            placeholder={I18n.t('Enter the document name')}
             value={documentTitle}
             onChangeText={setDocumentTitle}
           />
           <Layout style={styles.imageContainer}>
             <Image
-                source={{uri: fileResponse.uri}}
-                style={styles.imageStyle}
-              />
+              source={{uri: fileResponse.uri}}
+              style={styles.imageStyle}
+            />
           </Layout>
-          <Button onPress={handleUpload}>{I18n.t('UPLOAD TO IPFS')}</Button>
-          <Button status='basic' onPress={() => setModalUploadImageVisible(false)}>{I18n.t('CLOSE')}</Button>
+          <Button
+            onPress={photoUpload}>
+            {I18n.t('UPLOAD')}
+          </Button>
+          <Button
+            status='basic'
+            onPress={() => setModalUploadImageVisible(false)}>
+            {I18n.t('CLOSE')}
+          </Button>
         </Layout>
       </ModalUiKitten>
 
@@ -504,7 +545,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
         <Layout style={ styles.modal } >
           <Text style={ styles.modalText } >{I18n.t('30-Minutes Token Generated')}</Text>
           <Text style={ styles.modalText } category='h3' >{generatedToken}</Text>
-          <Text style={ styles.modalText } >{I18n.t('Communicate this token only')}</Text>
+          <Text style={ styles.modalText } >{I18n.t('Communicate this token')}</Text>
           <Button status='basic' onPress={() => setmodalVisible(false)}>{I18n.t('CLOSE')}</Button>
         </Layout>
       </ModalUiKitten>
@@ -533,7 +574,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
           <Button status='basic' onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>
           </View>
           <View style={styles.modalButtonRight} >
-          <Button status='primary' onPress={DeleteDocument}>{I18n.t('DELETE')}</Button>
+          <Button status='primary' onPress={deleteDocument}>{I18n.t('DELETE')}</Button>
           </View>
           </View>
         </Layout>
@@ -562,6 +603,7 @@ const themedStyles = StyleService.create({
     padding: 4,
     marginHorizontal: 16,
     color: 'color-light-100',
+    textAlign: 'center',
   },
   item: {
     borderBottomWidth: 1,
@@ -572,8 +614,12 @@ const themedStyles = StyleService.create({
     marginTop: 8,
     marginBottom: 10,
   },
-  backdrop: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
-  backdrop_black: { backgroundColor: 'rgba(0, 0, 0, 1)' },
+  backdrop: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  backdrop_black: {
+    backgroundColor: 'rgba(0, 0, 0, 1)',
+  },
   modal: {
     textAlign: 'center',
     margin: 12,
@@ -613,12 +659,19 @@ const themedStyles = StyleService.create({
     tintColor: '#FFFFFF',
   },
   modalButtonRight: {
-    width: '100%', height: 'auto', flex: 1, alignItems: 'center',
+    width: '100%',
+    height: 'auto',
+    flex: 1,
+    alignItems: 'center',
   },
   modalButtonLeft: {
-    width: '100%', height: 'auto', flex: 1, alignItems: 'center',
+    width: '100%',
+    height: 'auto',
+    flex: 1,
+    alignItems: 'center',
   },
   modalButtonsContainer: {
-    flexDirection: 'row', marginTop: 10,
+    flexDirection: 'row',
+    marginTop: 10,
   },
 });

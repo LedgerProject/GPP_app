@@ -1,38 +1,40 @@
+// React import
 import React, { useEffect } from 'react';
-import { View } from 'react-native';
-import {
-  Button,
-  Input,
-  Layout,
-  StyleService,
-  Text,
-  useStyleSheet,
-  Select,
-  TopNavigation,
-  TopNavigationAction,
-  Divider,
-  Datepicker, Modal,
-} from '@ui-kitten/components';
-import { ProfileAvatar } from '../services/profile-avatar.component';
-import { PersonIcon, PlusIcon } from '../components/icons';
-import { genderOptions } from './my-profile/data';
-// import { genderOptions, nationalityOptions } from './my-profile/data';
-import { MenuIcon, StopCircleIcon, GlobeIcon, CalendarIcon } from '../components/icons';
-import { KeyboardAvoidingView } from '../services/3rd-party';
-import { ScrollView } from 'react-native-gesture-handler';
-import { SafeAreaLayout } from '../components/safe-area-layout.component';
-import I18n from './../i18n/i18n';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppOptions } from '../services/app-env';
-import Spinner from 'react-native-loading-spinner-overlay';
 
-// REDUX
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  manageToken,
-  selectToken,
-} from '../app/tokenSlice';
+// React Native import
+import { View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
+
+// UIKitten import
+import { Button, Input, Layout, StyleService, Text, useStyleSheet, Select,
+  TopNavigation, TopNavigationAction, Divider, Datepicker, Modal } from '@ui-kitten/components';
+
+// Locale import
+import I18n from './../i18n/i18n';
+
+// Environment import
+import { AppOptions } from '../services/app-env';
+
+// Components import
+import { PersonIcon, PlusIcon, MenuIcon, StopCircleIcon, GlobeIcon, CalendarIcon } from '../components/icons';
+import { SafeAreaLayout } from '../components/safe-area-layout.component';
+
+// Model import
+import { genderOptions } from '../model/gender.model';
+
+// Axios import
+import axios from 'axios';
+
+// Async Storage import
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// Other imports
+import Spinner from 'react-native-loading-spinner-overlay';
+import { KeyboardAvoidingView } from '../services/3rd-party';
+
+// Redux import
+import { useSelector } from 'react-redux';
+import { selectToken } from '../redux/tokenSlice';
 
 export const MyProfileScreen = (props): React.ReactElement => {
   const [idUser, setIdUser] = React.useState<string>();
@@ -44,97 +46,230 @@ export const MyProfileScreen = (props): React.ReactElement => {
   const [loading, setLoading] = React.useState(false);
   const [nationalityOptions, setNationalityOptions] = React.useState([]);
   const [nationalityObjects, setNationalityObjects] = React.useState([]);
-  const today = new Date();
-  const firstDayCalendar = new Date(1900, 1, 1);
-
-  const styles = useStyleSheet(themedStyles);
-
   const [success, setSuccess] = React.useState<string>();
   const [error, setError] = React.useState<string>();
   const [modalVisible, setmodalVisible] = React.useState(false);
 
-  // Get Token from REDUX
+  const today = new Date();
+  const firstDayCalendar = new Date(1900, 1, 1);
+  const styles = useStyleSheet(themedStyles);
+
+  // Get token from Redux
   const token = useSelector(selectToken);
 
+  // Use Effect
+  useEffect(() => {
+    getNationalities();
+  }, []);
+
+  // On selecting gender event
   const onSelectGender = (option) => {
     setGender(option);
   };
 
+  // On selecting nationality event
   const onSelectNationality = (option) => {
     setNationality(option);
   };
 
-  async function onSaveButtonPress() {
-    setError('');
-    setSuccess('');
-    if (!firstName) {
-      setError(I18n.t('Please fill First Name'));
-      setmodalVisible(true);
-      return;
-    }
-    if (!lastName) {
-      setError(I18n.t('Please fill Last Name'));
-      setmodalVisible(true);
-      return;
-    }
-    // const token = await AsyncStorage.getItem('token');
+  // Get the nationalities list
+  async function getNationalities() {
+    // Show spinner
     setLoading(true);
-    const postParams = {
-        firstName: firstName,
-        lastName: lastName,
-      };
-      let key = '';
-      if (gender) {
-        const gender_value = gender.text;
-        key = 'gender';
-        postParams[key] = gender_value;
-      }
-      if (nationality) {
-        const nationality_identifier = nationality.text;
-        let nationality_value = '';
-        // search nationality
-        nationalityObjects.forEach(element => {
-          if (element.identifier === nationality_identifier) {
-            nationality_value = element.idNationality;
-            key = 'idNationality';
-            postParams[key] = nationality_value;
-          }
-        });
-        //
-      }
-      if (birthday) {
-        key = 'birthday';
-        postParams[key] = birthday;
-      }
 
-      axios
-      .patch(AppOptions.getServerUrl() + 'users/' + idUser, postParams, {
+    // Get the current language
+    let lang = await AsyncStorage.getItem('lang');
+    lang = lang.substring(0, 2);
+
+    // Set the filters
+    const nationalitiesFilters = `nationalities?filter={`
+        + `"include":[`
+          + `{"relation": "nationalityLanguage", "scope": {"where": {"language": "` + lang + `"}}}`
+        + `]`
+      + `}`;
+
+    // Get the nationalities list from the server
+    axios
+      .get(AppOptions.getServerUrl() + nationalitiesFilters, {
         headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(async function (response) {
+        // Hide spinner
+        setLoading(false);
+
+        // Set the nationalities objects
+        const data: any = response.data;
+        setNationalityObjects(data);
+
+        // Set the nationalities options
+        const options = [];
+
+        data.map((element) => {
+          const option = { text: element.nationalityLanguage[0].nationality };
+          options.push( option );
+        });
+
+        setNationalityOptions(options);
+
+        getUserInformation(data);
+      })
+      .catch(function () {
+        // Hide spinner
+        setLoading(false);
+
+        // Show the error message
+        setError(I18n.t('An error has occurred, please try again'));
+        setmodalVisible(true);
+      });
+  }
+
+  // Get and set the user information
+  async function getUserInformation(nationalitiesList: any) {
+    // Show spinner
+    setLoading(true);
+
+    // Get the user informatiomn
+    axios
+      .get(AppOptions.getServerUrl() + 'users/logged-user', {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
         },
       })
       .then(function (response) {
+        const data: any = response.data;
+
+        if (data) {
+          // Set the user ID
+          setIdUser(data.idUser);
+
+          // Set the user first name
+          setFirstName(data.firstName);
+
+          // Set the user last name
+          setLastName(data.lastName);
+
+          // Set the user gender
+          if (data.gender) {
+            setGender({ text: data.gender});
+          }
+
+          // Set the user nationality
+          if (data.idNationality) {
+            nationalitiesList.forEach( element => {
+              if (element.idNationality === data.idNationality) {
+                setNationality({ text: element.nationalityLanguage[0].nationality});
+              }
+            });
+          }
+
+          // Set the user birthday
+          const bday = data.birthday;
+          if (bday) {
+            const birthdayDate = new Date(bday);
+            setBirthday(birthdayDate);
+          }
+        }
+
+        // Hide spinner
         setLoading(false);
-            setSuccess(I18n.t(
-              'Profile updated successfully',
-              ));
+      })
+      .catch(function () {
+        // Hide spinner
+        setLoading(false);
+
+        // Show the error message
+        setError(I18n.t('An error has occurred, please try again'));
+        setmodalVisible(true);
+      });
+  }
+
+  // Save profile information
+  async function onSaveButtonPress() {
+    setError('');
+    setSuccess('');
+
+    // Check if first name is specified
+    if (!firstName) {
+      setError(I18n.t('Please enter your first name'));
+      setmodalVisible(true);
+      return;
+    }
+
+    // Check if last name is specified
+    if (!lastName) {
+      setError(I18n.t('Please enter your last name'));
+      setmodalVisible(true);
+      return;
+    }
+
+    // Show the spinner
+    setLoading(true);
+
+    // Set the post params
+    const postParams = {
+      firstName: firstName,
+      lastName: lastName,
+    };
+
+    let key = '';
+
+    if (gender) {
+      key = 'gender';
+      postParams[key] = gender.text;
+    }
+
+    if (nationality) {
+      const nationalityIdentifier = nationality.text;
+
+      nationalityObjects.forEach(element => {
+        if (element.identifier === nationalityIdentifier) {
+          key = 'idNationality';
+          postParams[key] = element.idNationality;
+        }
+      });
+    }
+
+    if (birthday) {
+      key = 'birthday';
+      postParams[key] = birthday;
+    }
+
+    // Update the user profile
+    axios
+      .patch(AppOptions.getServerUrl() + 'users/' + idUser, postParams, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(function (response) {
+        // Hide the spinner
+        setLoading(false);
+
+        // Show the success message
+        setSuccess(I18n.t('Profile updated successfully'));
         setmodalVisible(true);
       })
       .catch(errors => {
-
+        // Hide the spinner
         setLoading(false);
+
+        // Show the error message
         setError(I18n.t('An error has occurred, please try again'));
         setmodalVisible(true);
-        throw error;
-        return;
       });
-
   }
 
+  // Delete user data
   const onDeleteButtonPress = (): void => {
+    // Show spinner
     setLoading(true);
-    // TODO
+
+    // Hide spinner
     setLoading(false);
   };
 
@@ -144,136 +279,6 @@ export const MyProfileScreen = (props): React.ReactElement => {
       onPress={props.navigation.toggleDrawer}
     />
   );
-
-  const renderEditAvatarButton = (): React.ReactElement => (
-    <Button
-      style={styles.editAvatarButton}
-      status='basic'
-      icon={PlusIcon}
-    />
-  );
-
-  async function getNationalities() {
-      setLoading(true);
-      // const token = await AsyncStorage.getItem('token');
-      let lang = await AsyncStorage.getItem('lang');
-      lang = lang.substring(0, 2);
-      axios
-        .get(AppOptions.getServerUrl() + `nationalities?filter={`
-         + `"include":[`
-          + `{"relation": "nationalityLanguage", "scope": {"where": {"language": "` + lang + `"}}}`
-         + `]`
-          + `}`
-          , {
-          headers: {
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json',
-          },
-        })
-        .then(function (response) {
-          setLoading(false);
-          const data: any = response.data;
-          setNationalityObjects(data);
-          const options = [];
-          data.map ( (element) => {
-            const option = { text: element.identifier };
-            options.push( option );
-          });
-          setNationalityOptions(options);
-
-          // Getuser
-          axios
-          .get(AppOptions.getServerUrl() + 'users/logged-user', {
-            headers: {
-              'Authorization': 'Bearer ' + token,
-              'Content-Type': 'application/json',
-            },
-          })
-          .then(function (user_response) {
-            setLoading(false);
-            const user_data: any = user_response.data;
-            if (user_data) {
-              const bday = user_data.birthday;
-              if (bday) {
-                const bday_date = new Date(bday);
-                setBirthday(bday_date);
-              }
-              setIdUser(user_data.idUser);
-              setFirstName(user_data.firstName);
-              setLastName(user_data.lastName);
-              if (user_data.gender) {
-                setGender({ text: user_data.gender});
-              }
-              if (user_data.idNationality) {
-                data.forEach( element => {
-                  if (element.idNationality === user_data.idNationality) {
-                    setNationality({ text: element.identifier});
-                  }
-                });
-              }
-            }
-          })
-          .catch(function () {
-            // setLoading(false);
-            // throw error;
-          });
-
-          //
-
-        })
-        .catch(function () {
-          setLoading(false);
-          // alert(JSON.stringify(error));
-          throw error;
-        });
-    }
-
-    async function getUser() {
-      setLoading(true);
-      // const token = await AsyncStorage.getItem('token');
-      axios
-        .get(AppOptions.getServerUrl() + 'users/logged-user', {
-          headers: {
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json',
-          },
-        })
-        .then(function (response) {
-          setLoading(false);
-          const data: any = response.data;
-          if (data) {
-            let bday = data.birthday;
-            if (bday) {
-              bday = bday.substring(0, 10);
-              const bday_date = new Date(bday + ' 00:00:00');
-              setBirthday(bday_date);
-            }
-            setIdUser(data.idUser);
-            setFirstName(data.firstName);
-            setLastName(data.lastName);
-            if (data.gender) {
-              setGender({ text: data.gender});
-            }
-            if (data.idNationality) {
-              nationalityObjects.forEach( element => {
-                if (element.idNationality === data.idNationality) {
-                  setNationality({ text: element.identifier});
-                }
-              });
-            }
-          }
-        })
-        .catch(function () {
-          setLoading(false);
-          throw error;
-        });
-    }
-
-
-  useEffect(() => {
-    getNationalities();
-    // getUser();
-  }, []);
 
   return (
     <SafeAreaLayout insets='top' style={styles.safeArea}>
@@ -287,19 +292,11 @@ export const MyProfileScreen = (props): React.ReactElement => {
         />
         <Spinner
           visible={loading}
-          textContent={I18n.t('Loading') + '...'}
+          textContent={I18n.t('Please wait') + '...'}
           textStyle={styles.spinnerTextStyle}
         />
         <ScrollView style={styles.container}>
           <KeyboardAvoidingView style={styles.container}>
-            {/*<View style={styles.headerContainer}>
-              <ProfileAvatar
-                style={styles.profileAvatar}
-                resizeMode='center'
-                source={require('../assets/images/image-person.png')}
-                editButton={renderEditAvatarButton}
-              />
-            </View>*/}
             <Layout
               style={styles.formContainer}
               level='1'>
@@ -371,18 +368,17 @@ export const MyProfileScreen = (props): React.ReactElement => {
         </ScrollView>
       </View>
       <Modal
-      visible={ modalVisible }
-      backdropStyle={styles.backdrop}
-      onBackdropPress={ () => setmodalVisible(false)}
-      >
-      <Layout style={ styles.modal } >
-      <Text style={ styles.modalText } status={error ? 'danger' : 'success' }>{error ? error : success}</Text>
-      <Button
-      status={error ? 'basic' : 'primary' }
-      onPress={ () => setmodalVisible(false) }>
-        { I18n.t('CLOSE') }
-        </Button>
-      </Layout>
+        visible={ modalVisible }
+        backdropStyle={styles.backdrop}
+        onBackdropPress={ () => setmodalVisible(false)}>
+        <Layout style={ styles.modal }>
+          <Text style={ styles.modalText } status={error ? 'danger' : 'success' }>{error ? error : success}</Text>
+          <Button
+            status={error ? 'basic' : 'primary' }
+            onPress={ () => setmodalVisible(false) }>
+            { I18n.t('CLOSE') }
+          </Button>
+        </Layout>
       </Modal>
     </SafeAreaLayout>
   );

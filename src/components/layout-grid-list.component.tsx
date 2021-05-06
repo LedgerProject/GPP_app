@@ -1,14 +1,14 @@
+// React import
 import React from 'react';
+
+// React Native import
 import { Dimensions, Image, ListRenderItemInfo, StyleSheet } from 'react-native';
-import {
-  Card,
-  CardElement,
-  CardHeader,
-  CardHeaderElement,
-  List,
-  ListElement,
-  ListProps,
-} from '@ui-kitten/components';
+
+// UIKitten import
+import { Card, CardElement, CardHeader, CardHeaderElement, List,
+  ListElement, ListProps } from '@ui-kitten/components';
+
+// Model import
 import { LayoutItem } from '../model/layout-item.model';
 
 export interface LayoutGridListProps extends Omit<ListProps, 'renderItem'> {

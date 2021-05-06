@@ -1,7 +1,95 @@
+// React import
 import React from 'react';
+
+// React Native import
 import { ImageStyle } from 'react-native';
+
+// UIKitten import
 import { Icon, IconElement } from '@ui-kitten/components';
 
+/*** CUSTOM ICONS ***/
+
+// DocWallet icon
+export const CustomDocWalletIcon = (props) => (
+  <Icon {...props} name='custom-doc-wallet' pack='assets' />
+);
+
+// AroundMe icon
+export const CustomAroundMeIcon = (props) => (
+  <Icon {...props} name='custom-around-me' pack='assets' />
+);
+
+// AbuseAlarm icon
+export const CustomAbuseAlarmIcon = (props) => (
+  <Icon {...props} name='custom-abuse-alarm' pack='assets' />
+);
+
+// News&Stories icon
+export const CustomNewsStoriesIcon = (props) => (
+  <Icon {...props} name='custom-news-stories' pack='assets' />
+);
+
+// Take Photo icon
+export const CustomTakePhotoIcon = (props) => (
+  <Icon {...props} name='custom-take-photo' pack='assets' />
+);
+
+// From Library icon
+export const CustomFromLibraryIcon = (props) => (
+  <Icon {...props} name='custom-from-library' pack='assets' />
+);
+
+/*** ASSETS ICONS ***/
+
+export const AssetDocWalletIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} pack='app' name='doc-wallet'/>
+);
+
+export const AssetDocWalletDarkIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} pack='app' name='doc-wallet-dark'/>
+);
+
+export const AssetAroundMeIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} pack='app' name='around-me'/>
+);
+
+export const AssetAroundMeDarkIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} pack='app' name='around-me-dark'/>
+);
+
+export const AssetAbuseAlarmIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} pack='app' name='abuse-alarm'/>
+);
+
+export const AssetAbuseAlarmDarkIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} pack='app' name='abuse-alarm-dark'/>
+);
+
+export const AssetNewsStoriesIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} pack='app' name='news-stories'/>
+);
+
+export const AssetNewsStoriesDarkIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} pack='app' name='news-stories-dark'/>
+);
+
+export const AssetTakePhotoIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} pack='app' name='takephoto'/>
+);
+
+export const AssetTakePhotoDarkIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} pack='app' name='takephoto-dark'/>
+);
+
+export const AssetPhotoLibraryIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} pack='app' name='photolibrary'/>
+);
+
+export const AssetPhotoLibraryDarkIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} pack='app' name='photolibrary-dark'/>
+);
+
+/*** EVA ICONS ***/
 export const MinusIcon = (style: ImageStyle): IconElement => (
   <Icon {...style} name='minus'/>
 );
@@ -20,6 +108,10 @@ export const EyeOffIcon = (style: ImageStyle): IconElement => (
 
 export const EmailIcon = (style: ImageStyle): IconElement => (
   <Icon {...style} name='email'/>
+);
+
+export const HomeIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} name='home'/>
 );
 
 export const BookOpenIcon = (style: ImageStyle): IconElement => (
@@ -50,62 +142,24 @@ export const GlobeIcon = (style: ImageStyle): IconElement => (
   <Icon {...style} name='globe'/>
 );
 
+export const PinIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} name='pin'/>
+);
+
+export const BellIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} name='bell'/>
+);
+
+export const BookIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} name='book'/>
+);
+
 export const StopCircleIcon = (style: ImageStyle): IconElement => (
   <Icon {...style} name='stop-circle'/>
 );
 
 export const CalendarIcon = (style: ImageStyle): IconElement => (
   <Icon {...style} name='calendar'/>
-);
-
-/** ASSET **/
-
-export const AssetDocWalletIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='docwallet'/>
-);
-
-export const AssetDocWalletDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='docwallet-dark'/>
-);
-
-export const AssetStructuresIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='structures'/>
-);
-
-export const AssetStructuresDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='structures-dark'/>
-);
-
-export const AssetSocialIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='social'/>
-);
-
-export const AssetSocialDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='social-dark'/>
-);
-
-export const AssetNewPostIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='newpost'/>
-);
-
-export const AssetNewPostDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='newpost-dark'/>
-);
-
-export const AssetPhotoLibraryIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='photolibrary'/>
-);
-
-export const AssetPhotoLibraryDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='photolibrary-dark'/>
-);
-
-export const AssetTakePhotoIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='takephoto'/>
-);
-
-export const AssetTakePhotoDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='takephoto-dark'/>
 );
 
 export const ArrowBackIcon = (style: ImageStyle): IconElement => (
@@ -123,270 +177,3 @@ export const ListIcon = (style: ImageStyle): IconElement => (
 export const CloseIcon = (style: ImageStyle): IconElement => (
   <Icon {...style} name='close'/>
 );
-
-/**DA RIMUOVERE I SEGUENTI **/
-
-/*export const ArrowIosBackIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='arrow-ios-back'/>
-);
-
-export const ArrowIosForwardIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='arrow-ios-forward'/>
-);
-
-export const BookIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='book'/>
-);
-
-export const BookmarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='bookmark'/>
-);
-
-export const BookmarkOutlineIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='bookmark-outline'/>
-);
-
-export const ColorPaletteIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='color-palette-outline'/>
-);
-
-export const CloseIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='close'/>
-);
-
-export const GithubIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='github'/>
-);
-
-export const GridIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='grid-outline'/>
-);
-
-export const LayoutIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='layout-outline'/>
-);
-
-export const MoreVerticalIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='more-vertical'/>
-);
-
-export const SearchIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='search'/>
-);
-
-export const SettingsIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='settings'/>
-);
-
-export const StarIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='star'/>
-);
-
-export const StarOutlineIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='star-outline'/>
-);
-
-export const TrashIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name='trash'/>
-);
-
-export const AssetAuthIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='auth'/>
-);
-
-export const AssetAuthDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='auth-dark'/>
-);
-
-export const AssetArticlesIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='articles'/>
-);
-
-export const AssetArticlesDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='articles-dark'/>
-);
-
-export const AssetMessagingIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='messaging'/>
-);
-
-export const AssetMessagingDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='messaging-dark'/>
-);
-
-export const AssetDashboardsIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='dashboards'/>
-);
-
-export const AssetDashboardsDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='dashboards-dark'/>
-);
-
-export const AssetEcommerceIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='ecommerce'/>
-);
-
-export const AssetEcommerceDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='ecommerce-dark'/>
-);
-
-export const AssetAutocompleteIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='autocomplete'/>
-);
-
-export const AssetAutocompleteDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='autocomplete-dark'/>
-);
-
-export const AssetAvatarIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='avatar'/>
-);
-
-export const AssetAvatarDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='avatar-dark'/>
-);
-
-export const AssetBottomNavigationIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='bottom-navigation'/>
-);
-
-export const AssetBottomNavigationDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='bottom-navigation-dark'/>
-);
-
-export const AssetButtonIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='button'/>
-);
-
-export const AssetButtonDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='button-dark'/>
-);
-
-export const AssetButtonGroupIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='button-group'/>
-);
-
-export const AssetButtonGroupDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='button-group-dark'/>
-);
-
-export const AssetCalendarIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='calendar'/>
-);
-
-export const AssetCalendarDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='calendar-dark'/>
-);
-
-export const AssetCheckBoxIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='check-box'/>
-);
-
-export const AssetCheckBoxDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='check-box-dark'/>
-);
-
-export const AssetDatepickerIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='datepicker'/>
-);
-
-export const AssetDatepickerDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='datepicker-dark'/>
-);
-
-export const AssetIconIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='icon'/>
-);
-
-export const AssetIconDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='icon-dark'/>
-);
-
-export const AssetInputIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='input'/>
-);
-
-export const AssetInputDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='input-dark'/>
-);
-
-export const AssetListIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='list'/>
-);
-
-export const AssetListDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='list-dark'/>
-);
-
-export const AssetMenuIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='menu'/>
-);
-
-export const AssetMenuDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='menu-dark'/>
-);
-
-export const AssetRadioIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='radio'/>
-);
-
-export const AssetRadioDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='radio-dark'/>
-);
-
-export const AssetSelectIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='select'/>
-);
-
-export const AssetSelectDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='select-dark'/>
-);
-
-export const AssetSpinnerIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='spinner'/>
-);
-
-export const AssetSpinnerDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='spinner-dark'/>
-);
-
-export const AssetTabViewIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='tab-view'/>
-);
-
-export const AssetTabViewDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='tab-view-dark'/>
-);
-
-export const AssetTextIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='text'/>
-);
-
-export const AssetTextDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='text-dark'/>
-);
-
-export const AssetToggleIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='toggle'/>
-);
-
-export const AssetToggleDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='toggle-dark'/>
-);
-
-export const AssetTooltipIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='tooltip'/>
-);
-
-export const AssetTooltipDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='tooltip-dark'/>
-);
-
-export const AssetTopNavigationIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='top-navigation'/>
-);
-
-export const AssetTopNavigationDarkIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} pack='app' name='top-navigation-dark'/>
-); */
-

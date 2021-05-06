@@ -1,8 +1,8 @@
+// React Native import
 import { Linking, Platform } from 'react-native';
 import SafariView from 'react-native-safari-view';
 
 export class WebBrowserService {
-
   static openBrowserAsync = (url: string): Promise<any> => {
     if (Platform.OS === 'ios') {
       return WebBrowserService.openInAppUrl(url).catch(() => WebBrowserService.openUrl(url));
@@ -13,7 +13,7 @@ export class WebBrowserService {
 
   private static openInAppUrl = (url: string): Promise<any> => {
     return SafariView.isAvailable()
-                     .then(() => SafariView.show({ url }));
+      .then(() => SafariView.show({ url }));
   };
 
   private static openUrl = (url: string): Promise<any> => {
