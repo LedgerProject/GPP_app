@@ -26,7 +26,7 @@ import { MenuItem } from '../model/menu-item.model';
 import axios from 'axios';
 
 // AsyncStorage import
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Other imports
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -37,6 +37,10 @@ import data_compliants, { Compliant } from './compliants/data';
 export interface LayoutData extends MenuItem {
   route: string;
 }
+
+// Redux import
+import { useSelector } from 'react-redux';
+import { selectToken } from '../redux/tokenSlice';
 
 export const ContentsListScreen = (props): React.ReactElement => {
   const styles = useStyleSheet(themedStyles);
@@ -50,7 +54,12 @@ export const ContentsListScreen = (props): React.ReactElement => {
   const [alertMessage, setAlertMessage] = React.useState('');
   const [loading, setLoading] = React.useState(false);
 
-  // const { abuseAlarm } = props.route.params;
+  // Get Token from Redux
+  const token = useSelector(selectToken);
+
+  const { abuseAlarm } = props.route.params;
+   // let abuseAlarm = null;
+
 
   const onItemRemove = (compliant: Compliant, index: number): void => {
     // DeleteDocument(document,index);
@@ -62,7 +71,7 @@ export const ContentsListScreen = (props): React.ReactElement => {
 
   async function DeleteCompliant() {
     setLoading(true);
-    const token = await AsyncStorage.getItem('token');
+    // const token = await AsyncStorage.getItem('token');
     /*axios
     .delete(AppOptions.getServerUrl() + 'documents/' + documentDelete.idDocument, {
       headers: {
@@ -85,7 +94,7 @@ export const ContentsListScreen = (props): React.ReactElement => {
   }
 
   const onItemPress = (compliant: Compliant, index: number): void => {
-    props.navigation && props.navigation.navigate('ContentsDetails', { item: compliant });
+    props.navigation && props.navigation.navigate('ContentsDetails', { item: compliant, abuseAlarm: abuseAlarm });
   };
 
   const renderCompliantItem = (info: ListRenderItemInfo<Compliant>): React.ReactElement => (
@@ -124,6 +133,7 @@ export const ContentsListScreen = (props): React.ReactElement => {
 
   useEffect(() => {
     getMyCompliants();
+    // console.log(abuseAlarm);
   }, []);
 
 
@@ -152,7 +162,7 @@ export const ContentsListScreen = (props): React.ReactElement => {
       style={styles.safeArea}
       insets='top'>
       <TopNavigation
-        title={I18n.t('Compliants')}
+        title={abuseAlarm === true ? I18n.t('AbuseAlarm - List') : I18n.t('News&Stories - List')}
         titleStyle={styles.topBarTitle}
         leftControl={renderDrawerAction() }
         style={styles.topBar}
@@ -165,11 +175,20 @@ export const ContentsListScreen = (props): React.ReactElement => {
           textContent={I18n.t('Please wait') + '...'}
           textStyle={styles.spinnerTextStyle}
         />
+        { abuseAlarm === true && (
         <Text
           style={styles.infoSection}>
-          {I18n.t('Tap on compliant for the preview') + '. '
-          + I18n.t('Swipe left on compliant to delete it') + '.' }
+          {I18n.t('Tap on AbuseAlarm for the preview') + '. '
+          + I18n.t('Swipe left on AbuseAlarm to delete it') + '.' }
         </Text>
+        )}
+        { abuseAlarm === false && (
+        <Text
+        style={styles.infoSection}>
+        {I18n.t('Tap on News&Story for the preview') + '. '
+        + I18n.t('Swipe left on News&Story to delete it') + '.' }
+        </Text>
+        )}
         <List style={styles.container}
           data={compliants}
           renderItem={renderCompliantItem}

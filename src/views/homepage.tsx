@@ -12,13 +12,26 @@ import { MenuGridList } from '../components/menu-grid-list.component';
 import { MenuIcon, CustomDocWalletIcon, CustomAroundMeIcon, CustomAbuseAlarmIcon, CustomNewsStoriesIcon } from '../components/icons';
 import { ThemedIcon } from '../components/themed-icon.component';
 
+interface PropsObject {
+  [key: string]: any;
+}
+
 export const HomepageScreen = (props): React.ReactElement => {
   const [data, setData] = React.useState([]);
   const styles = useStyleSheet(themedStyles);
 
   // Homepage button press event
-  const onItemPress = (index: number): void => {
-    props.navigation.navigate(data[index].route);
+  const onItemPress = (index: number, var_name: string = null, var_value: boolean = null): void => {
+      const vars: PropsObject = {};
+      if (var_name) {
+        vars[var_name] = var_value;
+        props.navigation && props.navigation.navigate(data[index].route, {
+          screen: 'ContentsList',
+          params: vars,
+        });
+      } else {
+        props.navigation && props.navigation.navigate(data[index].route);
+      }
   };
 
   // Navbar menu render
@@ -50,6 +63,8 @@ export const HomepageScreen = (props): React.ReactElement => {
             { ...style, light: CustomDocWalletIcon, dark: CustomDocWalletIcon },
           );
         },
+        var_name: null,
+        var_value: null,
       },
     );
 
@@ -64,6 +79,8 @@ export const HomepageScreen = (props): React.ReactElement => {
             { ...style, light: CustomAroundMeIcon, dark: CustomAroundMeIcon },
           );
         },
+        var_name: null,
+        var_value: null,
       },
     );
 
@@ -78,6 +95,8 @@ export const HomepageScreen = (props): React.ReactElement => {
             { ...style, light: CustomAbuseAlarmIcon, dark: CustomAbuseAlarmIcon },
           );
         },
+        var_name: 'abuseAlarm',
+        var_value: true,
       },
     );
 
@@ -92,9 +111,10 @@ export const HomepageScreen = (props): React.ReactElement => {
             { ...style, light: CustomNewsStoriesIcon, dark: CustomNewsStoriesIcon },
           );
         },
+        var_name: 'abuseAlarm',
+        var_value: false,
       },
     );
-
     setData(buttonsArray);
   }
 

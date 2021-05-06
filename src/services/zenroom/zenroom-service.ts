@@ -48,7 +48,12 @@ export async function recoveryKeypair(clientSideContractText: string,  answers: 
 }
 
 // Verify that the answers are correct
-export async function verifyAnswers(clientSideContractText: string, answers: any, PBKDF: string, userPublicKey: string) {
+export async function verifyAnswers(
+  clientSideContractText: string,
+  answers: any,
+  PBKDF: string,
+  userPublicKey: string,
+  ) {
   const execution = await recoveryKeypair(
     clientSideContractText,
     answers,

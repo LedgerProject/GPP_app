@@ -65,10 +65,10 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState([]);
 
-  const item = null;
+  // const item = null;
   const styles = useStyleSheet(themedStyles);
 
-  const { abuseAlarm } = props.route.params;
+  const { item, abuseAlarm } = props.route.params;
 
   const ZoomImage = (): void => {
     setmodalFileVisible(true);
@@ -300,7 +300,11 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
       insets='top'>
     <KeyboardAvoidingView style= {styles.FlexGrowOne}>
       <TopNavigation
-        title={ item ? I18n.t('Edit Compliant') : I18n.t('New Compliant') }
+        title={
+          item ?
+          abuseAlarm ? I18n.t('AbuseAlarm - Edit') : I18n.t('News&Stories - Edit') :
+          abuseAlarm ? I18n.t('AbuseAlarm - New')  : I18n.t('News&Stories - New')
+        }
         titleStyle={styles.topBarTitle}
         leftControl={renderDrawerAction() }
         style={styles.topBar}

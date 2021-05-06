@@ -76,14 +76,20 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
       // AbuseAlarm
       case 3: {
         navigation.toggleDrawer();
-        navigation.navigate('AbuseAlarm');
+        navigation.navigate('AbuseAlarm', {
+          screen: 'ContentsList',
+          params: { abuseAlarm: true},
+        });
         return;
       }
 
       // News&Stories
       case 4: {
         navigation.toggleDrawer();
-        navigation.navigate('NewsStories');
+        navigation.navigate('NewsStories', {
+          screen: 'ContentsList',
+          params: { abuseAlarm: false},
+        });
         return;
       }
 

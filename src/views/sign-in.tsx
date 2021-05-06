@@ -66,6 +66,8 @@ export default ({ navigation }): React.ReactElement => {
     setAnswer3('');
     setAnswer4('');
     setAnswer5('');
+    setEmail('test4@stefanobaldassarre.it');
+    setPassword('12345678');
   }, []);
 
   // Open the sign-up page

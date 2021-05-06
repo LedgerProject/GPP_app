@@ -12,7 +12,7 @@ import { MenuItem } from '../model/menu-item.model';
 
 export interface MenuGridListProps extends Omit<ListProps, 'renderItem'> {
   data: MenuItem[];
-  onItemPress: (index: number) => void;
+  onItemPress: (index: number, var_name: string, var_value: boolean) => void;
 }
 
 export const MenuGridList = (props: MenuGridListProps): ListElement => {
@@ -21,7 +21,7 @@ export const MenuGridList = (props: MenuGridListProps): ListElement => {
   const renderItem = (info: ListRenderItemInfo<MenuItem>): ListItemElement => (
     <Card
       style={styles.item}
-      onPress={() => props.onItemPress(info.index)}>
+      onPress={() => props.onItemPress(info.index, info.item.var_name, info.item.var_value)}>
       {info.item.icon({ width: 64, height: 64, alignSelf: 'center' })}
       <Text
         style={styles.itemTitle}
