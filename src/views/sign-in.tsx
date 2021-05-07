@@ -223,7 +223,7 @@ export default ({ navigation }): React.ReactElement => {
           // Get public key and private key
           const publicKey = keypairData.user.keypair.public_key;
           const privateKey = keypairData.user.keypair.private_key;
-          
+
           // Proceed with sign-in (saving the private key and public key locally)
           onSignInButtonPress(privateKey, publicKey);
         } else {

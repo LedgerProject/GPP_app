@@ -532,7 +532,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
               source={{uri: fileResponse.uri}}
               style={styles.imageStyle}
             />
-          </Layout>          
+          </Layout>
           <Button
             onPress={photoUpload}>
             {I18n.t('UPLOAD')}
