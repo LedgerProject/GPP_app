@@ -31,6 +31,7 @@ import { MenuItem } from '../model/menu-item.model';
 // Redux import
 import { useSelector } from 'react-redux';
 import { selectToken } from '../redux/tokenSlice';
+import { selectPrivateKey } from '../redux/privateKeySlice';
 
 // Other imports
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -73,11 +74,13 @@ export const DocWalletScreen = (props): React.ReactElement => {
 
   // Get Token from Redux
   const token = useSelector(selectToken);
+  const privateKey = useSelector(selectPrivateKey);
 
   // Use Effect
   useEffect(() => {
     setButtons();
     getMyDocuments();
+    // console.log(privateKey);
   }, []);
 
   // Set the "Take Photo" and "From Library" buttons
@@ -260,10 +263,12 @@ export const DocWalletScreen = (props): React.ReactElement => {
       type: fileResponse.type,
       name: fileName,
     });
+    dataupload.append('title', documentTitle);
+    dataupload.append('privateKey', privateKey);
 
     // Send the document to the server, blockchain and ipfs
     axios
-      .post(AppOptions.getServerUrl() + 'documents/' + documentTitle, dataupload, {
+      .post(AppOptions.getServerUrl() + 'documents/upload', dataupload, {
         headers: {
           'Authorization': 'Bearer ' + token,
           'Content-Type': 'multipart/form-data',
@@ -281,7 +286,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
           I18n.t('Document uploaded successfully'),
           I18n.t('Document uploaded successfully to Blockchain and IPFS!'),
         );
-
+        setDocumentTitle('');
         // Load the user documents
         getMyDocuments();
       })
@@ -306,9 +311,12 @@ export const DocWalletScreen = (props): React.ReactElement => {
   async function loadDocument(document) {
     // Show spinner
     setLoading(true);
-
+    const postParams = {
+      idDocument: document.idDocument,
+      privateKey: privateKey,
+    };
     axios
-      .get(AppOptions.getServerUrl() + 'documents-base64/' + document.idDocument, {
+      .post(AppOptions.getServerUrl() + 'documents/download-base64', postParams, {
         headers: {
           'Authorization': 'Bearer ' + token,
           'Content-Type': 'application/json',
@@ -392,8 +400,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
         allSelectedDocuments.push(element.idDocument);
       }
     });
-
-    setSelectedDocuments(selectedDocuments);
+    setSelectedDocuments(allSelectedDocuments);
   };
 
   // Generate token event
@@ -525,7 +532,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
               source={{uri: fileResponse.uri}}
               style={styles.imageStyle}
             />
-          </Layout>
+          </Layout>          
           <Button
             onPress={photoUpload}>
             {I18n.t('UPLOAD')}

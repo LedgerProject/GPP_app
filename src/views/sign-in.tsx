@@ -223,7 +223,7 @@ export default ({ navigation }): React.ReactElement => {
           // Get public key and private key
           const publicKey = keypairData.user.keypair.public_key;
           const privateKey = keypairData.user.keypair.private_key;
-
+          
           // Proceed with sign-in (saving the private key and public key locally)
           onSignInButtonPress(privateKey, publicKey);
         } else {
@@ -243,7 +243,7 @@ export default ({ navigation }): React.ReactElement => {
   const onSignInButtonPress = (private_Key = null, public_Key = null): void => {
     // Show the spinner
     setLoading(true);
-
+    // console.log(private_Key);
     // Set the post params
     const postParams = {
       email: email,
