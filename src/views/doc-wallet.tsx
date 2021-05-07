@@ -414,9 +414,12 @@ export const DocWalletScreen = (props): React.ReactElement => {
     } else {
       // Show spinner
       setLoading(true);
-
+      const postParams = {
+        privateKey: privateKey,
+        idDocuments: selectedDocuments,
+      };
       axios
-        .post(AppOptions.getServerUrl() + 'users-token', null, {
+        .post(AppOptions.getServerUrl() + 'users-token', postParams, {
           headers: {
             'Authorization': 'Bearer ' + token,
             'Content-Type': 'application/json',
