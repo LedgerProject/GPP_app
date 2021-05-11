@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 
 // React Native import
-import { ListRenderItemInfo } from 'react-native';
+import { ListRenderItemInfo, View } from 'react-native';
 
 // UIKitten import
 import { Button, List, Layout, StyleService, Text, TopNavigation,
@@ -93,6 +93,10 @@ export const ContentsListScreen = (props): React.ReactElement => {
     });*/
   }
 
+  const addElement = (): void => {
+    props.navigation && props.navigation.navigate('ContentsDetails', { item: null, abuseAlarm: abuseAlarm });
+  };
+
   const onItemPress = (compliant: Compliant, index: number): void => {
     props.navigation && props.navigation.navigate('ContentsDetails', { item: compliant, abuseAlarm: abuseAlarm });
   };
@@ -176,18 +180,35 @@ export const ContentsListScreen = (props): React.ReactElement => {
           textStyle={styles.spinnerTextStyle}
         />
         { abuseAlarm === true && (
+        <View>
+          <View style={styles.addButtonContainer}>
+        <Button
+          status='primary'
+          style={styles.addButton}
+          onPress={addElement}>{I18n.t('New AbuseAlarm')}</Button>
+          </View>
         <Text
           style={styles.infoSection}>
           {I18n.t('Tap on AbuseAlarm for the preview') + '. '
           + I18n.t('Swipe left on AbuseAlarm to delete it') + '.' }
         </Text>
+        </View>
         )}
         { abuseAlarm === false && (
+        <View>
+          <View style={styles.addButtonContainer}>
+        <Button
+          status='primary'
+          style={styles.addButton}
+          onPress={addElement}>{I18n.t('New News&Story')}</Button>
+          </View>
         <Text
         style={styles.infoSection}>
         {I18n.t('Tap on News&Story for the preview') + '. '
         + I18n.t('Swipe left on News&Story to delete it') + '.' }
         </Text>
+
+        </View>
         )}
         <List style={styles.container}
           data={compliants}
@@ -286,4 +307,13 @@ const themedStyles = StyleService.create({
     color: '#FFFFFF',
     tintColor: '#FFFFFF',
   },
+  addButton: {
+    margin: 10,
+    width: 200,
+  },
+  addButtonContainer: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+
 });

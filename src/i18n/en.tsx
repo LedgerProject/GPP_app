@@ -207,4 +207,6 @@ export default {
   'AbuseAlarm - Edit': 'AbuseAlarm - Edit',
   'News&Stories - Edit': 'News&Stories - Edit',
   'Are you sure to delete all your data?': 'Are you sure to delete all your data?',
+  'New AbuseAlarm': 'New AbuseAlarm',
+  'New News&Story': 'New News&Story',
 };

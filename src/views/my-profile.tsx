@@ -437,14 +437,10 @@ export const MyProfileScreen = (props): React.ReactElement => {
           <Text style={ styles.modalText } category='h6' >
             {I18n.t('Are you sure to delete all your data?')}
           </Text>
-          <View style={styles.modalButtonsContainer}>
-          <View style={styles.modalButtonLeft} >
-          <Button status='basic' onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>
-          </View>
-          <View style={styles.modalButtonRight} >
-          <Button status='primary' onPress={deleteAllData}>{I18n.t('DELETE')}</Button>
-          </View>
-          </View>
+          <Layout style={styles.modalButtonsContainer}>
+          <Button style={styles.modalButtonLeft} status='basic' onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>
+          <Button style={styles.modalButtonRight} status='primary' onPress={deleteAllData}>{I18n.t('DELETE')}</Button>
+          </Layout>
         </Layout>
       </Modal>
     </SafeAreaLayout>
@@ -543,12 +539,14 @@ const themedStyles = StyleService.create({
     height: 'auto',
     flex: 1,
     alignItems: 'center',
+    marginLeft: 5,
   },
   modalButtonLeft: {
     width: '100%',
     height: 'auto',
     flex: 1,
     alignItems: 'center',
+    marginRight: 5,
   },
   modalButtonsContainer: {
     flexDirection: 'row',

@@ -67,7 +67,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
   const [alertMessage, setAlertMessage] = React.useState('');
   const [generatedToken, setGeneratedToken ] = React.useState('');
   const [modalUploadImageVisible, setModalUploadImageVisible] = React.useState(false);
-  const [documentTitle, setDocumentTitle] = React.useState('');
+  const [documentTitle, setDocumentTitle] = React.useState<string>();
   const [fileResponse, setFileResponse] = React.useState<ImagePickerResponse>(initialFileResponse);
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState([]);
@@ -505,7 +505,6 @@ export const DocWalletScreen = (props): React.ReactElement => {
           data={documents}
           renderItem={renderDocumentItem}
         />
-        <Divider/>
         <Text
           style={styles.infoSection}>
           {I18n.t('Generate a 30-minute token')}
@@ -537,15 +536,19 @@ export const DocWalletScreen = (props): React.ReactElement => {
               style={styles.imageStyle}
             />
           </Layout>
+          <Layout style={styles.modalButtonsContainer}>
           <Button
+            style={styles.modalButtonLeft}
             onPress={photoUpload}>
             {I18n.t('UPLOAD')}
           </Button>
           <Button
+            style={styles.modalButtonRight}
             status='basic'
             onPress={() => setModalUploadImageVisible(false)}>
             {I18n.t('CLOSE')}
           </Button>
+          </Layout>
         </Layout>
       </ModalUiKitten>
 
@@ -580,14 +583,16 @@ export const DocWalletScreen = (props): React.ReactElement => {
           <Text style={ styles.modalText } category='h6' >
             {I18n.t('Are you sure to delete the selected document?')}
           </Text>
-          <View style={styles.modalButtonsContainer}>
-          <View style={styles.modalButtonLeft} >
-          <Button status='basic' onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>
-          </View>
-          <View style={styles.modalButtonRight} >
-          <Button status='primary' onPress={deleteDocument}>{I18n.t('DELETE')}</Button>
-          </View>
-          </View>
+          <Layout style={styles.modalButtonsContainer}>
+            <Button
+            style={styles.modalButtonLeft}
+            status='basic'
+            onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>
+            <Button
+            style={styles.modalButtonRight}
+            status='primary'
+            onPress={deleteDocument}>{I18n.t('DELETE')}</Button>
+          </Layout>
         </Layout>
       </ModalUiKitten>
     </SafeAreaLayout>
@@ -607,11 +612,8 @@ const themedStyles = StyleService.create({
   },
   listContainer: {
     marginHorizontal: 16,
-    borderTopLeftRadius: 4,
-    borderTopRightRadius: 4,
-    paddingTop: 5,
-    paddingLeft: 5,
-    paddingRight: 5,
+    borderRadius: 4,
+    padding: 5,
   },
   safeArea: {
     flex: 1,
@@ -682,12 +684,14 @@ const themedStyles = StyleService.create({
     height: 'auto',
     flex: 1,
     alignItems: 'center',
+    marginLeft: 5,
   },
   modalButtonLeft: {
     width: '100%',
     height: 'auto',
     flex: 1,
     alignItems: 'center',
+    marginRight: 5,
   },
   modalButtonsContainer: {
     flexDirection: 'row',

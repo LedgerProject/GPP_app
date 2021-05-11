@@ -113,7 +113,7 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
       timeout: 15000,
     })
     .then(location => {
-      const latDelta = 1;
+      const latDelta = 0.7;
       const lonDelta = latDelta * (width / height);
 
       setLatitudeDelta(latDelta);
