@@ -380,7 +380,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
       .catch(function (error) {
         // Hide spinner
         setLoading(false);
-
+        setModalDeleteVisible(false);
         // Show the error message
         showAlertMessage(
           I18n.t('Error removing document'),
@@ -501,6 +501,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
           + I18n.t('Swipe left on document to delete it') }
         </Text>
         <List
+          style={styles.listContainer}
           data={documents}
           renderItem={renderDocumentItem}
         />
@@ -603,6 +604,14 @@ const themedStyles = StyleService.create({
   },
   divider: {
     backgroundColor: 'color-primary-default',
+  },
+  listContainer: {
+    marginHorizontal: 16,
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
+    paddingTop: 5,
+    paddingLeft: 5,
+    paddingRight: 5,
   },
   safeArea: {
     flex: 1,

@@ -31,10 +31,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // Other imports
 import Spinner from 'react-native-loading-spinner-overlay';
 import { KeyboardAvoidingView } from '../services/3rd-party';
+import { CommonActions } from '@react-navigation/native';
 
 // Redux import
-import { useSelector } from 'react-redux';
-import { selectToken } from '../redux/tokenSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectToken, manageToken } from '../redux/tokenSlice';
+import { manageLastLoginEmail } from '../redux/lastLoginEmailSlice';
+import { managePrivateKey } from '../redux/privateKeySlice';
+import { managePublicKey } from '../redux/publicKeySlice';
 
 export const MyProfileScreen = (props): React.ReactElement => {
   const [idUser, setIdUser] = React.useState<string>();
@@ -49,11 +53,13 @@ export const MyProfileScreen = (props): React.ReactElement => {
   const [success, setSuccess] = React.useState<string>();
   const [error, setError] = React.useState<string>();
   const [modalVisible, setmodalVisible] = React.useState(false);
+  const [modalDeleteVisible, setModalDeleteVisible] = React.useState(false);
 
   const today = new Date();
   const firstDayCalendar = new Date(1900, 1, 1);
   const styles = useStyleSheet(themedStyles);
 
+  const dispatch = useDispatch();
   // Get token from Redux
   const token = useSelector(selectToken);
 
@@ -266,12 +272,55 @@ export const MyProfileScreen = (props): React.ReactElement => {
 
   // Delete user data
   const onDeleteButtonPress = (): void => {
+    // Show the modal asking the delete confirmation
+    setModalDeleteVisible(true);
     // Show spinner
     setLoading(true);
 
     // Hide spinner
     setLoading(false);
   };
+
+  async function deleteAllData() {
+    // Show spinner
+    setLoading(true);
+
+    axios
+      .delete(AppOptions.getServerUrl() + 'users', {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(function (response) {
+        // Hide spinner
+        setLoading(false);
+        // Hide the modal asking the delete confirmation
+        setModalDeleteVisible(false);
+        // Clear Keys and Vars
+        dispatch(manageToken(''));
+        dispatch(managePrivateKey(''));
+        dispatch(managePublicKey(''));
+        dispatch(manageLastLoginEmail(''));
+        props.navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [
+              { name: 'SignIn' },
+            ],
+          }),
+        );
+      })
+      .catch(function () {
+        // Hide spinner
+        setLoading(false);
+        // Hide the modal asking the delete confirmation
+        setModalDeleteVisible(false);
+        // Show the error message
+        setError(I18n.t('An error has occurred, please try again'));
+        setmodalVisible(true);
+      });
+  }
 
   const renderDrawerAction = (): React.ReactElement => (
     <TopNavigationAction
@@ -380,6 +429,24 @@ export const MyProfileScreen = (props): React.ReactElement => {
           </Button>
         </Layout>
       </Modal>
+      <Modal
+        visible={ modalDeleteVisible }
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setModalDeleteVisible(false)}>
+        <Layout style={ styles.modal } >
+          <Text style={ styles.modalText } category='h6' >
+            {I18n.t('Are you sure to delete all your data?')}
+          </Text>
+          <View style={styles.modalButtonsContainer}>
+          <View style={styles.modalButtonLeft} >
+          <Button status='basic' onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>
+          </View>
+          <View style={styles.modalButtonRight} >
+          <Button status='primary' onPress={deleteAllData}>{I18n.t('DELETE')}</Button>
+          </View>
+          </View>
+        </Layout>
+      </Modal>
     </SafeAreaLayout>
   );
 };
@@ -470,5 +537,21 @@ const themedStyles = StyleService.create({
   },
   spinnerTextStyle: {
     color: '#FFF',
+  },
+  modalButtonRight: {
+    width: '100%',
+    height: 'auto',
+    flex: 1,
+    alignItems: 'center',
+  },
+  modalButtonLeft: {
+    width: '100%',
+    height: 'auto',
+    flex: 1,
+    alignItems: 'center',
+  },
+  modalButtonsContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
   },
 });

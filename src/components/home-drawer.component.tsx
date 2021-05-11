@@ -1,7 +1,7 @@
 // React import
 import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-
+import { CommonActions, DrawerActions } from '@react-navigation/native';
 // UIKitten import
 import {
   Avatar,
@@ -26,11 +26,16 @@ import I18n from '../i18n/i18n';
 // Other imports
 import { WebBrowserService } from '../services/web-browser.service';
 import { AppInfoService } from '../services/app-info.service';
+// Redux import
+import { useDispatch, useSelector } from 'react-redux';
+import { manageToken } from '../redux/tokenSlice';
 
 const version: string = AppInfoService.getVersion();
 
 export const HomeDrawer = ({ navigation }): DrawerElement => {
   const [data, setData] = React.useState([]);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const menuObj = [
@@ -123,11 +128,25 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
 
       // Logout
       case 10: {
+        dispatch(manageToken(''));
         navigation.toggleDrawer();
-        navigation.navigate('SignIn');
+        setTimeout(Logout, 100);
+        // navigation.navigate('SignIn');
         return;
       }
     }
+  };
+
+  const Logout = (): void => {
+    navigation.dispatch(
+      // DrawerActions.closeDrawer();
+      CommonActions.reset({
+        index: 1,
+        routes: [
+          { name: 'SignIn' },
+        ],
+      }),
+    );
   };
 
   const renderHeader = (): DrawerHeaderElement => (

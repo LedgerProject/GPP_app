@@ -130,12 +130,13 @@ const styles = StyleSheet.create({
   removeButton: {
     position: 'absolute',
     right: 0,
+    top: 15,
   },
   iconButton: {
     paddingHorizontal: 0,
   },
   checkbox: {
-    top: 10,
+    top: 25,
     left: 10,
     marginRight: 10,
   },

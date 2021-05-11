@@ -26,8 +26,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { manageToken } from '../redux/tokenSlice';
 import { manageEmail } from '../redux/emailSlice';
 import { selectLastLoginEmail, manageLastLoginEmail } from '../redux/lastLoginEmailSlice';
-import { managePrivateKey } from '../redux/privateKeySlice';
-import { managePublicKey } from '../redux/publicKeySlice';
+import { selectPrivateKey, managePrivateKey } from '../redux/privateKeySlice';
+import { selectPublicKey, managePublicKey } from '../redux/publicKeySlice';
 
 // Axios import
 import axios from 'axios';
@@ -53,6 +53,8 @@ export default ({ navigation }): React.ReactElement => {
   const [answer5, setAnswer5] = React.useState<string>();
 
   const lastLoginEmail = useSelector(selectLastLoginEmail);
+  const stored_privateKey = useSelector(selectPrivateKey);
+  const stored_publicKey = useSelector(selectPublicKey);
 
   // Redux
   const dispatch = useDispatch();
@@ -104,6 +106,7 @@ export default ({ navigation }): React.ReactElement => {
   // Try to login
   const onSignInCheckButtonPress = async (): Promise<void> => {
     // Check if the e-mail is entered
+    let loginCondition: boolean = false;
     if (!email) {
       setError(I18n.t('Please enter the e-mail'));
       setmodalVisible(true);
@@ -118,10 +121,15 @@ export default ({ navigation }): React.ReactElement => {
     }
 
     // Check if current email match the last login email
-    if (email !== lastLoginEmail) {
+    if ((email === lastLoginEmail) && stored_privateKey && stored_privateKey) {
+      loginCondition = true;
+    }
+
+    if (loginCondition === false) {
       if (showAnswers === false) {
         // Show answers
         setShowAnswers(true);
+        return;
       } else {
         // Check if answered 3 questions
         let countAnswered = 0;

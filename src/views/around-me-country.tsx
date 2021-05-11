@@ -150,7 +150,7 @@ export const AroundMeCountryScreen = (props): React.ReactElement => {
             <Layout key={index} style={styles.elementContainer}>
               <Text category='s1' style={styles.elementTitle}>{item.title}</Text>
               <Text category='p2' style={styles.elementDescription}>{item.description}</Text>
-              <Divider/>
+              <Divider style={styles.divider} />
             </Layout>
           ))}
         </Layout>
@@ -200,5 +200,8 @@ const themedStyles = StyleService.create({
   topBarIcon: {
     color: '#FFFFFF',
     tintColor: '#FFFFFF',
+  },
+  divider: {
+    marginTop: 20,
   },
 });
