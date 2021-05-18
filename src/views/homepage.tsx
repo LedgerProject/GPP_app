@@ -85,7 +85,7 @@ export const HomepageScreen = (props): React.ReactElement => {
     );
 
     // AbuseAlarm button
-    buttonsArray.push(
+    /*buttonsArray.push(
       {
         title: I18n.t('AbuseAlarm'),
         route: 'AbuseAlarm',
@@ -114,7 +114,7 @@ export const HomepageScreen = (props): React.ReactElement => {
         var_name: 'abuseAlarm',
         var_value: false,
       },
-    );
+    );*/
     setData(buttonsArray);
   }
 
@@ -128,26 +128,29 @@ export const HomepageScreen = (props): React.ReactElement => {
         leftControl={renderDrawerAction() }
         style={styles.topBar}
       />
-      <ScrollView>
         <Layout
-        style={styles.container}
-        level='2'>
-          <View>
+        style={styles.container}>
             <MenuGridList
               style={styles.buttonsContainer}
               data={data}
               onItemPress={onItemPress}
+              footerComponent={Footer}
             />
-          </View>
-          <View style={styles.logoContainer}>
-              <ImageBackground
-                style={styles.imageLogo}
-                source={require('../assets/images/logo-white.png')}>
-              </ImageBackground>
-          </View>
         </Layout>
-      </ScrollView>
     </SafeAreaLayout>
+  );
+};
+
+export const Footer = () => {
+  const styles = useStyleSheet(themedStyles);
+
+  return (
+    <View style={styles.logoContainer}>
+    <ImageBackground
+      style={styles.imageLogo}
+      source={require('../assets/images/logo-white.png')}>
+    </ImageBackground>
+    </View>
   );
 };
 
@@ -182,6 +185,6 @@ const themedStyles = StyleService.create({
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: 30,
-    backgroundColor: 'background-basic-color-4',
+    // backgroundColor: 'background-basic-color-4',
   },
 });

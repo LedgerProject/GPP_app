@@ -2,7 +2,7 @@
 import React from 'react';
 
 // React Native import
-import { Dimensions, ListRenderItemInfo, StyleSheet } from 'react-native';
+import { Dimensions, ListRenderItemInfo, StyleSheet, View, ImageBackground } from 'react-native';
 
 // UIKitten import
 import { Card, List, ListElement, ListItemElement, ListProps, Text } from '@ui-kitten/components';
@@ -13,10 +13,12 @@ import { MenuItem } from '../model/menu-item.model';
 export interface MenuGridListProps extends Omit<ListProps, 'renderItem'> {
   data: MenuItem[];
   onItemPress: (index: number, var_name: string, var_value: boolean) => void;
+  footerComponent?: any;
 }
 
+
 export const MenuGridList = (props: MenuGridListProps): ListElement => {
-  const { contentContainerStyle, onItemPress, ...listProps } = props;
+  const { contentContainerStyle, onItemPress, footerComponent, ...listProps } = props;
 
   const renderItem = (info: ListRenderItemInfo<MenuItem>): ListItemElement => (
     <Card
@@ -37,6 +39,7 @@ export const MenuGridList = (props: MenuGridListProps): ListElement => {
       contentContainerStyle={[styles.container, contentContainerStyle]}
       numColumns={2}
       renderItem={renderItem}
+      ListFooterComponent={footerComponent}
     />
   );
 };
