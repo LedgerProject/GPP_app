@@ -1,5 +1,5 @@
 // React import
-import React from 'react';
+import React, { useEffect, useState} from 'react';
 import { View, ImageBackground } from 'react-native';
 
 // Environment import
@@ -28,7 +28,10 @@ import axios from 'axios';
 import { getPBKDFPublicKey } from '../services/user.service';
 
 export default ({ navigation }): React.ReactElement => {
-  const [email, setEmail] = React.useState<string>(useSelector(selectEmail));
+  // workaround for Xiaomi fix
+  const [email, setEmail] = useState('.');
+
+  const lastLoginEmail = useSelector(selectEmail);
   const [answer1, setAnswer1] = React.useState<string>();
   const [answer2, setAnswer2] = React.useState<string>();
   const [answer3, setAnswer3] = React.useState<string>();
@@ -40,6 +43,15 @@ export default ({ navigation }): React.ReactElement => {
   const [modalVisible, setmodalVisible] = React.useState(false);
 
   const styles = useStyleSheet(themedStyles);
+
+  // Use effect
+  useEffect(() => {
+    // workaround for Xiaomi fix
+    setTimeout(() => {
+      // setEmail(lastLoginEmail);
+      setEmail('');
+    }, 1);
+  }, []);
 
   // Open the login page
   const onBackToLoginButtonPress = (): void => {

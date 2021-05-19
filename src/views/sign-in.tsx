@@ -1,8 +1,8 @@
 // React import
-import React, { useEffect} from 'react';
+import React, { useEffect, useState} from 'react';
 
 // React Native import
-import { View, ImageBackground } from 'react-native';
+import { View, ImageBackground, ScrollView } from 'react-native';
 
 // Environment import
 import { AppOptions } from '../services/app-env';
@@ -37,8 +37,11 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { KeyboardAvoidingView } from '../services/3rd-party';
 import { getPBKDFPublicKey } from '../services/user.service';
 
+
 export default ({ navigation }): React.ReactElement => {
-  const [email, setEmail] = React.useState<string>();
+  // workaround for Xiaomi fix
+  const [email, setEmail] = useState('.');
+
   const [showAnswers, setShowAnswers] = React.useState<boolean>(false);
   const [password, setPassword] = React.useState<string>();
   const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false);
@@ -68,8 +71,12 @@ export default ({ navigation }): React.ReactElement => {
     setAnswer3('');
     setAnswer4('');
     setAnswer5('');
-    setEmail('test4@stefanobaldassarre.it');
-    setPassword('12345678');
+
+    setPassword('');
+    // workaround for Xiaomi fix
+    setTimeout(() => {
+      setEmail('');
+    }, 1);
   }, []);
 
   // Open the sign-up page
@@ -472,6 +479,7 @@ const themedStyles = StyleService.create({
   },
   container: {
     backgroundColor: 'background-basic-color-4',
+    flex: 1,
   },
   imageAuth: {
     height: 123.9,

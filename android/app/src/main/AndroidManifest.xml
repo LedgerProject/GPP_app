@@ -27,7 +27,8 @@
           android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
           android:launchMode="singleTask"
           android:screenOrientation="portrait"
-          android:windowSoftInputMode="adjustPan">
+          android:windowSoftInputMode="adjustResize"
+          >
         <intent-filter>
           <action android:name="android.intent.action.VIEW" />
           <category android:name="android.intent.category.DEFAULT" />
@@ -37,7 +38,7 @@
       <!-- You will only need to add this meta-data tag, but make sure it's a child of application -->
       <meta-data
         android:name="com.google.android.geo.API_KEY"
-        android:value="%GOOGLE_MAPS_KEY%"/>
+        android:value="AIzaSyB0V5h9bq_CfW2Z9pVJHFJI8oiZ8NfdjUY"/>
       
       <!-- You will also only need to add this uses-library tag -->
       <uses-library android:name="org.apache.http.legacy" android:required="false"/>

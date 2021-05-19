@@ -1,5 +1,5 @@
 // React import
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 
 // React Native import
 import { View, ImageBackground, Linking } from 'react-native';
@@ -38,7 +38,9 @@ import { KeyboardAvoidingView } from '../services/3rd-party';
 export default ({ navigation }): React.ReactElement => {
   const [firstName, setFirstName] = React.useState<string>();
   const [lastName, setLastName] = React.useState<string>();
-  const [email, setEmail] = React.useState<string>();
+  // workaround for Xiaomi fix
+  const [email, setEmail] = useState('.');
+
   const [confirmEmail, setConfirmEmail] = React.useState<string>();
   const [password, setPassword] = React.useState<string>();
   const [confirmPassword, setConfirmPassword] = React.useState<string>();
@@ -72,6 +74,10 @@ export default ({ navigation }): React.ReactElement => {
       {'question': I18n.t('What is the name of your first teacher?'), 'answer': '' },
       {'question': I18n.t('What is the surname of your mother before wedding?'), 'answer': '' },
     ]);
+    // workaround for Xiaomi fix
+    setTimeout(() => {
+      setEmail('');
+    }, 1);
   }, []);
 
   // Show / hide password
