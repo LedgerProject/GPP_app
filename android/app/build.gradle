@@ -133,6 +133,10 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 6
         versionName "2.4.0"
+
+        ndk {
+            abiFilters "armeabi-v7a", "x86", "armeabi", "mips"
+        }
     }
     splits {
         abi {

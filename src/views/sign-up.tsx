@@ -40,8 +40,8 @@ export default ({ navigation }): React.ReactElement => {
   const [lastName, setLastName] = React.useState<string>();
   // workaround for Xiaomi fix
   const [email, setEmail] = useState('.');
-
-  const [confirmEmail, setConfirmEmail] = React.useState<string>();
+  const [confirmEmail, setConfirmEmail] = useState('.');
+  
   const [password, setPassword] = React.useState<string>();
   const [confirmPassword, setConfirmPassword] = React.useState<string>();
   const [termsAccepted, setTermsAccepted] = React.useState<boolean>(false);
@@ -77,6 +77,7 @@ export default ({ navigation }): React.ReactElement => {
     // workaround for Xiaomi fix
     setTimeout(() => {
       setEmail('');
+      setConfirmEmail('');
     }, 1);
   }, []);
 
