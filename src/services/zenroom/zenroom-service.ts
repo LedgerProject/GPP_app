@@ -35,13 +35,17 @@ export async function recoveryKeypair(clientSideContractText: string,  answers: 
   const jsonData = JSON.stringify(data);
 
   let response = '';
-
-  while (!response) {
+let count = 0;
+  while (!response) {  
+    count++;
+    console.log("start");
     response = await zenroom.execute(
       clientSideContractText,
       jsonKeys,
-      jsonData,
+      jsonData
     );
+    console.log(response);
+    console.log("end");
   }
 
   return JSON.parse(response);
