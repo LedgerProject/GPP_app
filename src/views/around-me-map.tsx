@@ -104,7 +104,7 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
         regionBoundaries.southEastLatitude,
         regionBoundaries.southEastLongitude,
         filterCategory,
-        zoom
+        zoom,
       );
     }
   }, [zoom]);
@@ -439,7 +439,7 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
                   key={-999}
                   coordinate={{
                     latitude: currentPosition.latitude,
-                    longitude: currentPosition.longitude
+                    longitude: currentPosition.longitude,
                   }}>
                 </Marker>
               ) }

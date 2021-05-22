@@ -83,9 +83,9 @@ export const AroundMeListScreen = (props): React.ReactElement => {
 
     if (currentPosition) {
       userLatitude = currentPosition.latitude;
-      userLongitude = currentPosition.longitude
+      userLongitude = currentPosition.longitude;
     }
-    
+
     getStructures(
       regionBoundaries.northWestLatitude,
       regionBoundaries.northWestLongitude,
