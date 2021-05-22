@@ -64,15 +64,8 @@ const initialBoudaries: RegionBoudaries = {
   southEastLongitude: 0,
 };
 
-const INITIAL_REGION = {
-  latitude: 52.5,
-  longitude: 19.2,
-  latitudeDelta: 8.5,
-  longitudeDelta: 8.5,
-};
-
 export const AroundMeMapScreen = (props): React.ReactElement => {
-  const [mapRegion, setMapRegion] = React.useState<Region>();
+  const [mapRegion, setMapRegion] = React.useState<Region>(undefined);
   const [regionBoundaries, setRegionBoundaries] = React.useState<RegionBoudaries>(initialBoudaries);
   const [isMapReady, setMapReady] = React.useState(false);
   const [filterCategory, setFilterCategory] = React.useState(null);
@@ -80,14 +73,14 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
   const [markers, setMarkers] = React.useState([]);
   const [currentCountry, setCurrentCountry] = React.useState('');
   const [avoidNextRegionComplete, setAvoidNextRegionComplete] = React.useState(true);
-  const [latitudeDelta, setLatitudeDelta] = React.useState(INITIAL_LATITUDE_DELTA);
-  const [longitudeDelta, setLongitudeDelta] = React.useState(INITIAL_LONGITUDE_DELTA);
-  const [zoom, setZoom] = React.useState(0);
+  const [zoom, setZoom] = React.useState(40);
   const [loading, setLoading] = React.useState(false);
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
   const [alertTitle, setAlertTitle] = React.useState('');
   const [alertMessage, setAlertMessage] = React.useState('');
   const [currentPosition, setCurrentPosition] = React.useState((): any => {});
+  const [gpsActive, setGPSActive] = React.useState(false);
+  const [initialPositionConfirmed, setInitialPositionConfirmed] = React.useState(false);
 
   const styles = useStyleSheet(themedStyles);
 
@@ -99,6 +92,22 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
     setCategoriesList();
     getCurrentPosition();
   }, []);
+
+  useEffect(() => {
+    // Remove the current markers on the map if zoom > 1.0
+    if (zoom > 1.0) {
+      setMarkers([]);
+    } else {
+      getMarkers(
+        regionBoundaries.northWestLatitude,
+        regionBoundaries.northWestLongitude,
+        regionBoundaries.southEastLatitude,
+        regionBoundaries.southEastLongitude,
+        filterCategory,
+        zoom
+      );
+    }
+  }, [zoom]);
 
   // Get the filter categories
   const setCategoriesList = async () => {
@@ -116,13 +125,12 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
       const latDelta = 0.7;
       const lonDelta = latDelta * (width / height);
 
-      setLatitudeDelta(latDelta);
-      setLongitudeDelta(lonDelta);
-
       setCurrentPosition({
         latitude: location.latitude,
         longitude: location.longitude,
       });
+
+      setGPSActive(true);
 
       const initialRegion: Region = {
         latitude: location.latitude,
@@ -136,6 +144,10 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
       setMapRegion(initialRegion);
     })
     .catch(error => {
+      setGPSActive(false);
+
+      setAvoidNextRegionComplete(false);
+
       setMapRegion(initialMapRegion);
     });
   }
@@ -151,7 +163,7 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
     // Remove the current markers on the map
     setMarkers([]);
 
-    if (delta < 1.5) {
+    if (delta < 1.0) {
       // Show spinner
       setLoading(true);
 
@@ -278,10 +290,28 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
 
     // Set the map boundaries
     setRegionBoundaries(boundaries);
-    setZoom(curMapRegion.longitudeDelta);
+    setZoom(curMapRegion.latitudeDelta);
 
-    // Load the structures from the server if the latitudeDelta (zoom is < 1.5)
-    if (avoidNextRegionComplete === false && latitudeDelta < 1.5) {
+    // Get the country based on current map region coordinates
+    Geocoder.from(curMapRegion.latitude, curMapRegion.longitude)
+    .then(json => {
+      let countryLong = '';
+      let countryShort = '';
+      const addressLength = json.results[0].address_components.length;
+
+      for (let i = 0; i < addressLength; i++) {
+        if (json.results[0].address_components[i].short_name.length === 2) {
+          countryLong = json.results[0].address_components[i].long_name;
+          countryShort = json.results[0].address_components[i].short_name;
+        }
+      }
+
+      setCurrentCountry(countryLong);
+    })
+    .catch(error => {});
+
+    // Load the structures from the server if the latitudeDelta (zoom is < 1.0)
+    if (avoidNextRegionComplete === false && curMapRegion.latitudeDelta < 1.0) {
       setAvoidNextRegionComplete(true);
 
       // Get the markers from the endpoint
@@ -291,27 +321,13 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
         boundaries.southEastLatitude,
         boundaries.southEastLongitude,
         filterCategory,
-        curMapRegion.longitudeDelta,
+        curMapRegion.latitudeDelta,
       );
-
-      // Get the country based on current map region coordinates
-      Geocoder.from(curMapRegion.latitude, curMapRegion.longitude)
-        .then(json => {
-          let countryLong = '';
-          let countryShort = '';
-          const addressLength = json.results[0].address_components.length;
-
-          for (let i = 0; i < addressLength; i++) {
-            if (json.results[0].address_components[i].short_name.length === 2) {
-              countryLong = json.results[0].address_components[i].long_name;
-              countryShort = json.results[0].address_components[i].short_name;
-            }
-          }
-
-          setCurrentCountry(countryLong);
-        })
-        .catch(error => {});
     }
+  };
+
+  const confirmInitialPosition = (): void => {
+    setInitialPositionConfirmed(true);
   };
 
   // Show the alert message
@@ -356,9 +372,14 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
           />
         </Layout>
         <Layout style={styles.mapContainer}>
-          { zoom >= 1.5 && (
-            <Text style={styles.info}>
+          { zoom >= 1.0 && (
+            <Text style={styles.infoMapZoom}>
               {I18n.t('Zoom in to view the structures')}
+            </Text>
+          )}
+          { zoom < 1.0 && (
+            <Text style={styles.infoMapNoZoom}>
+              {I18n.t('Click on a structure for details')}
             </Text>
           )}
           {mapRegion && (
@@ -366,17 +387,23 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
               provider={PROVIDER_GOOGLE}
               style={isMapReady ? styles.Map : {}}
               initialRegion={mapRegion}
+              region={!initialPositionConfirmed ? mapRegion : undefined}
+              onRegionChange={!initialPositionConfirmed ? confirmInitialPosition : undefined}
+              showsPointsOfInterest={false}
+              showsBuildings={false}
+              loadingEnabled={true}
+              mapType={'standard'}
               onRegionChangeComplete={onRegionChange}
               zoomControlEnabled={true}
               onMapReady={handleMapReady}
-              onPanDrag={onPanDragMap}
-              >
+              onPanDrag={onPanDragMap}>
               {
                 markers.map( (structure, index) => {
                   return (
                     <Marker
                       key={index}
                       coordinate={{ latitude: structure.latitude, longitude: structure.longitude }}
+                      tracksViewChanges={false}
                       onPress={onMarkerPress}>
                       <View>
                         <Image
@@ -407,10 +434,13 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
                   );
                 })
               }
-              { currentPosition && (
+              { currentPosition && gpsActive && (
                 <Marker
                   key={-999}
-                  coordinate={{ latitude: currentPosition.latitude, longitude: currentPosition.longitude }}>
+                  coordinate={{
+                    latitude: currentPosition.latitude,
+                    longitude: currentPosition.longitude
+                  }}>
                 </Marker>
               ) }
             </MapView>
@@ -565,11 +595,17 @@ const themedStyles = StyleService.create({
     marginBottom: 4,
     textAlign: 'center',
   },
-  info: {
+  infoMapZoom: {
     textAlign: 'center',
     paddingBottom: 3,
-    backgroundColor: '#999',
+    backgroundColor: '#F00',
     color: '#FFF',
+  },
+  infoMapNoZoom: {
+    textAlign: 'center',
+    paddingBottom: 3,
+    backgroundColor: '#FFF',
+    color: '#000',
   },
   topBar: {
     backgroundColor: 'color-primary-default',

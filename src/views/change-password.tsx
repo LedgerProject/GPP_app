@@ -233,12 +233,9 @@ export const ChangePasswordScreen = (props): React.ReactElement => {
                 onChangeText={setConfirmNewPassword}
                 onIconPress={onConfirmNewPasswordIconPress}
               />
-              <Divider />
               <Text
                 style={styles.infoSection}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse eu ligula ac magna sodales molestie.
-                  Mauris et orci ultrices, cursus est nec, dictum massa.
+                  {I18n.t('Change password info')}
               </Text>
               <Button
                   style={styles.saveButton}
@@ -293,6 +290,7 @@ const themedStyles = StyleService.create({
   },
   saveButton: {
     marginHorizontal: 16,
+    marginTop: 10,
   },
   topBar: {
     backgroundColor: 'color-primary-default',

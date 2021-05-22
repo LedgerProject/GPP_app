@@ -89,6 +89,7 @@ export const MyProfileScreen = (props): React.ReactElement => {
 
     // Set the filters
     const nationalitiesFilters = `nationalities?filter={`
+        + `"order": ["identifier"],`
         + `"include":[`
           + `{"relation": "nationalityLanguage", "scope": {"where": {"language": "` + lang + `"}}}`
         + `]`
@@ -391,12 +392,9 @@ export const MyProfileScreen = (props): React.ReactElement => {
                 placeholder={I18n.t('Select your birthday')}
                 onSelect={selectedDate => setBirthday(selectedDate)}
               />
-              <Divider />
               <Text
                 style={styles.infoSection}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse eu ligula ac magna sodales molestie.
-                  Mauris et orci ultrices, cursus est nec, dictum massa.
+                  {I18n.t('Profile info')}
               </Text>
               <Button
                   style={styles.saveButton}
@@ -404,6 +402,11 @@ export const MyProfileScreen = (props): React.ReactElement => {
                   onPress={onSaveButtonPress}>
                   {I18n.t('Save')}
               </Button>
+              <Divider />
+              <Text
+                style={styles.infoSectionDelete}>
+                  {I18n.t('Profile delete')}
+              </Text>
               <Button
                   style={styles.deleteButton}
                   size='giant'
@@ -502,8 +505,19 @@ const themedStyles = StyleService.create({
     marginHorizontal: 16,
     color: 'color-light-100',
   },
+  infoSectionDelete: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+    padding: 4,
+    marginHorizontal: 16,
+    marginTop: 15,
+    color: 'color-light-100',
+  },
   saveButton: {
     marginHorizontal: 16,
+    marginTop: 10,
+    marginBottom: 20,
   },
   deleteButton: {
     marginVertical: 12,

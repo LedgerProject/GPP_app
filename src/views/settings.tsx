@@ -110,7 +110,10 @@ export const SettingsScreen = (props): React.ReactElement => {
                 placeholder={I18n.t('Select the application language')}
                 onSelect={onSelectLanguage}
               />
-              <Divider />
+              <Text
+                style={styles.infoSection}>
+                  {I18n.t('Select the application language')}
+              </Text>
               <Button
                   style={styles.saveButton}
                   size='giant'

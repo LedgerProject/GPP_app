@@ -78,14 +78,22 @@ export const AroundMeListScreen = (props): React.ReactElement => {
   const onSelectFilter = (selectedOption) => {
     setFilter(selectedOption);
 
+    let userLatitude = null;
+    let userLongitude = null;
+
+    if (currentPosition) {
+      userLatitude = currentPosition.latitude;
+      userLongitude = currentPosition.longitude
+    }
+    
     getStructures(
       regionBoundaries.northWestLatitude,
       regionBoundaries.northWestLongitude,
       regionBoundaries.southEastLatitude,
       regionBoundaries.southEastLongitude,
       selectedOption.idCategory,
-      currentPosition.latitude,
-      currentPosition.longitude,
+      userLatitude,
+      userLongitude,
     );
   };
 
@@ -100,6 +108,7 @@ export const AroundMeListScreen = (props): React.ReactElement => {
 
     // Set the filters
     let filters = '';
+    let orderBy = '';
 
     if (idCategory) {
       filters = ' ,"idCategory": "' + idCategory + '" ';
@@ -107,6 +116,8 @@ export const AroundMeListScreen = (props): React.ReactElement => {
 
     if (currentLat && currentLon) {
       filters = filters + ' ,"userLatitude": "' + currentLat + '" ,"userLongitude": "' + currentLon + '" ';
+    } else {
+      orderBy = ', "order": ["structurename"] ';
     }
 
     const where = `"where": {`
@@ -139,7 +150,7 @@ export const AroundMeListScreen = (props): React.ReactElement => {
       + `}`;
 
     axios
-      .get(AppOptions.getServerUrl() + 'structures/?filter={' + where + fields + '}', {
+      .get(AppOptions.getServerUrl() + 'structures/?filter={' + where + fields + orderBy + '}', {
         headers: {
           'Authorization': 'Bearer ' + token,
           'Content-Type': 'application/json',

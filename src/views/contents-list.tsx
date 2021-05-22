@@ -233,7 +233,7 @@ export const ContentsListScreen = (props): React.ReactElement => {
         onBackdropPress={() => setModalDeleteVisible(false)}>
         <Layout style={ styles.modal } >
           <Text style={ styles.modalText } category='h6' >
-            {I18n.t('Are you sure to delete the selected compliant?')}
+            {I18n.t('Are you sure to delete the selected content?')}
           </Text>
           <Button status='primary' onPress={DeleteCompliant}>{I18n.t('DELETE')}</Button>
           <Button status='basic' onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>

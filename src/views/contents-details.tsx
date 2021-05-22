@@ -138,12 +138,12 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
     if (!compliantTitle) {
       showAlertMessage(
         I18n.t('Title missing'),
-        I18n.t('Please fill the compliant title'),
+        I18n.t('Please fill the title'),
       );
     } else if (!compliantDescription) {
       showAlertMessage(
         I18n.t('Description missing'),
-        I18n.t('Please fill the compliant descripton'),
+        I18n.t('Please fill the descripton'),
       );
     } else {
       alert('Send OK');
