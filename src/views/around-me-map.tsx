@@ -52,7 +52,7 @@ interface RegionBoudaries {
 
 const initialMapRegion: Region = {
   latitude: 48.368141,
-  longitude: 35.412676,
+  longitude: 20.412676,
   latitudeDelta: INITIAL_LATITUDE_DELTA,
   longitudeDelta: INITIAL_LONGITUDE_DELTA,
 };
