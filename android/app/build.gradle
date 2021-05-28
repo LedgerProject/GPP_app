@@ -129,13 +129,13 @@ android {
 
     defaultConfig {
         applicationId "com.kosmopolis.gpp"
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion "21" //rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 22
-        versionName "2.4.7"
+        versionCode 23
+        versionName "2.4.8"
 
         ndk {
-            abiFilters "armeabi-v7a", "x86", "armeabi", "mips", "arm64-v8a", "x86_64"
+            abiFilters "armeabi-v7a", "x86", "armeabi", "mips", "arm64-v8a" , "x86_64"
         }
     }
     splits {
@@ -171,8 +171,13 @@ android {
             // see https://facebook.github.io/react-native/docs/signed-apk-android.
             // signingConfig signingConfigs.debug
             signingConfig signingConfigs.release
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            //minifyEnabled enableProguardInReleaseBuilds
+            //proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs 'jniLibs/armeabi-v7a/', 'jniLibs/armeabi/', 'jniLibs/x86/', 'jniLibs/arm64-v8a/', 'jniLibs/x86_64/'
         }
     }
     // applicationVariants are e.g. debug, release

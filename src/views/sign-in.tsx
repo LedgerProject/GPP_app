@@ -200,7 +200,7 @@ export default ({ navigation }): React.ReactElement => {
         answers = sanitizeAnswers(answers);
 
         // Show the spinner
-        setLoading(true);
+        //setLoading(true);
 
         // Get the e-mail public key and pbkdf
         let emailPublicKey = '';
@@ -235,12 +235,19 @@ export default ({ navigation }): React.ReactElement => {
           // Generate private key and public key
           const keypairData = await recoveryKeypair(clientSideContract, answers, emailPBKDF);
 
-          // Get public key and private key
-          const publicKey = keypairData.user.keypair.public_key;
-          const privateKey = keypairData.user.keypair.private_key;
+          if (keypairData) {
+            // Get public key and private key
+            const publicKey = keypairData.user.keypair.public_key;
+            const privateKey = keypairData.user.keypair.private_key;
 
-          // Proceed with sign-in (saving the private key and public key locally)
-          onSignInButtonPress(privateKey, publicKey);
+            // Proceed with sign-in (saving the private key and public key locally)
+            onSignInButtonPress(privateKey, publicKey);
+          } else {
+            // Zenroom error
+            setLoading(false);
+            setError('Zenroom error, please call Dyne dont bother us...');
+            setmodalVisible(true);
+          }
         } else {
           // Answers not correct
           setLoading(false);

@@ -1,4 +1,5 @@
 export default `
+Rule check version 1.0.0
 Scenario 'ecdh': create keypair from data
 
 # Loading the user name from data

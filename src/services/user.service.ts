@@ -19,7 +19,7 @@ export const getPBKDFPublicKey = async (email: string): Promise<PBKBFPublicKeyRe
   const postParams = {
     email: email,
   };
-
+  
   let userPBKDFPublicKeyResponse: PBKBFPublicKeyResponse = {
     code: '0',
     message: '',
@@ -28,11 +28,11 @@ export const getPBKDFPublicKey = async (email: string): Promise<PBKBFPublicKeyRe
   };
 
   await axios
-    .post<PBKBFPublicKeyResponse>(AppOptions.getServerUrl() + 'users/get-pbkdf-publickey', postParams)
+    .post<PBKBFPublicKeyResponse>(AppOptions.getServerUrl() + 'users/get-pbkdf-publickey', postParams, { timeout: 30000 })
     .then(function (response) {
       userPBKDFPublicKeyResponse = response.data.pbkdfPublicKeyResponse;
     })
-    .catch(function () {
+    .catch(function (err) {
       userPBKDFPublicKeyResponse = {
         code: '10',
         message: I18n.t('An error has occurred, please try again'),

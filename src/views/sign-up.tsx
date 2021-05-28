@@ -294,65 +294,72 @@ export default ({ navigation }): React.ReactElement => {
     // Generate the public and private key
     const keypairData = await recoveryKeypair(clientSideContract, answers, pbkdf);
 
-    // Get public key and private key
-    const publicKey = keypairData.user.keypair.public_key;
-    const privateKey = keypairData.user.keypair.private_key;
+    if (keypairData) {
+      // Get public key and private key
+      const publicKey = keypairData.user.keypair.public_key;
+      const privateKey = keypairData.user.keypair.private_key;
 
-    // Save locally the keypair and the last login email
-    dispatch(managePublicKey(publicKey));
-    dispatch(managePrivateKey(privateKey));
-    dispatch(manageLastLoginEmail(email));
+      // Save locally the keypair and the last login email
+      dispatch(managePublicKey(publicKey));
+      dispatch(managePrivateKey(privateKey));
+      dispatch(manageLastLoginEmail(email));
 
-    // Proceed with user registration
-    const postParams = {
-      userType: 'user',
-      email: email,
-      password: password,
-      firstName: firstName,
-      lastName: lastName,
-      pbkdf: pbkdf,
-      publicKey: publicKey,
-    };
+      // Proceed with user registration
+      const postParams = {
+        userType: 'user',
+        email: email,
+        password: password,
+        firstName: firstName,
+        lastName: lastName,
+        pbkdf: pbkdf,
+        publicKey: publicKey,
+      };
 
-    axios
-      .post(AppOptions.getServerUrl() + 'users/signup', postParams)
-      .then(function (response) {
-        // Hide the spinner
-        setLoading(false);
+      axios
+        .post(AppOptions.getServerUrl() + 'users/signup', postParams)
+        .then(function (response) {
+          // Hide the spinner
+          setLoading(false);
 
-        // Show a success message
-        setError('');
-        setSuccess(I18n.t('Congratulations! Registration completed'));
-        setmodalVisible(true);
+          // Show a success message
+          setError('');
+          setSuccess(I18n.t('Congratulations! Registration completed'));
+          setmodalVisible(true);
 
-        // Reset the registration inputs
-        setStep2(false);
-        setFirstName('');
-        setLastName('');
-        setEmail('');
-        setConfirmEmail('');
-        setPassword('');
-        setConfirmPassword('');
-        setTermsAccepted(false);
-        const questions_array = [];
-        questions.forEach( (question) => {
-          question.answer = '';
-          questions_array.push(question);
+          // Reset the registration inputs
+          setStep2(false);
+          setFirstName('');
+          setLastName('');
+          setEmail('');
+          setConfirmEmail('');
+          setPassword('');
+          setConfirmPassword('');
+          setTermsAccepted(false);
+          const questions_array = [];
+          questions.forEach( (question) => {
+            question.answer = '';
+            questions_array.push(question);
+          });
+          setQuestions(questions_array);
+          setAnswered(0);
+
+          // Open the login page
+          navigation && navigation.navigate('SignIn');
+        })
+        .catch(function (err) {
+          // Hide the spinner
+          setLoading(false);
+
+          // Show an error message
+          setError(I18n.t('An error has occurred, please try again'));
+          setmodalVisible(true);
         });
-        setQuestions(questions_array);
-        setAnswered(0);
-
-        // Open the login page
-        navigation && navigation.navigate('SignIn');
-      })
-      .catch(function (err) {
-        // Hide the spinner
+      } else {
+        // Zenroom error
         setLoading(false);
-
-        // Show an error message
-        setError(I18n.t('An error has occurred, please try again'));
+        setError('Zenroom error, please call Dyne dont bother us...');
         setmodalVisible(true);
-      });
+      }
   };
 
   const onReadTermsButtonPress = () =>

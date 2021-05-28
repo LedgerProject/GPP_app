@@ -31,20 +31,33 @@ export async function recoveryKeypair(clientSideContractText: string,  answers: 
 
   const data = {};
 
-  const jsonKeys = JSON.stringify(keys);
-  const jsonData = JSON.stringify(data);
+  const jsonKeys = '{\"userChallenges\":{\"question1\":\"LAquila\",\"question2\":\"C arl\",\"question3\":\"88 ggg\",\"question4\":\"null\",\"question5\":\"null\"},\"username\":\"user\",\"key_derivation\":\"qf3skXnPGFMrE28UJS7S8BdT8g==\"}'; //JSON.stringify(keys);
+  const jsonData = '{}'; //JSON.stringify(data);
 
   let response = '';
+  let noAttempts = 0;
 
-  while (!response) {
+  console.log("prima");
+
+  while (!response && noAttempts < 3) {
+    console.log("while");
     response = await zenroom.execute(
       clientSideContractText,
       jsonKeys,
       jsonData,
     );
+
+    noAttempts++;
+    console.log(response);
+    console.log('Attemp no. ' + noAttempts);
+    console.log('Response: ' + response);
   }
 
-  return JSON.parse(response);
+  if (response) {
+    return JSON.parse(response);
+  } else {
+    return false;
+  }
 }
 
 // Verify that the answers are correct
@@ -54,11 +67,16 @@ export async function verifyAnswers(
   PBKDF: string,
   userPublicKey: string,
   ) {
+    console.log("verifyAnswers");
   const execution = await recoveryKeypair(
     clientSideContractText,
     answers,
     PBKDF,
   );
 
-  return userPublicKey === execution[DEFAULT_USER].keypair.public_key;
+  if (execution) {
+    return userPublicKey === execution[DEFAULT_USER].keypair.public_key;
+  } else {
+    return undefined;
+  }
 }

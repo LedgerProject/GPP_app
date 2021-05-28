@@ -15,7 +15,7 @@ import { KeyboardAvoidingView } from '../services/3rd-party';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 
 // Zenroom import
-import { sanitizeAnswers, recoveryKeypair, verifyAnswers } from '../services/zenroom/zenroom-service';
+import { sanitizeAnswers, verifyAnswers } from '../services/zenroom/zenroom-service';
 import clientSideContract from '../services/zenroom/zenroom-client-contract.zen';
 
 // Redux import
