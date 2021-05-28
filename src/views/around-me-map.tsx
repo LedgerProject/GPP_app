@@ -81,12 +81,11 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
   const [currentPosition, setCurrentPosition] = React.useState((): any => {});
   const [gpsActive, setGPSActive] = React.useState(false);
   const [initialPositionConfirmed, setInitialPositionConfirmed] = React.useState(false);
-
+  const [deltaValue, setDeltaValue] = React.useState(0);
   const styles = useStyleSheet(themedStyles);
 
   // Get Token from Redux
   const token = useSelector(selectToken);
-
   // Use Effect
   useEffect(() => {
     setCategoriesList();
@@ -161,8 +160,8 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
   async function getMarkers(northWestLatitude, northWestLongitude, southEastLatitude, southEastLongitude,
     filterCat = null, delta = 0) {
     // Remove the current markers on the map
-    setMarkers([]);
 
+    setMarkers([]);
     if (delta < 1.0) {
       // Show spinner
       setLoading(true);
@@ -237,7 +236,9 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
       regionBoundaries.southEastLatitude,
       regionBoundaries.southEastLongitude,
       option,
+      deltaValue,
     );
+
   };
 
   // Open the structures list
@@ -285,6 +286,7 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
 
   // Event on Google Maps region change
   const onRegionChange = (curMapRegion) => {
+    setDeltaValue(curMapRegion.latitudeDelta);
     // Get the map boundaries
     const boundaries = getBoundByRegion(curMapRegion);
 
@@ -309,11 +311,9 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
       setCurrentCountry(countryLong);
     })
     .catch(error => {});
-
     // Load the structures from the server if the latitudeDelta (zoom is < 1.0)
     if (avoidNextRegionComplete === false && curMapRegion.latitudeDelta < 1.0) {
       setAvoidNextRegionComplete(true);
-
       // Get the markers from the endpoint
       getMarkers(
         boundaries.northWestLatitude,

@@ -15,7 +15,7 @@ import I18n from './../i18n/i18n';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { CompliantItem } from './compliants/compliant-item.component';
 import { MenuIcon } from '../components/icons';
-
+import { useIsFocused } from '@react-navigation/native';
 // Environment import
 import { AppOptions } from '../services/app-env';
 
@@ -32,7 +32,7 @@ import axios from 'axios';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 // REMOVE IMPORTS
-import data_compliants, { Compliant } from './compliants/data';
+import { Compliant } from './compliants/data';
 
 export interface LayoutData extends MenuItem {
   route: string;
@@ -56,13 +56,14 @@ export const ContentsListScreen = (props): React.ReactElement => {
 
   // Get Token from Redux
   const token = useSelector(selectToken);
+  const isEntering = useIsFocused();
 
   const { abuseAlarm } = props.route.params;
    // let abuseAlarm = null;
 
 
   const onItemRemove = (compliant: Compliant, index: number): void => {
-    // DeleteDocument(document,index);
+    // DeleteCompliant(compliant);
     setCompliantDelete(compliant);
     setCompliantDeleteIndex(index);
     setModalDeleteVisible(true);
@@ -71,26 +72,25 @@ export const ContentsListScreen = (props): React.ReactElement => {
 
   async function DeleteCompliant() {
     setLoading(true);
-    // const token = await AsyncStorage.getItem('token');
-    /*axios
-    .delete(AppOptions.getServerUrl() + 'documents/' + documentDelete.idDocument, {
+    axios
+    .delete(AppOptions.getServerUrl() + 'contents/' + compliantDelete.idContent, {
       headers: {
         'Authorization': 'Bearer ' + token,
         'Content-Type': 'application/json',
       },
     })
-    .then(function (response) {*/
+    .then(function (response) {
       setLoading(false);
       compliants.splice(compliantDeleteIndex, 1);
       setCompliants([...compliants]);
       setModalDeleteVisible(false);
       // alert('removed');
-    /*})
+    })
     .catch(function (error) {
       setLoading(false);
       // alert(JSON.stringify(error));
       throw error;
-    });*/
+    });
   }
 
   const addElement = (): void => {
@@ -113,32 +113,50 @@ export const ContentsListScreen = (props): React.ReactElement => {
 
   async function getMyCompliants() {
     setLoading(true);
-    /*const token = await AsyncStorage.getItem('token');
+    const contentType = abuseAlarm ? 'abuseAlarm' : 'newsStory';
     axios
-    .get(AppOptions.getServerUrl() + 'documents', {
+    .get(AppOptions.getServerUrl() + `contents?filter={
+      "where": {
+        "contentType": "` + contentType + `"
+      },
+      "fields": {
+        "idContent": true,
+        "idUser": false,
+        "title": true,
+        "description": true,
+        "sharePosition": true,
+        "positionLatitude": true,
+        "positionLongitude": true,
+        "shareName": true,
+        "contentType": true,
+        "insertDate": true
+      },
+      "order": [
+        "insertDate DESC"
+      ]
+    }`, {
       headers: {
         'Authorization': 'Bearer ' + token,
         'Content-Type': 'application/json',
       },
     })
-    .then(function (response) {*/
+    .then(function (response) {
       setLoading(false);
-      // setCompliants(response.data);
-      setCompliants(data_compliants);
-
-      // alert(JSON.stringify(response));
-    /*})
+      setCompliants(response.data);
+    })
     .catch(function (error) {
       setLoading(false);
       // alert(JSON.stringify(error));
       throw error;
-    });*/
+    });
   }
 
   useEffect(() => {
-    getMyCompliants();
+    if (isEntering) {
+      getMyCompliants();
+    }
     // console.log(abuseAlarm);
-  }, []);
+  }, [isEntering]);
 
 
 

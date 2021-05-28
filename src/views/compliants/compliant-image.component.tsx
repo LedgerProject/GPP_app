@@ -7,7 +7,7 @@ export class CompliantImageModel {
 
   constructor(readonly id: string,
               readonly name: string,
-              readonly uri: string,
+              readonly mimeType: string,
               readonly size: number,
               ) {
   }
@@ -17,15 +17,21 @@ export class CompliantImageModel {
 export type CompliantImageProps = ListItemProps & {
   index: number;
   compliantImage: CompliantImageModel;
+  onItemPress: (compliantImage: CompliantImageModel, index: number) => void;
   onRemove: (compliantImage: CompliantImageModel, index: number) => void;
 };
 
 export const CompliantImage = (props: CompliantImageProps): React.ReactElement => {
 
-  const { style, compliantImage, index, onRemove, ...listItemProps } = props;
+  const { style, compliantImage, index, onItemPress, onRemove, ...listItemProps } = props;
 
   const onRemoveButtonPress = (): void => {
     onRemove(compliantImage, index);
+  };
+
+  // Select item event
+  const onButtonPress = (): void => {
+     onItemPress(compliantImage, index);
   };
 
   const formatSize = (size): string => {
@@ -38,18 +44,32 @@ export const CompliantImage = (props: CompliantImageProps): React.ReactElement =
     return parseFloat((size / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   };
 
+  // Document format image
+  const formatFileImage = (mimeType: string): ImageSourcePropType => {
+    let icon: ImageSourcePropType;
+
+    if (mimeType === 'image/jpeg' || mimeType === 'image/png') {
+      icon = require('../../assets/images/file-icon-image.png');
+    } else {
+      icon = require('../../assets/images/file-icon-pdf.png');
+    }
+
+    return icon;
+  };
+
   return (
     <ListItem
       {...listItemProps}
       style={[styles.container, style]}
+      onPress={onButtonPress}
       >
       <Image
         style={styles.image}
-        source={{uri: compliantImage.uri }}
+        source={formatFileImage(compliantImage.mimeType)}
       />
       <View style={styles.detailsContainer}>
-        <TextNative style={styles.itemTitle} numberOfLines={1} ellipsizeMode={'tail'} >
-          {compliantImage.name}
+        <TextNative style={styles.itemTitle} numberOfLines={1} ellipsizeMode={'tail'} >FILE {index + 1}
+          {/* compliantImage.name */}
         </TextNative>
         <Text style={styles.itemSize}
           appearance='hint'

@@ -85,7 +85,7 @@ export const HomepageScreen = (props): React.ReactElement => {
     );
 
     // AbuseAlarm button
-    /*buttonsArray.push(
+    buttonsArray.push(
       {
         title: I18n.t('AbuseAlarm'),
         route: 'AbuseAlarm',
@@ -114,7 +114,7 @@ export const HomepageScreen = (props): React.ReactElement => {
         var_name: 'abuseAlarm',
         var_value: false,
       },
-    );*/
+    );
     setData(buttonsArray);
   }
 
