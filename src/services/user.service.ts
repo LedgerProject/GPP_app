@@ -19,7 +19,7 @@ export const getPBKDFPublicKey = async (email: string): Promise<PBKBFPublicKeyRe
   const postParams = {
     email: email,
   };
-  
+
   let userPBKDFPublicKeyResponse: PBKBFPublicKeyResponse = {
     code: '0',
     message: '',
