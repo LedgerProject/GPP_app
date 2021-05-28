@@ -200,7 +200,7 @@ export default ({ navigation }): React.ReactElement => {
         answers = sanitizeAnswers(answers);
 
         // Show the spinner
-        //setLoading(true);
+        // setLoading(true);
 
         // Get the e-mail public key and pbkdf
         let emailPublicKey = '';
