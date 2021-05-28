@@ -28,7 +28,8 @@ export const getPBKDFPublicKey = async (email: string): Promise<PBKBFPublicKeyRe
   };
 
   await axios
-    .post<PBKBFPublicKeyResponse>(AppOptions.getServerUrl() + 'users/get-pbkdf-publickey', postParams, { timeout: 30000 })
+    .post<PBKBFPublicKeyResponse>(AppOptions.getServerUrl() + 'users/get-pbkdf-publickey', postParams,
+    { timeout: 30000 })
     .then(function (response) {
       userPBKDFPublicKeyResponse = response.data.pbkdfPublicKeyResponse;
     })
