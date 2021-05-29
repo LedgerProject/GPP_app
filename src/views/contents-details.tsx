@@ -26,7 +26,11 @@ import { ImageStyle, ImageSourcePropType } from 'react-native';
 import { ThemedIcon } from '../components/themed-icon.component';
 import { MenuItem } from '../model/menu-item.model';
 import { KeyboardAvoidingView } from '../services/3rd-party';
+import GetLocation from 'react-native-get-location';
 
+// Redux import
+import { useSelector } from 'react-redux';
+import { selectToken } from '../redux/tokenSlice';
 export interface LayoutData extends MenuItem {
   route: string;
 }
@@ -49,7 +53,7 @@ export const CustomFromLibraryIcon = (props) => (
 );
 
 export const ContentsDetailsScreen = (props): React.ReactElement => {
-  const [documents, setDocuments] = React.useState([]);
+  const [documents, setDocuments] = React.useState((): any => {});
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
   const [modalFileVisible, setmodalFileVisible] = React.useState(false);
   const [modalDeleteVisible, setModalDeleteVisible] = React.useState(false);
@@ -60,10 +64,15 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
   const [compliantTitle, setCompliantTitle] = React.useState('');
   const [compliantSharePosition, setCompliantSharePosition] = React.useState(false);
   const [compliantShareName, setCompliantShareName] = React.useState(false);
+  const [currentPosition, setCurrentPosition] = React.useState((): any => {});
   const [compliantDescription, setCompliantDescription] = React.useState('');
-  const [fileResponse, setFileResponse] = React.useState<ImagePickerResponse>(initialFileResponse);
+  // const [fileResponse, setFileResponse] = React.useState<ImagePickerResponse>(initialFileResponse);
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState([]);
+  const [Content, setContent] = React.useState((): any => {});
+  const [remaining, setRemaining] = React.useState(5);
+
+  const token = useSelector(selectToken);
 
   // const item = null;
   const styles = useStyleSheet(themedStyles);
@@ -80,6 +89,35 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
   const onCheckedNameChange = (isChecked) => {
     setCompliantShareName(isChecked);
   };
+
+  // Get the user documents from the server
+  async function getMyDocuments(idContent) {
+    // Show spinner
+    setLoading(true);
+    axios
+      .get(AppOptions.getServerUrl() + 'contents/' + idContent + '/media' , {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(function (response) {
+        // Hide spinner
+        setLoading(false);
+        setDocuments(response.data);
+        setRemaining(5 - response.data.length);
+      })
+      .catch(function (error) {
+        // Hide spinner
+        setLoading(false);
+        setRemaining(5);
+        // Show the error message
+        showAlertMessage(
+          I18n.t('Error loading documents'),
+          I18n.t('An error has occurred, please try again'),
+        );
+      });
+  }
 
   const onItemUploadPhotoPress = (index: number): void => {
     if (index === 0) {
@@ -99,26 +137,25 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
 
   async function DeleteDocument() {
     setLoading(true);
-    /*const token = await AsyncStorage.getItem('token');
     axios
-    .delete(AppOptions.getServerUrl() + 'documents/' + documentDelete.idDocument, {
+    .delete(AppOptions.getServerUrl() + 'contents/' + Content.idContent + '/delete/' + documentDelete.idContentMedia, {
       headers: {
         'Authorization': 'Bearer ' + token,
         'Content-Type': 'application/json',
       },
     })
-    .then(function (response) {*/
+    .then(function (response) {
       setLoading(false);
       documents.splice(documentDeleteIndex, 1);
       setDocuments([...documents]);
       setModalDeleteVisible(false);
       // alert('removed');
-    /*})
+    })
     .catch(function (error) {
       setLoading(false);
       // alert(JSON.stringify(error));
       throw error;
-    });*/
+    });
   }
 
   /*const onItemPress = (document: Document, index: number): void => {
@@ -130,6 +167,7 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
       style={styles.item}
       index={info.index}
       compliantImage={info.item}
+      onItemPress={onItemPress}
       onRemove={onItemRemove}
     />
   );
@@ -140,19 +178,134 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
         I18n.t('Title missing'),
         I18n.t('Please fill the title'),
       );
+      return;
     } else if (!compliantDescription) {
       showAlertMessage(
         I18n.t('Description missing'),
         I18n.t('Please fill the descripton'),
       );
+      return;
+    }
+
+    // Show spinner
+    setLoading(true);
+
+    // Set the post params
+    const postParams = {
+      // idUser: '000000000000000',
+      title: compliantTitle,
+      description: compliantDescription,
+      sharePosition: compliantSharePosition,
+      shareName: compliantShareName,
+      // contentType: abuseAlarm ? 'abuseAlarm' : 'newsStory',
+      // insertDate: "2021-05-25T00:00:00.000Z"
+    };
+    let key = '';
+    if (!Content) {
+      key = 'idUser';
+      postParams[key] = '000000000000000';
+      key = 'contentType';
+      postParams[key] = abuseAlarm ? 'abuseAlarm' : 'newsStory';
+      key = 'insertDate';
+      postParams[key] = '2021-05-25T00:00:00.000Z';
+    }
+
+    if (currentPosition.latitude && currentPosition.longitude && compliantSharePosition) {
+      key = 'positionLatitude';
+      postParams[key] = currentPosition.latitude;
+      key = 'positionLongitude';
+      postParams[key] = currentPosition.longitude;
+    }
+
+
+
+    if (!Content) {
+    // save new content
+    axios
+      .post(AppOptions.getServerUrl() + 'contents', postParams , {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(function (response) {
+        setContent(response.data);
+        showAlertMessage(
+          I18n.t('Save completed'),
+          I18n.t('Content saved successfully, now you can upload images'),
+        );
+        // Hide spinner
+        setLoading(false);
+      })
+      .catch(function () {
+        // Hide spinner
+        setLoading(false);
+        showAlertMessage(
+          I18n.t('Error saving content'),
+          I18n.t('An error has occurred, please try again'),
+        );
+      });
     } else {
-      alert('Send OK');
+    // update new content
+    axios
+      .patch( AppOptions.getServerUrl() + 'contents/' + Content.idContent, postParams, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(function (response) {
+        showAlertMessage(
+          I18n.t('Save completed'),
+          I18n.t('Content saved successfully'),
+        );
+        // Hide spinner
+        setLoading(false);
+      })
+      .catch(function () {
+        // Hide spinner
+        setLoading(false);
+        showAlertMessage(
+          I18n.t('Error saving content'),
+          I18n.t('An error has occurred, please try again'),
+        );
+      });
     }
   };
 
   useEffect(() => {
-    // console.log(item);
     getButtons();
+
+    if (item) {
+      // load documents
+      getMyDocuments(item.idContent);
+      setContent(item);
+      setCompliantTitle(item.title);
+      setCompliantShareName(item.shareName);
+      setCompliantSharePosition(item.sharePosition);
+      setCompliantDescription(item.description);
+     }
+
+    // Get Location
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 15000,
+    })
+    .then(location => {
+      setCurrentPosition({
+        latitude: location.latitude,
+        longitude: location.longitude,
+      });
+    })
+    .catch(error => {
+      setCurrentPosition({
+        latitude: 0,
+        longitude: 0,
+      });
+      // const { code, message } = error;
+      // console.warn(code, message);
+    });
+
   }, []);
 
   async function getButtons() {
@@ -264,20 +417,119 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
       return;
     }
     // add to documents
-    const element: any = {
+     const element: any = {
       'id': response.fileName,
       'name': response.fileName,
       'uri': response.uri,
       'size': response.fileSize,
     };
-    const elements: any = documents;
+    // const elements: any = documents;
     // console.log(documents);
-    elements.push(element);
-    setDocuments(elements);
+    // elements.push(element);
+    // setDocuments(elements);
     //
     // setFileResponse(response);
     // setModalUploadImageVisible(true);
+    photoUpload(response);
   };
+
+  // Photo upload
+  const photoUpload = async (fileResponse) => {
+
+    // Show spinner
+    setLoading(true);
+
+    // Get the file extension
+    const extension =  fileResponse.fileName.split('.').pop();
+
+    // Set the post parameters
+    const dataupload = new FormData();
+
+    dataupload.append('file', {
+      uri: fileResponse.uri,
+      type: fileResponse.type,
+      name: fileResponse.fileName,
+    });
+
+    // dataupload.append('title', documentTitle);
+
+    // Send the document to the server, blockchain and ipfs
+    axios
+      .post(AppOptions.getServerUrl() + 'contents/' + Content.idContent + '/upload', dataupload, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then(function(response) {
+        // Hide spinner
+        setLoading(false);
+
+        // Hide the modal to enter the document title
+        // setModalUploadImageVisible(false);
+
+        // Show success message
+        showAlertMessage(
+          I18n.t('Document uploaded successfully'),
+          I18n.t('Document uploaded successfully to Blockchain and IPFS!'),
+        );
+        // Load the user documents
+        getMyDocuments(Content.idContent);
+      })
+      .catch(function (error) {
+        // Hide spinner
+        setLoading(false);
+
+        // Show the error message
+        showAlertMessage(
+          I18n.t('Error uploading file'),
+          error.message,
+        );
+      });
+  };
+
+  // On document press event (from the list)
+  const onItemPress = (document: CompliantImageModel, index: number): void => {
+    loadDocument(document);
+  };
+
+  // Load the selected document from Blockchain and IPFS
+  async function loadDocument(document) {
+    // Show spinner
+    setLoading(true);
+    const postParams = {
+      // idContentMedia: document.idContentMedia,
+    };
+    axios
+      .post(AppOptions.getServerUrl() + 'contents/' + Content.idContent
+        + '/download-base64/' + document.idContentMedia, postParams, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(function (response) {
+        // Hide spinner
+        setLoading(false);
+
+        // Set the base64 image
+        const image = 'data:' + document.mimeType + ';base64,' + response.data;
+
+        // Open the document details view
+        props.navigation && props.navigation.navigate('DocWalletDetails', { item: document, image: image });
+      })
+      .catch(function (error) {
+
+        // Hide spinner
+        setLoading(false);
+
+        // Show the error message
+        showAlertMessage(
+          I18n.t('Error loading document'),
+          I18n.t('An error has occurred, please try again'),
+        );
+      });
+  }
 
   /* ALERT MESSAGE */
   const showAlertMessage = (title: string, message: string) => {
@@ -301,7 +553,7 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
     <KeyboardAvoidingView style= {styles.FlexGrowOne}>
       <TopNavigation
         title={
-          item ?
+          Content ?
           abuseAlarm ? I18n.t('AbuseAlarm - Edit') : I18n.t('News&Stories - Edit') :
           abuseAlarm ? I18n.t('AbuseAlarm - New')  : I18n.t('News&Stories - New')
         }
@@ -318,17 +570,34 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
           textStyle={styles.spinnerTextStyle}
         />
 
+        { Content && (
         <View>
         <Text
           style={styles.infoSection}>
           {I18n.t('Select the images, enter the title and description and then press the send button')
           + '.' }
         </Text>
+          { remaining > 0 && (
           <MenuGridList style={styles.buttonsContainer}
             data={data}
             onItemPress={onItemUploadPhotoPress}
           />
+          )}
+        <Text
+          style={styles.infoSection}>
+          { I18n.t('Remaining:') + remaining }
+        </Text>
         </View>
+        ) }
+        { !Content && (
+        <View>
+        <Text
+          style={styles.infoSection}>
+          {I18n.t('Enter the title and description and then press the send button')
+          + '.' }
+        </Text>
+        </View>
+        )}
         <Divider style={styles.divider} />
         <View style={styles.title}>
         <Text category='s1' style={styles.label}>{I18n.t('Insert title')}</Text>
@@ -344,7 +613,8 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
         <Input
         multiline={true}
         textStyle={{ minHeight: 64 }}
-        placeholder='Description'
+        value={compliantDescription}
+        placeholder={I18n.t('Description')}
         onChangeText={setCompliantDescription}
         style={styles.inputDescription}
         />
@@ -366,17 +636,19 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
         >
         </Toggle>
         </View>
+        { documents && (
         <List
           data={documents}
           renderItem={renderCompliantItem}
         />
+        )}
         <Divider/>
         <Button
           style={styles.sendButton}
           size='giant'
           appearance='outline'
           onPress={onSendButtonPress}>
-          {I18n.t('SEND')}
+          { I18n.t('SEND') }
         </Button>
       </Layout>
 
@@ -399,8 +671,16 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
           <Text style={ styles.modalText } category='h6' >
             {I18n.t('Are you sure to delete the selected document?')}
           </Text>
-          <Button status='primary' onPress={DeleteDocument}>{I18n.t('DELETE')}</Button>
-          <Button status='basic' onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>
+          <Layout style={styles.modalButtonsContainer}>
+            <Button
+            style={styles.modalButtonLeft}
+            status='basic'
+            onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>
+            <Button
+            style={styles.modalButtonRight}
+            status='primary'
+            onPress={DeleteDocument}>{I18n.t('DELETE')}</Button>
+          </Layout>
         </Layout>
       </ModalUiKitten>
       </KeyboardAvoidingView>
@@ -507,8 +787,25 @@ const themedStyles = StyleService.create({
     marginLeft: 16,
     marginRight: 16,
     textAlign: 'left',
-    flex: 1,
     flexDirection: 'row',
     color: 'color-light-100',
+  },
+  modalButtonRight: {
+    width: '100%',
+    height: 'auto',
+    flex: 1,
+    alignItems: 'center',
+    marginLeft: 5,
+  },
+  modalButtonLeft: {
+    width: '100%',
+    height: 'auto',
+    flex: 1,
+    alignItems: 'center',
+    marginRight: 5,
+  },
+  modalButtonsContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
   },
 });

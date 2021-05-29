@@ -42,8 +42,8 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
       { title: I18n.t('Homepage'), icon: HomeIcon },
       { title: I18n.t('DocWallet'), icon: BookOpenIcon },
       { title: I18n.t('AroundMe'), icon: PinIcon },
-      // { title: I18n.t('AbuseAlarm'), icon: BellIcon },
-      // { title: I18n.t('News&Stories'), icon: BookIcon },
+      { title: I18n.t('AbuseAlarm'), icon: BellIcon },
+      { title: I18n.t('News&Stories'), icon: BookIcon },
       { title: ' ', icon: null },
       { title: I18n.t('My Profile'), icon: PersonIcon },
       { title: I18n.t('Settings'), icon: Settings2Icon },
@@ -80,7 +80,7 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
       // Work if AbuseAlarm and News & Stories
 
       // AbuseAlarm
-      /*case 3: {
+      case 3: {
         navigation.toggleDrawer();
         navigation.navigate('AbuseAlarm', {
           screen: 'ContentsList',
@@ -134,48 +134,7 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
         setTimeout(Logout, 100);
         // navigation.navigate('SignIn');
         return;
-      }*/
-
-      // to delete if abusealarm and news & stories
-
-      // My Profile
-      case 4: {
-        navigation.toggleDrawer();
-        navigation.navigate('MyProfile');
-        return;
       }
-
-      // Settings
-      case 5: {
-        navigation.toggleDrawer();
-        navigation.navigate('Settings');
-        return;
-      }
-
-      // Change Password
-      case 6: {
-        navigation.toggleDrawer();
-        navigation.navigate('ChangePassword');
-        return;
-      }
-
-      // Kosmopolis
-      case 7: {
-        navigation.toggleDrawer();
-        WebBrowserService.openBrowserAsync('http://www.kosmopolis.me/');
-        return;
-      }
-
-      // Logout
-      case 8: {
-        dispatch(manageToken(''));
-        navigation.toggleDrawer();
-        setTimeout(Logout, 10);
-        // navigation.navigate('SignIn');
-        return;
-      }
-
-
     }
   };
 

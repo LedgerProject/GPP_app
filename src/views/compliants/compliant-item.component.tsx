@@ -42,7 +42,7 @@ export const CompliantItem = (props: CompliantItemProps): React.ReactElement => 
         <Text
           appearance='hint'
           category='p2'>
-          {substrDate(compliant.date)}
+          {substrDate(compliant.insertDate)}
         </Text>
       </View>
       <Button
