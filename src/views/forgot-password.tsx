@@ -275,7 +275,7 @@ export default ({ navigation }): React.ReactElement => {
 
           <Text
             style={styles.enterFieldLabel}>
-            {I18n.t('What is the name of your first pet?')}
+            {I18n.t('What is your favorite artist?')}
           </Text>
 
           <Input
@@ -308,7 +308,7 @@ export default ({ navigation }): React.ReactElement => {
 
           <Text
             style={styles.enterFieldLabel}>
-            {I18n.t('What is the surname of your mother before wedding?')}
+            {I18n.t('What is your favorite dish?')}
           </Text>
 
           <Input

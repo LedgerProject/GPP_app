@@ -98,14 +98,18 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
     if (zoom > 1.0) {
       setMarkers([]);
     } else {
-      getMarkers(
-        regionBoundaries.northWestLatitude,
-        regionBoundaries.northWestLongitude,
-        regionBoundaries.southEastLatitude,
-        regionBoundaries.southEastLongitude,
-        filterCategory,
-        zoom,
-      );
+      if (avoidNextRegionComplete === false) {
+        setAvoidNextRegionComplete(true);
+        
+        getMarkers(
+          regionBoundaries.northWestLatitude,
+          regionBoundaries.northWestLongitude,
+          regionBoundaries.southEastLatitude,
+          regionBoundaries.southEastLongitude,
+          filterCategory,
+          zoom,
+        );
+      }
     }
   }, [zoom]);
 

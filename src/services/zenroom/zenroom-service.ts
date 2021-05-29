@@ -29,22 +29,28 @@ export async function recoveryKeypair(clientSideContractText: string,  answers: 
     key_derivation: PBKDF,
   };
 
-  const data = {};
-
   const jsonKeys = JSON.stringify(keys);
-  const jsonData = JSON.stringify(data);
 
   let response = '';
+  let numAttempts = 0;
 
-  while (!response) {
+  while (!response && numAttempts < 5) {
     response = await zenroom.execute(
       clientSideContractText,
+      null,
       jsonKeys,
-      jsonData,
     );
+
+    console.log(response);
+
+    numAttempts++;
   }
 
-  return JSON.parse(response);
+  if (response && numAttempts < 5) {
+    return JSON.parse(response);
+  } else {
+    return false;
+  }
 }
 
 // Verify that the answers are correct
@@ -60,5 +66,9 @@ export async function verifyAnswers(
     PBKDF,
   );
 
-  return userPublicKey === execution[DEFAULT_USER].keypair.public_key;
+  if (execution) {
+    return userPublicKey === execution[DEFAULT_USER].keypair.public_key;
+  } else {
+    return null;
+  }
 }

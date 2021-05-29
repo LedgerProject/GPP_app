@@ -31,10 +31,10 @@ export default {
 
   '***QUESTIONS***': '***QUESTIONS***',
   'Where my parents met?': 'Where my parents met?',
-  'What is the name of your first pet?': 'What is the name of your first pet?',
+  'What is your favorite artist?': 'What is your favorite artist?',
   'What is your home town?': 'What is your home town?',
   'What is the name of your first teacher?': 'What is the name of your first teacher?',
-  'What is the surname of your mother before wedding?': 'What is the surname of your mother before wedding?',
+  'What is your favorite dish?': 'What is your favorite dish?',
 
   'SIGN-IN': 'SIGN-IN',
   'Sign-in to your account': 'Sign-in to your account',

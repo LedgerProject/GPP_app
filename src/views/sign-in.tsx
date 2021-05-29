@@ -241,10 +241,15 @@ export default ({ navigation }): React.ReactElement => {
 
           // Proceed with sign-in (saving the private key and public key locally)
           onSignInButtonPress(privateKey, publicKey);
-        } else {
+        } else if (publicKeyMatch === false) {
           // Answers not correct
           setLoading(false);
           setError(I18n.t('The answers are incorrect'));
+          setmodalVisible(true);
+        } else {
+          // Zenroom error
+          setLoading(false);
+          setError('Zenroom error!');
           setmodalVisible(true);
         }
       }
@@ -388,7 +393,7 @@ export default ({ navigation }): React.ReactElement => {
 
               <Text
                 style={styles.enterFieldLabel}>
-                {I18n.t('What is the name of your first pet?')}
+                {I18n.t('What is your favorite artist?')}
               </Text>
 
               <Input
@@ -421,7 +426,7 @@ export default ({ navigation }): React.ReactElement => {
 
               <Text
                 style={styles.enterFieldLabel}>
-                {I18n.t('What is the surname of your mother before wedding?')}
+                {I18n.t('What is your favorite dish?')}
               </Text>
 
               <Input

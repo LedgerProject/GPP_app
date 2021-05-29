@@ -22,7 +22,6 @@ Given I have a 'string' named 'question3' in 'userChallenges'
 Given I have a 'string' named 'question4' in 'userChallenges'
 Given I have a 'string' named 'question5' in 'userChallenges'
 
-
 # Hashing the user's challenges and renaming it
 When I create the hash of 'userChallenges'
 and I rename the 'hash' to 'userChallenges.hash'

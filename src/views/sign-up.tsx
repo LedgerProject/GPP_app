@@ -69,10 +69,10 @@ export default ({ navigation }): React.ReactElement => {
   useEffect(() => {
     setQuestions([
       {'question': I18n.t('Where my parents met?'), 'answer': '' },
-      {'question': I18n.t('What is the name of your first pet?'), 'answer': '' },
+      {'question': I18n.t('What is your favorite artist?'), 'answer': '' },
       {'question': I18n.t('What is your home town?'), 'answer': '' },
       {'question': I18n.t('What is the name of your first teacher?'), 'answer': '' },
-      {'question': I18n.t('What is the surname of your mother before wedding?'), 'answer': '' },
+      {'question': I18n.t('What is your favorite dish?'), 'answer': '' },
     ]);
     // workaround for Xiaomi fix
     setTimeout(() => {
