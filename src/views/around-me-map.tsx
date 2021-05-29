@@ -99,7 +99,7 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
     } else {
       if (avoidNextRegionComplete === false) {
         setAvoidNextRegionComplete(true);
-        
+
         getMarkers(
           regionBoundaries.northWestLatitude,
           regionBoundaries.northWestLongitude,
