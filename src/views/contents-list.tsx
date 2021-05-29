@@ -253,8 +253,16 @@ export const ContentsListScreen = (props): React.ReactElement => {
           <Text style={ styles.modalText } category='h6' >
             {I18n.t('Are you sure to delete the selected content?')}
           </Text>
-          <Button status='primary' onPress={DeleteCompliant}>{I18n.t('DELETE')}</Button>
-          <Button status='basic' onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>
+          <Layout style={styles.modalButtonsContainer}>
+            <Button
+            style={styles.modalButtonLeft}
+            status='basic'
+            onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>
+            <Button
+            style={styles.modalButtonRight}
+            status='primary'
+            onPress={DeleteCompliant}>{I18n.t('DELETE')}</Button>
+          </Layout>
         </Layout>
       </ModalUiKitten>
     </SafeAreaLayout>
@@ -333,5 +341,22 @@ const themedStyles = StyleService.create({
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
-
+  modalButtonRight: {
+    width: '100%',
+    height: 'auto',
+    flex: 1,
+    alignItems: 'center',
+    marginLeft: 5,
+  },
+  modalButtonLeft: {
+    width: '100%',
+    height: 'auto',
+    flex: 1,
+    alignItems: 'center',
+    marginRight: 5,
+  },
+  modalButtonsContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
+  },
 });

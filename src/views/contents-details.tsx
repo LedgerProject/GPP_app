@@ -70,7 +70,7 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState([]);
   const [Content, setContent] = React.useState((): any => {});
-  const [remaining, setRemaining] = React.useState(0);
+  const [remaining, setRemaining] = React.useState(5);
 
   const token = useSelector(selectToken);
 
@@ -138,7 +138,7 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
   async function DeleteDocument() {
     setLoading(true);
     axios
-    .delete(AppOptions.getServerUrl() + 'contents/' + item.idContent + '/delete/' + documentDelete.idContentMedia, {
+    .delete(AppOptions.getServerUrl() + 'contents/' + Content.idContent + '/delete/' + documentDelete.idContentMedia, {
       headers: {
         'Authorization': 'Bearer ' + token,
         'Content-Type': 'application/json',
@@ -201,7 +201,7 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
       // insertDate: "2021-05-25T00:00:00.000Z"
     };
     let key = '';
-    if (!item) {
+    if (!Content) {
       key = 'idUser';
       postParams[key] = '000000000000000';
       key = 'contentType';
@@ -217,7 +217,9 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
       postParams[key] = currentPosition.longitude;
     }
 
-    if (!item) {
+
+
+    if (!Content) {
     // save new content
     axios
       .post(AppOptions.getServerUrl() + 'contents', postParams , {
@@ -229,8 +231,8 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
       .then(function (response) {
         setContent(response.data);
         showAlertMessage(
-          I18n.t('Saving completed'),
-          I18n.t('Content saved succefully, now you can upload images'),
+          I18n.t('Save completed'),
+          I18n.t('Content saved successfully, now you can upload images'),
         );
         // Hide spinner
         setLoading(false);
@@ -246,7 +248,7 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
     } else {
     // update new content
     axios
-      .patch( AppOptions.getServerUrl() + 'contents/' + item.idContent, postParams, {
+      .patch( AppOptions.getServerUrl() + 'contents/' + Content.idContent, postParams, {
         headers: {
           'Authorization': 'Bearer ' + token,
           'Content-Type': 'application/json',
@@ -254,8 +256,8 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
       })
       .then(function (response) {
         showAlertMessage(
-          I18n.t('Saving completed'),
-          I18n.t('Content saved succefully'),
+          I18n.t('Save completed'),
+          I18n.t('Content saved successfully'),
         );
         // Hide spinner
         setLoading(false);
@@ -551,7 +553,7 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
     <KeyboardAvoidingView style= {styles.FlexGrowOne}>
       <TopNavigation
         title={
-          item ?
+          Content ?
           abuseAlarm ? I18n.t('AbuseAlarm - Edit') : I18n.t('News&Stories - Edit') :
           abuseAlarm ? I18n.t('AbuseAlarm - New')  : I18n.t('News&Stories - New')
         }
@@ -575,7 +577,7 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
           {I18n.t('Select the images, enter the title and description and then press the send button')
           + '.' }
         </Text>
-          { remaining < 5 && (
+          { remaining > 0 && (
           <MenuGridList style={styles.buttonsContainer}
             data={data}
             onItemPress={onItemUploadPhotoPress}

@@ -216,6 +216,6 @@ export default {
   'Error loading document': 'Error loading document',
   'Remaining:': 'Remaining:',
   'Save completed': 'Save completed',
-  'Content saved succefully': 'Content saved succefully',
-  'Content saved succefully, now you can upload images': 'Content saved succefully, now you can upload images',
+  'Content saved successfully': 'Content saved successfully',
+  'Content saved successfully, now you can upload images': 'Content saved successfully, now you can upload images',
 };
