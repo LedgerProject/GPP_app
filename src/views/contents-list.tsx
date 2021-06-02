@@ -4,6 +4,9 @@ import React, { useEffect } from 'react';
 // React Native import
 import { ListRenderItemInfo, View } from 'react-native';
 
+// React Navigation import
+import { useIsFocused } from '@react-navigation/native';
+
 // UIKitten import
 import { Button, List, Layout, StyleService, Text, TopNavigation,
   TopNavigationAction, useStyleSheet, Modal as ModalUiKitten } from '@ui-kitten/components';
@@ -13,170 +16,182 @@ import I18n from './../i18n/i18n';
 
 // Component import
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
-import { CompliantItem } from './compliants/compliant-item.component';
+import { ContentItem } from '../components/content-item.component';
 import { MenuIcon } from '../components/icons';
-import { useIsFocused } from '@react-navigation/native';
+
 // Environment import
 import { AppOptions } from '../services/app-env';
 
 // Model import
+import { Content } from '../model/content.model';
 import { MenuItem } from '../model/menu-item.model';
 
 // Axios import
 import axios from 'axios';
 
-// AsyncStorage import
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+// Redux import
+import { useSelector } from 'react-redux';
+import { selectToken } from '../redux/tokenSlice';
 
 // Other imports
 import Spinner from 'react-native-loading-spinner-overlay';
-
-// REMOVE IMPORTS
-import { Compliant } from './compliants/data';
 
 export interface LayoutData extends MenuItem {
   route: string;
 }
 
-// Redux import
-import { useSelector } from 'react-redux';
-import { selectToken } from '../redux/tokenSlice';
-
 export const ContentsListScreen = (props): React.ReactElement => {
-  const styles = useStyleSheet(themedStyles);
-  const [compliants, setCompliants] = React.useState([]);
+  const [contents, setContents] = React.useState([]);
   const [modalAlertVisible, setModalAlertVisible] = React.useState(false);
-  const [modalVisible, setmodalVisible] = React.useState(false);
   const [modalDeleteVisible, setModalDeleteVisible] = React.useState(false);
-  const [compliantDelete, setCompliantDelete] = React.useState((): any => {});
-  const [compliantDeleteIndex, setCompliantDeleteIndex] = React.useState(0);
+  const [contentDelete, setContentDelete] = React.useState((): any => {});
+  const [contentDeleteIndex, setContentDeleteIndex] = React.useState(0);
   const [alertTitle, setAlertTitle] = React.useState('');
   const [alertMessage, setAlertMessage] = React.useState('');
   const [loading, setLoading] = React.useState(false);
 
-  // Get Token from Redux
-  const token = useSelector(selectToken);
+  const { abuseAlarm } = props.route.params;
+
+  const styles = useStyleSheet(themedStyles);
   const isEntering = useIsFocused();
 
-  const { abuseAlarm } = props.route.params;
-   // let abuseAlarm = null;
+  // Get Token from Redux
+  const token = useSelector(selectToken);
 
-
-  const onItemRemove = (compliant: Compliant, index: number): void => {
-    // DeleteCompliant(compliant);
-    setCompliantDelete(compliant);
-    setCompliantDeleteIndex(index);
-    setModalDeleteVisible(true);
-
-  };
-
-  async function DeleteCompliant() {
+  // UseEffect
+  useEffect(() => {
+    if (isEntering) {
+      getContents();
+    }
+  }, [isEntering]);
+  
+  // Get the user contents
+  async function getContents() {
+    // Show spinner
     setLoading(true);
+
+    const contentType = abuseAlarm ? 'abuseAlarm' : 'newsStory';
+
+    // Get the user contents based on the contentType (abuseAlarm or newsStory)
     axios
-    .delete(AppOptions.getServerUrl() + 'contents/' + compliantDelete.idContent, {
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(function (response) {
-      setLoading(false);
-      compliants.splice(compliantDeleteIndex, 1);
-      setCompliants([...compliants]);
-      setModalDeleteVisible(false);
-      // alert('removed');
-    })
-    .catch(function (error) {
-      setLoading(false);
-      // alert(JSON.stringify(error));
-      throw error;
-    });
+      .get(AppOptions.getServerUrl() + `contents?filter={
+          "where": {
+            "contentType": "` + contentType + `"
+          },
+          "fields": {
+            "idContent": true,
+            "idUser": false,
+            "title": true,
+            "description": true,
+            "sharePosition": true,
+            "positionLatitude": true,
+            "positionLongitude": true,
+            "shareName": true,
+            "contentType": true,
+            "insertDate": true
+          },
+          "order": [
+            "insertDate DESC"
+          ]
+        }`, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(function (response) {
+        // Hide spinner
+        setLoading(false);
+        
+        // Set the contents
+        setContents(response.data);
+      })
+      .catch(function (error) {
+        // Hide spinner
+        setLoading(false);
+
+        // Show the error message
+        showAlertMessage(I18n.t('Error getting contents'), I18n.t('Error getting contents from the server'));
+      });
   }
 
-  const addElement = (): void => {
+  // Open the page to add a new content
+  const addContent = (): void => {
     props.navigation && props.navigation.navigate('ContentsDetails', { item: null, abuseAlarm: abuseAlarm });
   };
 
-  const onItemPress = (compliant: Compliant, index: number): void => {
-    props.navigation && props.navigation.navigate('ContentsDetails', { item: compliant, abuseAlarm: abuseAlarm });
+  // Open the page to edit the selected content
+  const editContent = (content: Content, index: number): void => {
+    props.navigation && props.navigation.navigate('ContentsDetails', { item: content, abuseAlarm: abuseAlarm });
   };
 
-  const renderCompliantItem = (info: ListRenderItemInfo<Compliant>): React.ReactElement => (
-    <CompliantItem
-      style={styles.item}
-      index={info.index}
-      compliant={info.item}
-      onRemove={onItemRemove}
-      onItemPress={onItemPress}
-    />
-  );
+  // Ask user to remove the content
+  const askRemoveContent = (content: Content, index: number): void => {
+    // Set the content and the index to delete
+    setContentDelete(content);
+    setContentDeleteIndex(index);
 
-  async function getMyCompliants() {
+    // Show the modal to delete the content
+    setModalDeleteVisible(true);
+  };
+
+  // Remove the content from the server
+  async function removeContent() {
+    // Show spinner
     setLoading(true);
-    const contentType = abuseAlarm ? 'abuseAlarm' : 'newsStory';
+
+    // Remove the content from the server
     axios
-    .get(AppOptions.getServerUrl() + `contents?filter={
-      "where": {
-        "contentType": "` + contentType + `"
-      },
-      "fields": {
-        "idContent": true,
-        "idUser": false,
-        "title": true,
-        "description": true,
-        "sharePosition": true,
-        "positionLatitude": true,
-        "positionLongitude": true,
-        "shareName": true,
-        "contentType": true,
-        "insertDate": true
-      },
-      "order": [
-        "insertDate DESC"
-      ]
-    }`, {
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(function (response) {
-      setLoading(false);
-      setCompliants(response.data);
-    })
-    .catch(function (error) {
-      setLoading(false);
-      // alert(JSON.stringify(error));
-      throw error;
-    });
+      .delete(AppOptions.getServerUrl() + 'contents/' + contentDelete.idContent, {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(function (response) {
+        // Hide spinner
+        setLoading(false);
+
+        // Remove the content from the list
+        contents.splice(contentDeleteIndex, 1);
+        setContents([...contents]);
+
+        // Hide the modal
+        setModalDeleteVisible(false);
+      })
+      .catch(function (error) {
+        // Hide spinner
+        setLoading(false);
+
+        // Show the error message
+        showAlertMessage(I18n.t('Error removing content'), I18n.t('Error removing the selected content'));
+      });
   }
 
-  useEffect(() => {
-    if (isEntering) {
-      getMyCompliants();
-    }
-    // console.log(abuseAlarm);
-  }, [isEntering]);
-
-
-
-  /* ALERT MESSAGE */
+  // Alert message
   const showAlertMessage = (title: string, message: string) => {
     setAlertTitle(title);
     setAlertMessage(message);
     setModalAlertVisible(true);
   };
 
-  const navigateBack = () => {
-    props.navigation.goBack();
-  };
-
-  // <TopNavigationAction icon={ArrowBackIcon} onPress={navigateBack} />
+  // Render top navigation menu
   const renderDrawerAction = (): React.ReactElement => (
-      <TopNavigationAction
-        icon={MenuIcon}
-        onPress={props.navigation.toggleDrawer}
-      />
+    <TopNavigationAction
+      icon={MenuIcon}
+      onPress={props.navigation.toggleDrawer}
+    />
+  );
+
+  // Render the list content item
+  const renderContentItem = (info: ListRenderItemInfo<Content>): React.ReactElement => (
+    <ContentItem
+      style={styles.item}
+      index={info.index}
+      content={info.item}
+      onRemove={askRemoveContent}
+      onItemPress={editContent}
+    />
   );
 
   return (
@@ -190,47 +205,45 @@ export const ContentsListScreen = (props): React.ReactElement => {
         style={styles.topBar}
       />
       <Layout
-      style={styles.container}
-      level='2'>
-      <Spinner
+        style={styles.container}
+        level='2'>
+        <Spinner
           visible={loading}
           textContent={I18n.t('Please wait') + '...'}
           textStyle={styles.spinnerTextStyle}
         />
         { abuseAlarm === true && (
-        <View>
-          <View style={styles.addButtonContainer}>
-        <Button
-          status='primary'
-          style={styles.addButton}
-          onPress={addElement}>{I18n.t('New AbuseAlarm')}</Button>
+          <View>
+            <Button
+              status='primary'
+              style={styles.addButton}
+              onPress={addContent}>
+              {I18n.t('New Report')}
+            </Button>
+            <Text
+              style={styles.infoSection}>
+              {I18n.t('AbuseAlarm info')}
+            </Text>
           </View>
-        <Text
-          style={styles.infoSection}>
-          {I18n.t('Tap on AbuseAlarm for the preview') + '. '
-          + I18n.t('Swipe left on AbuseAlarm to delete it') + '.' }
-        </Text>
-        </View>
         )}
         { abuseAlarm === false && (
-        <View>
-          <View style={styles.addButtonContainer}>
-        <Button
-          status='primary'
-          style={styles.addButton}
-          onPress={addElement}>{I18n.t('New News&Story')}</Button>
+          <View>
+            <Button
+              status='primary'
+              style={styles.addButton}
+              onPress={addContent}>
+              {I18n.t('New Story')}
+            </Button>
+            <Text
+              style={styles.infoSection}>
+              {I18n.t('News&Story info')}
+            </Text>
           </View>
-        <Text
-        style={styles.infoSection}>
-        {I18n.t('Tap on News&Story for the preview') + '. '
-        + I18n.t('Swipe left on News&Story to delete it') + '.' }
-        </Text>
-
-        </View>
         )}
-        <List style={styles.container}
-          data={compliants}
-          renderItem={renderCompliantItem}
+        <List
+          style={styles.listContainer}
+          data={contents}
+          renderItem={renderContentItem}
         />
       </Layout>
 
@@ -238,10 +251,22 @@ export const ContentsListScreen = (props): React.ReactElement => {
         visible={ modalAlertVisible }
         backdropStyle={styles.backdrop}
         onBackdropPress={() => setModalAlertVisible(false)}>
-        <Layout style={ styles.modal } >
-          <Text style={ styles.modalText } category='h6' >{alertTitle}</Text>
-          <Text style={ styles.modalText } >{alertMessage}</Text>
-          <Button status='basic' onPress={() => setModalAlertVisible(false)}>{I18n.t('CLOSE')}</Button>
+        <Layout
+          style={ styles.modal }>
+          <Text
+            style={ styles.modalText }
+            category='h6' >
+            {alertTitle}
+          </Text>
+          <Text
+          style={ styles.modalText } >
+            {alertMessage}
+          </Text>
+          <Button
+            status='basic'
+            onPress={() => setModalAlertVisible(false)}>
+            {I18n.t('CLOSE')}
+          </Button>
         </Layout>
       </ModalUiKitten>
 
@@ -249,19 +274,26 @@ export const ContentsListScreen = (props): React.ReactElement => {
         visible={ modalDeleteVisible }
         backdropStyle={styles.backdrop}
         onBackdropPress={() => setModalDeleteVisible(false)}>
-        <Layout style={ styles.modal } >
-          <Text style={ styles.modalText } category='h6' >
+        <Layout
+          style={ styles.modal }>
+          <Text
+            style={ styles.modalText }
+            category='h6'>
             {I18n.t('Are you sure to delete the selected content?')}
           </Text>
-          <Layout style={styles.modalButtonsContainer}>
+          <Layout
+            style={styles.modalButtonsContainer}>
             <Button
-            style={styles.modalButtonLeft}
-            status='basic'
-            onPress={() => setModalDeleteVisible(false)}>{I18n.t('CLOSE')}</Button>
+              style={styles.modalButtonLeft}
+              status='basic'
+              onPress={() => setModalDeleteVisible(false)}>
+              {I18n.t('CLOSE')}
+            </Button>
             <Button
-            style={styles.modalButtonRight}
-            status='primary'
-            onPress={DeleteCompliant}>{I18n.t('DELETE')}</Button>
+              style={styles.modalButtonRight}
+              status='primary'
+              onPress={removeContent}>{I18n.t('DELETE')}
+            </Button>
           </Layout>
         </Layout>
       </ModalUiKitten>
@@ -283,6 +315,13 @@ const themedStyles = StyleService.create({
     padding: 4,
     marginHorizontal: 16,
     color: 'color-light-100',
+    textAlign: 'center',
+  },
+  listContainer: {
+    marginHorizontal: 16,
+    borderRadius: 4,
+    padding: 5,
+    marginBottom: 20,
   },
   item: {
     borderBottomWidth: 1,
@@ -293,8 +332,12 @@ const themedStyles = StyleService.create({
     marginTop: 8,
     marginBottom: 10,
   },
-  backdrop: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
-  backdrop_black: { backgroundColor: 'rgba(0, 0, 0, 1)' },
+  backdrop: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
+  backdrop_black: {
+    backgroundColor: 'rgba(0, 0, 0, 1)'
+  },
   modal: {
     textAlign: 'center',
     margin: 12,
@@ -335,11 +378,6 @@ const themedStyles = StyleService.create({
   },
   addButton: {
     margin: 10,
-    width: 200,
-  },
-  addButtonContainer: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
   },
   modalButtonRight: {
     width: '100%',

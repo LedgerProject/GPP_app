@@ -61,7 +61,7 @@ export const SettingsScreen = (props): React.ReactElement => {
 
       showAlertMessage(
         (I18n.t('Language Settings')),
-        (I18n.t('Language updated successfully.')),
+        (I18n.t('Language updated successfully')),
       );
     }
   };

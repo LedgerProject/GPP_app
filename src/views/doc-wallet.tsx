@@ -202,10 +202,6 @@ export const DocWalletScreen = (props): React.ReactElement => {
   const managePhoto = async (response: ImagePickerResponse) => {
     // Check if the response is an error
     if (response.didCancel) {
-      showAlertMessage(
-        I18n.t('Photo canceled'),
-        I18n.t('User canceled the operation'),
-      );
       return;
     } else if (response.errorCode === 'camera_unavailable') {
       showAlertMessage(
@@ -497,8 +493,7 @@ export const DocWalletScreen = (props): React.ReactElement => {
         </View>
         <Text
           style={styles.infoSection}>
-          { I18n.t('Tap on document for the preview') + '\n'
-          + I18n.t('Swipe left on document to delete it') }
+          { I18n.t('Tap on document for the preview') }
         </Text>
         <List
           style={styles.listContainer}
@@ -537,17 +532,17 @@ export const DocWalletScreen = (props): React.ReactElement => {
             />
           </Layout>
           <Layout style={styles.modalButtonsContainer}>
-          <Button
-            style={styles.modalButtonLeft}
-            onPress={photoUpload}>
-            {I18n.t('UPLOAD')}
-          </Button>
-          <Button
-            style={styles.modalButtonRight}
-            status='basic'
-            onPress={() => setModalUploadImageVisible(false)}>
-            {I18n.t('CLOSE')}
-          </Button>
+            <Button
+              style={styles.modalButtonLeft}
+              onPress={photoUpload}>
+              {I18n.t('UPLOAD')}
+            </Button>
+            <Button
+              style={styles.modalButtonRight}
+              status='basic'
+              onPress={() => setModalUploadImageVisible(false)}>
+              {I18n.t('CLOSE')}
+            </Button>
           </Layout>
         </Layout>
       </ModalUiKitten>

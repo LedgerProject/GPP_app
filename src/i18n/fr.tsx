@@ -43,7 +43,7 @@ export default {
   'Please enter the e-mail': 'Please enter the e-mail',
   'Please enter the password': 'Please enter the password',
   'Please check e-mail or password': 'Please check e-mail or password',
-  'Unable to reach the server, please try again.': 'Unable to reach the server, please try again.',
+  'Unable to reach the server, please try again': 'Unable to reach the server, please try again.',
 
   '***SIGN-ON***': '***SIGN-ON***',
   'Please register to Global Passport Project': 'Please register to Global Passport Project',
@@ -93,7 +93,7 @@ export default {
 
   '***SETTING***': '***SETTING***',
   'Language Settings': 'Language Settings',
-  'Language updated successfully.': 'Language updated successfully. The application will be restarted.',
+  'Language updated successfully': 'Language updated successfully. The application will be restarted.',
   'Select the application language': 'Select the application language',
 
   '***CHANGE PASSWORD***': '***CHANGE PASSWORD***',
@@ -114,7 +114,6 @@ export default {
   'From Library': 'From Library',
   'Error loading documents': 'Error loading documents',
   'Tap on document for the preview': 'Tap on document for the preview.',
-  'Swipe left on document to delete it': 'Swipe left on document to delete it.',
   'Please specify a title for your document': 'Please specify a title for your document',
   'Generate a 30-minute token': 'Generate a 30-minute token to be communicated to the operator to allow him to check your documents.',
   'GENERATE A 30-MINUTE TOKEN': 'GENERATE A 30-MINUTE TOKEN',
@@ -149,7 +148,7 @@ export default {
   'No structures available': 'No structures available',
   'Search before the structures on the map, then click the list button': 'Search before the structures on the map, then click the list button',
   'No country available': 'No country available',
-  'Show before the country on the map, then click the country information button': 'Show before the country on the map, then click the country information button',
+  'Show before the country on the map': 'Show before the country on the map, then click the country information button',
   'What are you searching for': 'What are you searching for',
   'Zoom in to view the structures': 'Zoom in to view the structures',
   'Click on a structure for details': 'Click on a structure for details',
@@ -192,7 +191,7 @@ export default {
   'Tap on News&Story for the preview': 'Tap on News&Story for the preview',
   'Swipe left on News&Story to delete it': 'Swipe left on News&Story to delete it',
   'New AbuseAlarm': 'New AbuseAlarm',
-  'New News&Story': 'New News&Story',
+  'New Story': 'New Story',
 
   '***ABUSE-ALARM / NEWS-STORIES DETAILS***': '***ABUSE-ALARM / NEWS-STORIES DETAILS***',
   'Are you sure to delete the selected content?': 'Are you sure to delete the selected content?',

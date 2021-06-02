@@ -169,7 +169,7 @@ export const ChangePasswordScreen = (props): React.ReactElement => {
             break;
           }
         } else {
-          errDescription = 'Unable to reach the server, please try again.';
+          errDescription = 'Unable to reach the server, please try again';
         }
 
         setLoading(false);

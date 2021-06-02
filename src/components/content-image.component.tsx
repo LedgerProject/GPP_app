@@ -1,46 +1,52 @@
+// React import
 import React from 'react';
+
+// React native import
 import { Image, StyleSheet, View, ImageSourcePropType, Text as TextNative } from 'react-native';
+
+// UIKitten import
 import { Button, ListItem, ListItemProps, Text } from '@ui-kitten/components';
-import { CloseIcon, MinusIcon, PlusIcon } from '../../components/icons';
 
-export class CompliantImageModel {
+// Components import
+import { CloseIcon } from './icons';
 
-  constructor(readonly id: string,
-              readonly name: string,
-              readonly mimeType: string,
-              readonly size: number,
-              ) {
-  }
-
+export class ContentImageModel {
+  constructor(
+    readonly id: string,
+    readonly name: string,
+    readonly mimeType: string,
+    readonly size: number,
+  ) {}
 }
-
-export type CompliantImageProps = ListItemProps & {
+ 
+export type ContentImageProps = ListItemProps & {
   index: number;
-  compliantImage: CompliantImageModel;
-  onItemPress: (compliantImage: CompliantImageModel, index: number) => void;
-  onRemove: (compliantImage: CompliantImageModel, index: number) => void;
+  contentImage: ContentImageModel;
+  onItemPress: (contentImage: ContentImageModel, index: number) => void;
+  onRemove: (contentImage: ContentImageModel, index: number) => void;
 };
 
-export const CompliantImage = (props: CompliantImageProps): React.ReactElement => {
-
-  const { style, compliantImage, index, onItemPress, onRemove, ...listItemProps } = props;
+export const ContentImage = (props: ContentImageProps): React.ReactElement => {
+  const { style, contentImage, index, onItemPress, onRemove, ...listItemProps } = props;
 
   const onRemoveButtonPress = (): void => {
-    onRemove(compliantImage, index);
+    onRemove(contentImage, index);
   };
 
   // Select item event
   const onButtonPress = (): void => {
-     onItemPress(compliantImage, index);
+     onItemPress(contentImage, index);
   };
 
   const formatSize = (size): string => {
     if (size === 0) { return '0'; }
+
     const decimals = 2;
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     const i = Math.floor(Math.log(size) / Math.log(k));
+
     return parseFloat((size / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   };
 
@@ -49,9 +55,9 @@ export const CompliantImage = (props: CompliantImageProps): React.ReactElement =
     let icon: ImageSourcePropType;
 
     if (mimeType === 'image/jpeg' || mimeType === 'image/png') {
-      icon = require('../../assets/images/file-icon-image.png');
+      icon = require('../assets/images/file-icon-image.png');
     } else {
-      icon = require('../../assets/images/file-icon-pdf.png');
+      icon = require('../assets/images/file-icon-pdf.png');
     }
 
     return icon;
@@ -61,20 +67,22 @@ export const CompliantImage = (props: CompliantImageProps): React.ReactElement =
     <ListItem
       {...listItemProps}
       style={[styles.container, style]}
-      onPress={onButtonPress}
-      >
+      onPress={onButtonPress}>
       <Image
         style={styles.image}
-        source={formatFileImage(compliantImage.mimeType)}
+        source={formatFileImage(contentImage.mimeType)}
       />
       <View style={styles.detailsContainer}>
-        <TextNative style={styles.itemTitle} numberOfLines={1} ellipsizeMode={'tail'} >FILE {index + 1}
-          {/* compliantImage.name */}
+        <TextNative
+          style={styles.itemTitle}
+          numberOfLines={1}
+          ellipsizeMode={'tail'}>
+          File {index + 1}
         </TextNative>
-        <Text style={styles.itemSize}
+        <Text
           appearance='hint'
           category='p2'>
-          {formatSize(compliantImage.size)}
+          {formatSize(contentImage.size)}
         </Text>
       </View>
       <Button
@@ -109,6 +117,7 @@ const styles = StyleSheet.create({
   removeButton: {
     position: 'absolute',
     right: 0,
+    top: 15,
   },
   iconButton: {
     paddingHorizontal: 0,
@@ -117,8 +126,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingRight: 20,
     marginBottom: 12,
-  },
-  itemSize: {
-
   },
 });

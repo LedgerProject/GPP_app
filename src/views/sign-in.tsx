@@ -317,7 +317,7 @@ export default ({ navigation }): React.ReactElement => {
             break;
           }
         } else {
-          errDescription = 'Unable to reach the server, please try again.';
+          errDescription = 'Unable to reach the server, please try again';
         }
 
         // Hide the spinner

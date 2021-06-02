@@ -1,7 +1,12 @@
 // React import
 import React, { useEffect } from 'react';
+
+// React native import
 import { StyleSheet, View } from 'react-native';
-import { CommonActions, DrawerActions } from '@react-navigation/native';
+
+// React navigation import
+import { CommonActions } from '@react-navigation/native';
+
 // UIKitten import
 import {
   Avatar,
@@ -20,14 +25,15 @@ import { HomeIcon, BellIcon, PinIcon, BookOpenIcon, LockIcon, BookIcon, PersonIc
   Settings2Icon, GlobeIcon, LogoutIcon } from '../components/icons';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 
-// Language import
+// Locale import
 import I18n from '../i18n/i18n';
 
 // Other imports
 import { WebBrowserService } from '../services/web-browser.service';
 import { AppInfoService } from '../services/app-info.service';
+
 // Redux import
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { manageToken } from '../redux/tokenSlice';
 
 const version: string = AppInfoService.getVersion();
@@ -48,9 +54,11 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
       { title: I18n.t('My Profile'), icon: PersonIcon },
       { title: I18n.t('Settings'), icon: Settings2Icon },
       { title: I18n.t('Change Password'), icon: LockIcon },
-      { title: I18n.t('Kosmopolis'), icon: GlobeIcon },
       { title: I18n.t('Logout'), icon: LogoutIcon },
+      { title: I18n.t('Global Passport Project'), icon: GlobeIcon },
+      { title: I18n.t('Kosmopolis'), icon: GlobeIcon },
     ];
+
     const menuArray = menuObj;
     setData(menuArray);
   }, []);
@@ -77,7 +85,6 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
         navigation.navigate('AroundMe');
         return;
       }
-      // Work if AbuseAlarm and News & Stories
 
       // AbuseAlarm
       case 3: {
@@ -120,19 +127,25 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
         return;
       }
 
-      // Kosmopolis
-      case 9: {
-        navigation.toggleDrawer();
-        WebBrowserService.openBrowserAsync('http://www.kosmopolis.me/');
-        return;
-      }
-
       // Logout
-      case 10: {
+      case 9: {
         dispatch(manageToken(''));
         navigation.toggleDrawer();
         setTimeout(Logout, 100);
-        // navigation.navigate('SignIn');
+        return;
+      }
+
+      // Global Passport Peoject
+      case 10: {
+        navigation.toggleDrawer();
+        WebBrowserService.openBrowserAsync('https://www.globalpassportproject.org/');
+        return;
+      }
+
+      // Kosmopolis
+      case 11: {
+        navigation.toggleDrawer();
+        WebBrowserService.openBrowserAsync('http://www.kosmopolis.me/');
         return;
       }
     }
@@ -140,7 +153,6 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
 
   const Logout = (): void => {
     navigation.dispatch(
-      // DrawerActions.closeDrawer();
       CommonActions.reset({
         index: 1,
         routes: [
@@ -154,7 +166,8 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
     <Layout
       style={styles.header}
       level='2'>
-      <View style={styles.profileContainer}>
+      <View
+        style={styles.profileContainer}>
         <Avatar
           size='giant'
           source={require('../assets/images/image-app-icon.png')}
@@ -170,7 +183,6 @@ export const HomeDrawer = ({ navigation }): DrawerElement => {
 
   const renderFooter = (): DrawerHeaderFooterElement => (
     <React.Fragment>
-      <Divider/>
       <DrawerHeaderFooter
         disabled={true}
         description={`Version ${AppInfoService.getVersion()}`}

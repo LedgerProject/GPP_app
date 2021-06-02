@@ -273,7 +273,7 @@ export const AroundMeMapScreen = (props): React.ReactElement => {
     } else {
       showAlertMessage(
         I18n.t('No country available'),
-        I18n.t('Show before the country on the map, then click the country information button'),
+        I18n.t('Show before the country on the map'),
       );
     }
   };

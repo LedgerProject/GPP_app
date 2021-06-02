@@ -1,26 +1,34 @@
+// React import
 import React from 'react';
-import { Image, StyleSheet, View, ImageSourcePropType } from 'react-native';
-import { Button, ListItem, ListItemProps, Text } from '@ui-kitten/components';
-import { CloseIcon, MinusIcon, PlusIcon } from '../../components/icons';
-import { Compliant } from './data';
 
-export type CompliantItemProps = ListItemProps & {
+// React native import
+import { StyleSheet, View } from 'react-native';
+
+// UIKitten import
+import { Button, ListItem, ListItemProps, Text } from '@ui-kitten/components';
+
+// Models import
+import { Content } from '../model/content.model';
+
+// Components import
+import { CloseIcon } from './icons';
+
+export type ContentItemProps = ListItemProps & {
   index: number;
-  compliant: Compliant;
-  onRemove: (compliant: Compliant, index: number) => void;
-  onItemPress: (compliant: Compliant, index: number) => void;
+  content: Content;
+  onRemove: (content: Content, index: number) => void;
+  onItemPress: (content: Content, index: number) => void;
 };
 
-export const CompliantItem = (props: CompliantItemProps): React.ReactElement => {
-
-  const { style, compliant, index, onRemove, onItemPress, ...listItemProps } = props;
+export const ContentItem = (props: ContentItemProps): React.ReactElement => {
+  const { style, content, index, onRemove, onItemPress, ...listItemProps } = props;
 
   const onRemoveButtonPress = (): void => {
-    onRemove(compliant, index);
+    onRemove(content, index);
   };
 
   const onButtonPress = (): void => {
-    onItemPress(compliant, index);
+    onItemPress(content, index);
   };
 
   const substrDate = (date: any): any => {
@@ -32,17 +40,16 @@ export const CompliantItem = (props: CompliantItemProps): React.ReactElement => 
     <ListItem
       {...listItemProps}
       style={[styles.container, style]}
-      onPress={onButtonPress}
-      >
+      onPress={onButtonPress}>
       <View style={styles.detailsContainer}>
         <Text
           category='s1'>
-          {compliant.title}
+          {content.title}
         </Text>
         <Text
           appearance='hint'
           category='p2'>
-          {substrDate(compliant.insertDate)}
+          {substrDate(content.insertDate)}
         </Text>
       </View>
       <Button
@@ -74,6 +81,7 @@ const styles = StyleSheet.create({
   removeButton: {
     position: 'absolute',
     right: 0,
+    top: 15,
   },
   iconButton: {
     paddingHorizontal: 0,

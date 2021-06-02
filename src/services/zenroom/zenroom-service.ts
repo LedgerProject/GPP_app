@@ -41,8 +41,6 @@ export async function recoveryKeypair(clientSideContractText: string,  answers: 
       jsonKeys,
     );
 
-    console.log(response);
-
     numAttempts++;
   }
 

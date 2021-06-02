@@ -1,9 +1,13 @@
 // React import
 import React from 'react';
+
+// React native import
 import { Image, StyleSheet, View, ImageSourcePropType } from 'react-native';
 
 // UIKitten import
 import { Button, ListItem, ListItemProps, Text, CheckBox } from '@ui-kitten/components';
+
+// Components import
 import { CloseIcon } from '../components/icons';
 
 export type DocumentItemProps = ListItemProps & {
