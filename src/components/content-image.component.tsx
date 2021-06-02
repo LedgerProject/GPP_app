@@ -17,6 +17,7 @@ export class ContentImageModel {
     readonly mimeType: string,
     readonly size: number,
   ) {}
+
 }
 
 export type ContentImageProps = ListItemProps & {
