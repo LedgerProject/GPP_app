@@ -18,7 +18,7 @@ export class ContentImageModel {
     readonly size: number,
   ) {}
 }
- 
+
 export type ContentImageProps = ListItemProps & {
   index: number;
   contentImage: ContentImageModel;

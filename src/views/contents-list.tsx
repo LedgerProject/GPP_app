@@ -64,7 +64,7 @@ export const ContentsListScreen = (props): React.ReactElement => {
       getContents();
     }
   }, [isEntering]);
-  
+
   // Get the user contents
   async function getContents() {
     // Show spinner
@@ -102,7 +102,7 @@ export const ContentsListScreen = (props): React.ReactElement => {
       .then(function (response) {
         // Hide spinner
         setLoading(false);
-        
+
         // Set the contents
         setContents(response.data);
       })
@@ -333,10 +333,10 @@ const themedStyles = StyleService.create({
     marginBottom: 10,
   },
   backdrop: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   backdrop_black: {
-    backgroundColor: 'rgba(0, 0, 0, 1)'
+    backgroundColor: 'rgba(0, 0, 0, 1)',
   },
   modal: {
     textAlign: 'center',

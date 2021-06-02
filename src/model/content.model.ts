@@ -10,4 +10,4 @@ export class Content {
         readonly positionLongitude: number,
         readonly shareName: boolean,
     ) {}
-  }
+}

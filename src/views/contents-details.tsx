@@ -254,7 +254,7 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
       key = 'insertDate';
       postParams[key] = '2021-05-25T00:00:00.000Z'; // The param is overridden by the server
     }
-  
+
     // If shared position, send the latitude and longitude
     if (currentPosition.latitude && currentPosition.longitude && contentSharePosition) {
       key = 'positionLatitude';
@@ -540,7 +540,6 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
         props.navigation && props.navigation.navigate('DocWalletDetails', { item: document, image: image });
       })
       .catch(function (error) {
-        console.log(error);
         // Hide spinner
         setLoading(false);
 
@@ -654,9 +653,9 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
               style={styles.inputDescription}
             />
           </View>
-          <View 
+          <View
             style={styles.toggle}>
-            <Toggle 
+            <Toggle
               style={styles.label}
               checked={contentSharePosition}
               onChange={checkboxPositionChange}
@@ -664,7 +663,7 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
               text={I18n.t('Share current position')}
             />
           </View>
-          <View 
+          <View
             style={styles.toggle}>
             <Toggle
               style={styles.label}
@@ -710,10 +709,10 @@ export const ContentsDetailsScreen = (props): React.ReactElement => {
           visible={ modalAlertVisible }
           backdropStyle={styles.backdrop}
           onBackdropPress={() => setModalAlertVisible(false)}>
-          <Layout 
+          <Layout
             style={ styles.modal }>
-            <Text 
-              style={ styles.modalText } 
+            <Text
+              style={ styles.modalText }
               category='h6' >{alertTitle}
             </Text>
             <Text
@@ -805,10 +804,10 @@ const themedStyles = StyleService.create({
     marginBottom: 10,
   },
   backdrop: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   backdrop_black: {
-    backgroundColor: 'rgba(0, 0, 0, 1)' 
+    backgroundColor: 'rgba(0, 0, 0, 1)',
   },
   modal: {
     textAlign: 'center',

@@ -223,5 +223,5 @@ export default {
   'Error getting contents from the server': 'Error getting contents from the server, try later.',
   'Error removing content': 'Error removing content',
   'Error removing the selected content': 'Error removing the selected content from the server, try later',
-  'Error removing file': 'Error removing file'
+  'Error removing file': 'Error removing file',
 };
