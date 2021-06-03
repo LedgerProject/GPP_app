@@ -131,8 +131,8 @@ android {
         applicationId "com.kosmopolis.gpp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 32
-        versionName "2.4.16"
+        versionCode 33
+        versionName "2.4.17"
 
         ndk {
             abiFilters "armeabi-v7a", "arm64-v8a", "mips" // , "x86", "x86_64" // Da decommentare quando verrà rilasciata la versione x86_64 di Zenroom
