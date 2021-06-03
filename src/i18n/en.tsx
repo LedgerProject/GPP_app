@@ -190,6 +190,12 @@ export default {
   'News&Stories - List': 'News&Stories - List',
   'New Report': 'New Report',
   'New Story': 'New Story',
+  'AbuseAlarm info': 'If you need support and would like to report abuse to us, please select the "New Report" button. We will try to get you in touch with a support structure as soon as possible.',
+  'News&Story info': 'If you have a story to tell and share, send it to us, please select the "New Story" button.',
+  'Error getting contents': 'Error getting contents',
+  'Error getting contents from the server': 'Error getting contents from the server, try later.',
+  'Error removing content': 'Error removing content',
+  'Error removing the selected content': 'Error removing the selected content from the server, try later',
 
   '***ABUSE-ALARM / NEWS-STORIES DETAILS***': '***ABUSE-ALARM / NEWS-STORIES DETAILS***',
   'Are you sure to delete the selected content?': 'Are you sure you want to delete the selected content?',
@@ -213,15 +219,8 @@ export default {
   'Save completed': 'Save completed',
   'Content saved successfully': 'Content saved successfully',
   'Content saved successfully, now you can upload images': 'Content saved successfully, now you can upload images',
-
-  'AbuseAlarm info': 'If you need support and would like to report abuse to us, please select the "New Report" button. We will try to get you in touch with a support structure as soon as possible.',
-  'News&Story info': 'If you have a story to tell and share, send it to us, please select the "New Story" button.',
   'Error loading content media': 'Error loading content media',
   'New content detail info': 'Enter the content title and description and then press the save button.',
   'Edit content detail info': 'Take a photo or edit the title or description and then press the save button.',
-  'Error getting contents': 'Error getting contents',
-  'Error getting contents from the server': 'Error getting contents from the server, try later.',
-  'Error removing content': 'Error removing content',
-  'Error removing the selected content': 'Error removing the selected content from the server, try later',
   'Error removing file': 'Error removing file',
 };
