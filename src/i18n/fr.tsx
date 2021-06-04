@@ -59,6 +59,7 @@ export default {
   'Please enter your e-mail': 'Please enter your e-mail',
   'Please confirm your e-mail': 'Please confirm your e-mail',
   'The confirmation email does not match the specified email': 'The confirmation email does not match the specified email',
+  'Password should be at least 8 chars long': 'Password should be at least 8 chars long',
   'Please confirm the password': 'Please confirm the password',
   'The confirmation password does not match the specified password': 'The confirmation password does not match the specified password',
   'Please accept terms and conditions': 'Please accept the Terms & Conditions',

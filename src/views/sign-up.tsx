@@ -145,6 +145,13 @@ export default ({ navigation }): React.ReactElement => {
       return;
     }
 
+    // Check if the password is min 8 chars
+    if (password.length < 8) {
+      setError(I18n.t('Password should be at least 8 chars long'));
+      setmodalVisible(true);
+      return;
+    }
+
     // Check if the confirmation password is entered
     if (!confirmPassword) {
       setError(I18n.t('Please confirm the password'));
