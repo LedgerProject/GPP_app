@@ -78,8 +78,14 @@ It is meant to serve as an innovative tool also for the third sector (NGOs, aid 
 * react-native-screens: native navigation primitives for React Native app.
 * react-native-svg: SVG library for React Native.
 * react-native-tab-view: tab view component for React Native.
+* react-native-web: React Native components and APIs for the web.
 * react-native-async-storage/async-storage: asynchronous, persistent, key-value storage system for React Native.
 * react-native-community/masked-view: React Native masked view for iOS and Android.
+* react-navigation/bottom-tabs: bottom tab navigator following iOS design guidelines.
+* react-navigation/drawer: drawer navigator component for React Navigation.
+* react-navigation/material-top-tabs: integration for the animated tab view component from react-native-tab-view.
+* react-navigation/native: React Native integration for React Navigation.
+* react-navigation/stack: stack navigator component for React Navigation.
 * axios: promise based HTTP client for the browser and node.js. Make http requests from node.js
 * date-fns: JavaScript date utility library.
 * form-data: library to create readable "multipart/form-data" streams.
@@ -88,11 +94,9 @@ It is meant to serve as an innovative tool also for the third sector (NGOs, aid 
 * ui-kitten/components: React Native components based on Eva Design System.
 * ui-kitten/date-fns: date-fns services for UI Kitten.
 * ui-kitten/moment: moment.js services for UI Kitten.
-* react-navigation/bottom-tabs: bottom tab navigator following iOS design guidelines.
-* react-navigation/drawer: drawer navigator component for React Navigation.
-* react-navigation/material-top-tabs: integration for the animated tab view component from react-native-tab-view.
-* react-navigation/native: React Native integration for React Navigation.
-* react-navigation/stack: stack navigator component for React Navigation.
+* reduxjs/toolkit: toolset for efficient Redux development.
+* react-redux: official React bindings for Redux.
+* redux-persist: persist and rehydrate a redux store.
 
 ### Development dependencies
 
@@ -196,4 +200,4 @@ npx react-native run-ios
 
 ## How the app works
 
-TODO
+Please visit (https://www.globalpassportproject.org) for more information.
