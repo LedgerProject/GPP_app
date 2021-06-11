@@ -117,16 +117,16 @@ It is meant to serve as an innovative tool also for the third sector (NGOs, aid 
 * android: contains all the specific native code for Android. 
 * env: contains the development and productions files with the UI environment variables.
 * ios: contains all the specific native code for iOS. 
-* patches: directory containing node modules patches
+* patches: directory containing node modules patches.
 * src: TypeScript source code, having the following structure:
   * app: application core
   * assets: assets directory containing images and fonts.
   * components: contains the custom application components.
   * i18n: localization files in JSON format.
-  * model: oggetti dell'applicazione
-  * navigation: definizione delle routes
-  * scenes: menu laterale
-  * services: various services functions and environment variables.
+  * model: application models.
+  * navigation: routes definition.
+  * redux: contains all the Redux logic.
+  * services: various services functions and environment variables + zenroom methods and contracts.
   * views: application views. Each view is contained in a file which defines the operating logic and the UX.
 
 ## Starting a development environment
