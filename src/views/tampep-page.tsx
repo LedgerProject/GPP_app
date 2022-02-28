@@ -363,5 +363,5 @@ const themedStyles = StyleService.create({
     marginTop: 8,
     marginBottom: 12,
     width: '100%',
-  }
+  },
 });

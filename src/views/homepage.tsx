@@ -9,14 +9,14 @@ import I18n from './../i18n/i18n';
 import { TopNavigation, TopNavigationAction, Icon, StyleService, useStyleSheet, Layout } from '@ui-kitten/components';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { MenuGridList } from '../components/menu-grid-list.component';
-import { 
+import {
   MenuIcon,
   CustomDocWalletIcon,
   CustomAroundMeIcon,
   CustomAbuseAlarmIcon,
   CustomNewsStoriesIcon,
   CustomTampepIcon,
-  CustomMyProfileIcon
+  CustomMyProfileIcon,
 } from '../components/icons';
 import { ThemedIcon } from '../components/themed-icon.component';
 
