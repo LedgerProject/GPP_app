@@ -131,7 +131,7 @@ android {
         applicationId "com.kosmopolis.gpp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 34
+        versionCode 35
         versionName "2.4.18"
 
         ndk {
@@ -160,7 +160,7 @@ android {
                 keyAlias MYAPP_UPLOAD_KEY_ALIAS
                 keyPassword MYAPP_UPLOAD_KEY_PASSWORD
             }
-        }        
+        }
     }
     buildTypes {
         debug {

@@ -80,7 +80,6 @@ export const DocWalletScreen = (props): React.ReactElement => {
   useEffect(() => {
     setButtons();
     getMyDocuments();
-    // console.log(privateKey);
   }, []);
 
   // Set the "Take Photo" and "From Library" buttons

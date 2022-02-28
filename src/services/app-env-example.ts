@@ -1,5 +1,4 @@
 export class AppOptions {
-
   static getServerUrl = (): string => {
     return '<backend url>';
   };
@@ -11,4 +10,12 @@ export class AppOptions {
   static getTermsAndConditionsUrl = (): string => {
     return '<terms conditions url>';
   };
+
+  static getPrivacyPolicyUrl = (): string => {
+    return '<privacy policy url>';
+  };
+
+  static getInformedConsentUrl = (): string => {
+    return '<informed consent url>';
+  }
 }

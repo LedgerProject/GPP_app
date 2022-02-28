@@ -263,7 +263,7 @@ export default ({ navigation }): React.ReactElement => {
   const onSignInButtonPress = (private_Key = null, public_Key = null): void => {
     // Show the spinner
     setLoading(true);
-    // console.log(private_Key);
+
     // Set the post params
     const postParams = {
       email: email,

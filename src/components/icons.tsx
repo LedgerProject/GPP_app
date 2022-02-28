@@ -29,6 +29,21 @@ export const CustomNewsStoriesIcon = (props) => (
   <Icon {...props} name='custom-news-stories' pack='assets' />
 );
 
+// Tampep icon
+export const CustomTampepIcon = (props) => (
+  <Icon {...props} name='custom-tampep' pack='assets' />
+);
+
+// Profile icon
+export const CustomMyProfileIcon = (props) => (
+  <Icon {...props} name='custom-my-profile' pack='assets' />
+);
+
+// Settings icon
+export const CustomSettingsIcon = (props) => (
+  <Icon {...props} name='custom-settings' pack='assets' />
+);
+
 // Take Photo icon
 export const CustomTakePhotoIcon = (props) => (
   <Icon {...props} name='custom-take-photo' pack='assets' />

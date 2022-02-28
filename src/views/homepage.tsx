@@ -9,7 +9,7 @@ import I18n from './../i18n/i18n';
 import { TopNavigation, TopNavigationAction, Icon, StyleService, useStyleSheet, Layout } from '@ui-kitten/components';
 import { SafeAreaLayout } from '../components/safe-area-layout.component';
 import { MenuGridList } from '../components/menu-grid-list.component';
-import { MenuIcon, CustomDocWalletIcon, CustomAroundMeIcon, CustomAbuseAlarmIcon, CustomNewsStoriesIcon } from '../components/icons';
+import { MenuIcon, CustomDocWalletIcon, CustomAroundMeIcon, CustomAbuseAlarmIcon, CustomNewsStoriesIcon, CustomTampepIcon, CustomMyProfileIcon } from '../components/icons';
 import { ThemedIcon } from '../components/themed-icon.component';
 
 interface PropsObject {
@@ -115,6 +115,39 @@ export const HomepageScreen = (props): React.ReactElement => {
         var_value: false,
       },
     );
+
+    // Tampep button
+    buttonsArray.push(
+      {
+        title: I18n.t('Tampep'),
+        route: 'Tampep',
+        icon: (style: ImageStyle) => {
+          return React.createElement(
+            ThemedIcon,
+            { ...style, light: CustomTampepIcon, dark: CustomTampepIcon },
+          );
+        },
+        var_name: 'tampep',
+        var_value: false,
+      },
+    );
+
+    // My ProfileIcon button
+    buttonsArray.push(
+      {
+        title: I18n.t('MyProfile'),
+        route: 'MyProfile',
+        icon: (style: ImageStyle) => {
+          return React.createElement(
+            ThemedIcon,
+            { ...style, light: CustomMyProfileIcon, dark: CustomMyProfileIcon },
+          );
+        },
+        var_name: 'myProfile',
+        var_value: false,
+      },
+    );
+
     setData(buttonsArray);
   }
 

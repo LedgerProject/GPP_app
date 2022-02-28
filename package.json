@@ -4,12 +4,6 @@
   "version": "0.8.3",
   "author": "antonio.dibattista <antonio.dibattista@gmail.com>",
   "main": "./index.js",
-  "workspaces": {
-    "nohoist": [
-      "*",
-      "*/**"
-    ]
-  },
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",

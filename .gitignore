@@ -34,6 +34,7 @@ buck-out/
 \.buckd/
 *.keystore
 !debug.keystore
+/android/app/gradle.properties
 
 # CocoaPods
 /ios/Pods/
