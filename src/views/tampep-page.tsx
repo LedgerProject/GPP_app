@@ -33,7 +33,7 @@ export interface LayoutData extends MenuItem {
 }
 
 export const TampepPage = (props): React.ReactElement => {
-  const [language, setLanguage] = React.useState({"lang": "en", "text": "English"});
+  const [language, setLanguage] = React.useState({'lang': 'en', 'text': 'English'});
 
   const styles = useStyleSheet(themedStyles);
 
@@ -52,19 +52,19 @@ export const TampepPage = (props): React.ReactElement => {
 
   const openTampep = () => {
     WebBrowserService.openBrowserAsync('https://www.tampep.eu');
-  }
+  };
 
   const openServicesSexWorkers = () => {
     WebBrowserService.openBrowserAsync('https://www.services4sexworkers.eu');
-  }
+  };
 
   const openTampepBooklet = () => {
     WebBrowserService.openBrowserAsync('https://tampep.eu/wp-content/uploads/2021/12/Booklet_FINAL.pdf');
-  }
+  };
 
   const showVideo = () => {
     WebBrowserService.openBrowserAsync('https://www.youtube.com/watch?v=9xV-aSeXlN4');
-  }
+  };
 
   // On selecting language event
   const onSelectLanguage = (option) => {
@@ -265,12 +265,12 @@ const themedStyles = StyleService.create({
   },
   imageStyle: {
     width: '100%',
-    height: 300
+    height: 300,
   },
   videoImage: {
     marginTop: 20,
     width: '100%',
-    height: 200
+    height: 200,
   },
   spinnerTextStyle: {
     color: '#FFF',
@@ -334,30 +334,30 @@ const themedStyles = StyleService.create({
     fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'justify',
-    marginTop: 10
+    marginTop: 10,
   },
   subtitle: {
     marginTop: 5,
     fontWeight: 'bold',
     textAlign: 'justify',
-    color: '#FFF'
+    color: '#FFF',
   },
   paragraph: {
     marginTop: 5,
     textAlign: 'justify',
-    color: '#FFF'
+    color: '#FFF',
   },
   paragraphBold: {
     marginTop: 5,
     fontWeight: 'bold',
     textAlign: 'justify',
-    color: '#FFF'
+    color: '#FFF',
   },
   paragraphBoldRed: {
     marginTop: 5,
     fontWeight: 'bold',
     textAlign: 'justify',
-    color: '#F00'
+    color: '#F00',
   },
   select: {
     marginTop: 8,
